@@ -1,0 +1,34 @@
+name: Test the API
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    - name: Install sitespeed.io
+      run: npm sitespeed.io -g
+    - name: Install Chrome
+      run: |
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+        sudo apt-get update
+        sudo apt-get --only-upgrade install google-chrome-stable
+        google-chrome --version
+    - name: Start dependencies
+      run: docker-compose -f docker-compose.yml up -d
+    - name: Start the server
+      run: node server/app.js &
+    - name: Start the testrunner
+      run: node testrunner/app.js &
+    - name: Add a test
+      run: sitespeed.io https://www.sitespeed.io -n 1 --api.hostname 127.0.0.1  --api.location default
