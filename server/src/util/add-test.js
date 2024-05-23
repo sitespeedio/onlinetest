@@ -31,7 +31,7 @@ async function getDefaultSitespeedConfiguration() {
     return JSON.parse(result.toString());
   }
   const result = await readFile(
-    path.resolve(getLocalFilePath('../config/sitespeed.json'))
+    path.resolve(getLocalFilePath('../../config/sitespeed.json'))
   );
   return JSON.parse(result.toString());
 }
