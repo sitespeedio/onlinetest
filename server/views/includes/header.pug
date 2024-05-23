@@ -1,0 +1,28 @@
+script.
+  document.addEventListener('DOMContentLoaded', () => {
+    const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        const target = el.dataset.target;
+        const targetE = document.getElementById(target);
+
+        el.classList.toggle('is-active');
+        targetE.classList.toggle('is-active');
+
+      });
+    });
+  });
+
+nav.navbar(role='navigation' aria-label='main navigation')
+    .navbar-brand
+      a.navbar-item(href='/')
+        img(src=nconf.get('html:logoHeader:path') width=nconf.get('html:logoHeader:width') height=nconf.get('html:logoHeade:height') alt=nconf.get('html:logoHeader:alt'))
+      a.navbar-burger(role='button' aria-label='menu' data-target='navMenu' aria-expanded='false')
+        span(aria-hidden='true')
+        span(aria-hidden='true')
+        span(aria-hidden='true')
+    .navbar-menu(id='navMenu')
+      .navbar-start
+        a.navbar-item(href='/') #{getText('navigationbar.home')}
+        a.navbar-item(href='/search/') #{getText('navigationbar.search')}

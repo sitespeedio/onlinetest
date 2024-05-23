@@ -1,0 +1,21 @@
+mixin radio(label, name)
+  .mb-2.mb-tablet-0(style='width:100%;max-width:450px;padding:0 15px')
+    .control
+      .field
+        .control
+            .is-size-4.is-size-5-mobile.is-fullwidth
+                input.is-checkradio.is-size-4.is-size-5-mobile.is-fullwidth.has-background-color.is-white.is-large(type='checkbox' name=name id=name)
+                label.checkbox.label(for=name) #{label}
+
+.field.is-grouped
+    p.control.is-expanded
+        input.input.is-large(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label')
+    p.control
+        button.button.is-primary.is-large(accesskey='s') #{getText('index.button.analyze')} 
+
+.level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
+    +radio(getText('index.tab.extras.sustainable'),'sustainable')
+    +radio(getText('index.tab.extras.axe'),'axe')
+    +radio(getText('index.tab.extras.crux'),'crux')
+    if (nconf.get('html:useLighthouse') === true)
+      +radio(getText('index.tab.extras.lighthouse'),'lighthouse')

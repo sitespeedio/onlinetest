@@ -1,0 +1,15 @@
+extends ./layouts/running.pug
+
+block content
+  section.section
+      .container
+          p.has-text-centered.mb-2
+            img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
+          article.message.is-success
+            .message-header
+              p#title(style='font-size:1.5rem')
+            .message-body#message(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left;')
+          noscript
+            .level
+            .level-item.has-text-centered
+              button.button.is-primary.is-medium(onclick='window.location.href=window.location.href') #{getText('running.refresh')}

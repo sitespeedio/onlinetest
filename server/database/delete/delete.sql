@@ -1,0 +1,1 @@
+DELETE FROM sitespeed_io_test_runs WHERE added_date < NOW() - INTERVAL '60 days';

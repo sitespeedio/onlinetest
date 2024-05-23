@@ -1,0 +1,60 @@
+extends ./layouts/default.pug
+
+block content
+  section.section
+    .container
+      .level
+        .level-item.has-text-centered
+          img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
+
+      if serverConfig.length > 0
+        script.
+            function openTab(evt, tabName) {
+              var i, x, tablinks;
+              x = document.getElementsByClassName("content-tab");
+              for (i = 0; i < x.length; i++) {
+                  x[i].style.display = "none";
+              }
+              tablinks = document.getElementsByClassName("tab");
+              for (i = 0; i < x.length; i++) {
+                  tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+              }
+              document.getElementById(tabName).style.display = "block";
+              evt.currentTarget.className += " is-active";
+            }
+
+        .tabs.is-centered.is-boxed.is-large
+          ul
+            li.tab.is-active(onclick='openTab(event,"settings")')
+              a
+                span.is-large #{getText('index.tab.settings')}
+            li.tab(onclick='openTab(event,"commandline")')
+              a
+                span.is-large #{getText('index.tab.cli')} 
+            li.tab(onclick='openTab(event,"extras")')
+              a
+                span.is-large #{getText('index.tab.extras')}
+            li.tab(onclick='openTab(event,"scripting")')
+              a
+                span.is-large #{getText('index.tab.scripting')} 
+
+        form#analyze-form(method='post' action='/')
+          .content-tab#settings
+            include includes/index/tabs/settings.pug
+          .content-tab#extras(style='display: none;')
+            include includes/index/tabs/extras.pug
+          .content-tab#commandline(style='display: none;')
+            include includes/index/tabs/commandLine.pug
+          .content-tab#scripting(style='display: none;')
+            include includes/index/tabs/scripting.pug
+            
+      else
+        .level
+          .level-item.has-text-centered
+            p.control.is-expanded
+              label.label.is-large
+                | #{getText('index.waitingtestrunners')}
+        .level
+          .level-item.has-text-centered
+            button.button.is-primary.is-medium(onclick='window.location.href=window.location.href') #{getText('index.refresh')}
+      include ./includes/script.pug

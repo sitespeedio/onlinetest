@@ -1,0 +1,146 @@
+extends ./layouts/default.pug
+
+block content
+  script(type='text/javascript').
+    function toggleSearchHelp() {
+      var el = document.getElementById('searchHelp');
+      if (el.style.display === 'none') {
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+      }
+    }
+    function addToSearch(text) {
+      var search = document.getElementById('search');
+      if (search) {
+        if (search.value==='') {
+          search.value = text;
+        } else {
+          search.value += ' ' + text;
+        }
+      }
+      
+    }
+  section.section
+    .container
+      .level
+        .level-item.has-text-centered
+          img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
+
+      form#search-form(method='get' action='/search/')
+        input(type='hidden' name='page' value='1' id='page') 
+        .field.is-grouped
+            p.control.is-expanded
+                input.input.is-large(type='text' placeholder=getText('search.input.placeholder') name='search' id='search' autofocus value=searchQuery)  
+            p.control
+                button.button.is-primary.is-large(accesskey='s' name='searchbutton') #{getText('search.button.search')}
+      p.control
+        .buttons.py-2
+          button.button.is-primary.is-medium(onclick='addToSearch(\'when:today\')' role='button') #{getText('search.button.today')}
+          button.button.is-primary.is-medium(onclick='addToSearch(\'when:yesterday\')' role='button') #{getText('search.button.yesterday')}
+          button.button.is-primary.is-medium(onclick='addToSearch(\'when:lastweek\')' role='button') #{getText('search.button.lastweek')}
+          button.button.is-warning.is-medium(accesskey='h' onclick='toggleSearchHelp()') #{getText('search.button.help')}
+
+        .content.p-5.has-background-white(style='display:none' id='searchHelp')
+            h2.mb-3  #{getText('search.help.heading')}
+            p.mb-2 #{getText('search.help.description')}:
+              code https://www.sitespeed.io/documentation/ date:#{dayjs().format('YYYY-MM-DD')} browser:chrome  
+            ul 
+              li 
+                b 
+                  - let browserOnClick = 'addToSearch(\'date:' + dayjs().format('YYYY-MM-DD') + '\')';
+                  a(role='button' onclick=browserOnClick) date:#{dayjs().format('YYYY-MM-DD')}
+                | - #{getText('search.help.bydate')}
+              li
+                b 
+                  - browserOnClick = 'addToSearch(\'before:' + dayjs().format('YYYY-MM-DD') + '\')';
+                  a(role='button' onclick=browserOnClick) before:#{dayjs().format('YYYY-MM-DD')} 
+                | - #{getText('search.help.beforedate')}
+              li 
+                b 
+                  - browserOnClick = 'addToSearch(\'after:' + dayjs().format('YYYY-MM-DD') + '\')';
+                  a(role='button' onclick=browserOnClick) after:#{dayjs().format('YYYY-MM-DD')} 
+                | - #{getText('search.help.afterdate')}
+              li 
+                b 
+                  - browserOnClick = 'addToSearch(\'when:today\')';
+                  a(role='button' onclick=browserOnClick) when:today 
+                | - #{getText('search.help.byday')}
+              li 
+                b label:the_label 
+                | - #{getText('search.help.bylabel')}
+              li 
+                b url:https://www.myurl.org/  
+                | - #{getText('search.help.byurlwithwildcard', 'url:Barack_Obama', 'https://en.wikipedia.org/wiki/Barack_Obama')}
+              li 
+                b https://www.myurl.org/ 
+                | - #{getText('search.help.byurl')}
+              li
+                b 
+                  - browserOnClick = 'addToSearch(\'testType:desktop\')';
+                  a(role='button' onclick=browserOnClick) testType:desktop 
+                | - #{getText('search.help.bytesttype')}
+              li 
+                b location:
+                | - #{getText('search.help.bylocation')}
+              li
+                b 
+                  - browserOnClick = 'addToSearch(\'browser:firefox\')';
+                  a(role='button' onclick=browserOnClick) browser:firefox 
+                | - #{getText('search.help.bybrowser')}
+              li
+                b name:
+                | - #{getText('search.help.byscriptname')}
+
+      if data
+        if data.count > 0
+          p.has-background-white.has-text-black.p-3.has-text-centered 
+            b #{getText('search.result.showing', firstResultIndex, lastResultIndex, data.count)}
+          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
+            button.button.is-link.is-medium.mr-2(
+              onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
+            button.button.is-link.is-medium(
+              onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
+          form#search-form-compare(action='/compare-redirect/' method='post')
+            table.table.is-striped.is-fullwidth
+              tr 
+                th #{getText('search.result.urlscriptname')}
+                th #{getText('search.result.label')}
+                th #{getText('search.result.rundate')}
+                th #{getText('search.result.location')}
+                th #{getText('search.result.type')}
+                th #{getText('search.result.status')}
+                th #{getText('search.result.browser')}
+                th #{getText('search.result.compare')}
+              each test in data.result
+                tr 
+                  td
+                    span.icon-text
+                      span
+                        a(href=test.result_url) #{test.url ? shortURL(test.url, true) : test.scripting_name}
+                        - let urlOnClick = test.url ? `addToSearch('url:${test.url}')` : `addToSearch('name:${ test.scripting_name}')`;
+                      a(role='button' onclick=urlOnClick)
+                        span.icon.is-small
+                          img(src='/img/icons/content-copy.svg' alt='Go to URL')
+                  td 
+                    - let labelOnClick = `addToSearch('label:${test.label}')`;
+                    a(role='button' onclick=labelOnClick) #{test.label}
+                  td #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
+                  td #{test.location}
+                  td.is-capitalized #{test.test_type}
+                  td #{test.status}
+                  td
+                    - let browserOnClick = 'addToSearch(\'browser:' + test.browser_name + '\')';
+                    a(role='button' onclick=browserOnClick) #{test.browser_name}
+                  td 
+                    label.checkbox
+                      if test.status === 'completed' 
+                        input(type='checkbox' value=test.id name='har')
+                      else 
+                        input(type='checkbox' value=test.id name='har' disabled)
+            button.button.is-primary.is-medium(accesskey='c') #{getText('search.button.compare')}
+        else 
+          .message.is-fullwidth.is-large.has-background-white.has-text-centered
+            .message-body
+              | #{getText('search.result.nomatch')}
+        

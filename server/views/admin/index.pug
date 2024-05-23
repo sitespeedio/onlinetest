@@ -1,0 +1,32 @@
+doctype html
+html
+  head
+    title Queues Display
+    link(rel='stylesheet' href='/css/admin.css')
+    script.
+      function confirmAndSubmit(queue) {
+        if (confirm(`Are you sure you want to empty the queue: ${queue}?`)) {
+          var form = document.createElement('form');
+          form.method = 'POST';
+          form.action = '/admin/'; 
+
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'queueName';
+          input.value = queue;
+          form.appendChild(input);
+
+          document.body.appendChild(form);
+          form.submit();
+        }
+      }
+  body
+    header
+      h1 Admin
+    main
+      .container
+        each queue, index in queues
+            .key #{index+1}: #{queue} has #{queueSizes[queue]} entries.
+            button(onclick=`confirmAndSubmit('${queue}')`) Empty queue
+    footer
+      p Copyright © 2024 sitespeed.io

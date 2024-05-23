@@ -1,0 +1,30 @@
+script(type='text/javascript').
+    function addScripting(text) {
+      var scripting = document.getElementById('scriptingArea');
+      scripting.value = text;
+    }
+
+.field.is-grouped
+    p.control.is-expanded
+        input.input.is-large(type='text' placeholder=getText('index.tab.scripting.scriptname') name='scriptingName' pattern='^[-a-zA-Z0-9\._-]*')
+    p.control
+    button.button.is-primary.is-large(accesskey='s') #{getText('index.button.analyze')} 
+
+script(src='/js/ace-1.33.1/ace.js')
+script.
+    ace.config.set('basePath', '/js/ace-1.33.1/');
+script(src='/js/ace-1.33.1/theme/theme-github.js')
+script(src='/js/ace-1.33.1/ext-language_tools.js')
+script(src='/js/ace-1.33.1/mode-javascript.js')
+
+p.control.is-expanded
+    label.label.is-large.is-white
+        | #{getText('index.tab.scripting.recommendation')} (
+        a(href='https://www.sitespeed.io/documentation/sitespeed.io/scripting/') #{getText('index.tab.scripting.documentation')}
+        | )
+
+.field.is-grouped
+    #editor(style='height: 400px; width: 100%;')
+    textarea(name='scripting' id='hiddenScriptingArea' style='display:none;')
+
+include editor

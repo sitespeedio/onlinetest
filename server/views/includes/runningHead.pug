@@ -1,0 +1,74 @@
+meta(charset='utf-8')
+meta(name='viewport' content='width=device-width, initial-scale=1')
+title #{title}
+link(rel='stylesheet' href='/css/bulma.min.css')
+link(rel='stylesheet' href='/css/bulma-checkradio.min.css')
+link(rel='stylesheet' href='/css/extra.css')
+if (nconf.get('html:css:override')) 
+  link(rel='stylesheet' href=nconf.get('html:css:override'))
+noscript
+  meta(http-equiv='refresh' content='30')
+link(rel='apple-touch-icon-precomposed' sizes='144x144' href='/img/ico/sitespeed.io-144.png')
+link(rel='apple-touch-icon-precomposed' sizes='114x114' href='/img/ico/sitespeed.io-114.png')
+link(rel='apple-touch-icon-precomposed' sizes='72x72' href='/img/ico/sitespeed.io-72.png')
+link(rel='apple-touch-icon-precomposed' href='/img/ico/sitespeed.io-57.png')
+link(rel='shortcut icon' href='/img/ico/sitespeed.io.ico')
+meta(name='description' content=description)
+meta(name='keywords' content='sitespeed.io, wpo, webperf, perfmatters, performance')
+script(type='text/javascript').
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+      worker(); 
+  };
+  });
+  function worker() {
+    const images = ['/img/ai/performance-engineers-healthy-relationship-to-google.jpg'];
+    const texts = ['Performance Engineers healthy relationship to Google'];
+    const showRandomAIImage = !{JSON.stringify(nconf.get('html:showRandomAIImage'))};
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", "/api/status/#{id}", true);
+    xhr.onload = function() {
+      const serverResponse = JSON.parse(xhr.responseText);
+      const testName = serverResponse.url === '' ? serverResponse.scriptingName : serverResponse.url; 
+
+      if (showRandomAIImage === true) {
+        const index = Math.floor(Math.random() * images.length);
+        const messageElement = document.getElementById('message');
+        const image = document.createElement('img');
+        image.src = images[index];
+        image.alt = texts[index];
+
+        const header = document.createElement('h2');
+        header.textContent = 'AI generated content:' + texts[0];
+      
+        messageElement.innerHTML = '';
+
+        messageElement.appendChild(header);
+        messageElement.appendChild(image);
+      } else {
+        document.getElementById('message').innerHTML = serverResponse.logs.join('<br>');
+      }
+      if (serverResponse.status === 'waiting') {
+        document.getElementById('title').innerHTML = "Waiting to run tests " + testName;
+        document.getElementById('message').innerHTML = serverResponse.message;
+        setTimeout(worker, 2000);
+      } else if (serverResponse.status === 'active' || serverResponse.status === 'stuck') {
+          document.getElementById('title').innerHTML = "Testing " + testName;
+          setTimeout(worker, 1000);
+      } 
+      else if (serverResponse.status === 'completed' || serverResponse.status === 'failed') {
+        if (serverResponse.result) {
+            window.location.href = serverResponse.result;
+        } else location.reload();
+        return;
+      } 
+    } 
+    xhr.onerror = function() {
+    // oops couldn't fetch the response
+    console.error('Could not fetch the response');
+    setTimeout(worker, 5000); 
+  };
+  xhr.send();
+  };
+
+  worker();

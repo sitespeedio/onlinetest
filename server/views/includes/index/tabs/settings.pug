@@ -1,0 +1,59 @@
+mixin dropdown(label, name)
+  .mb-2.mb-tablet-0(style='width:100%;max-width:325px;padding:0 15px')
+    .subtitle.has-text-weight-semibold(style='margin-left:2px;margin-bottom:0.6rem;font-size:1rem')
+      label.label.is-large #{label}
+    .control
+      .field
+        .control
+          .select.is-size-4.is-size-5-mobile.is-fullwidth
+            select(id=name style='border-bottom-left-radius:0;border-bottom-right-radius:0' name=name)
+              block
+
+block content
+    .field.is-grouped
+        p.control.is-expanded
+            - const domainText = getText('index.tab.settings.placeholder') + testDomains;
+            input.input.is-large(type='text' placeholder=domainText name='url' autofocus)
+        p.control
+            button.button.is-primary.is-large(accesskey='s') #{getText('index.button.analyze')} 
+
+    .level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
+        
+        +dropdown(getText('index.tab.settings.location') ,'location')
+            each setup in serverConfig
+                option(value=setup.name) #{setup.name}
+
+        +dropdown(getText('index.tab.settings.testtype'),'testType')
+            - testTypes = {}
+            each setup in serverConfig[0].setup
+                - testTypes[setup.type] = 1
+            each val, key in testTypes
+                if (key === 'emulatedMobile')
+                    option(value=key) #{getText('index.tab.settings.emulatedmobile')}
+                else
+                    option(value=key) #{key}
+
+        +dropdown(getText('index.tab.settings.browser'),'browser')
+            each browser in serverConfig[0].setup[0].browsers
+                option(value=browser) #{browser}
+
+    .level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
+
+        +dropdown(getText('index.tab.settings.connectivity'),'connectivity')
+            each connectivity in  serverConfig[0].setup[0].connectivity
+                option(value=connectivity) #{connectivity}
+
+        +dropdown(getText('index.tab.settings.device'),'deviceId')
+            each setup in serverConfig[0].setup[0]
+                if setup.id
+                    option(value=setup.id) #{setup.id} (#{queueNamesAndSize[setup.queue]})
+
+        +dropdown(getText('index.tab.settings.iterations'),'iterations')
+            option 1
+            option(selected='selected') 3
+            option 5
+            option 7
+            option 9
+            option 11
+            option 15
+            option 21

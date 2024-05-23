@@ -1,0 +1,53 @@
+{
+  "name": "@sitespeed.io/testrunner",
+  "version": "0.0.1",
+  "description": "A test runner for sitespeed.io server.",
+  "type": "module",
+  "exports": "./app.js",
+  "bin": {
+    "sitespeed.io-testrunner": "./app.js"
+  },
+  "engines": {
+		"node": ">=20"
+	},
+  "publishConfig": {
+    "access": "public"
+  },
+  "engineStrict": true,
+  "keywords": [
+    "sitespeed.io",
+    "webperf",
+    "webperformance"
+  ],
+  "license": "AGPL-3.0-only",
+  "files": [
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE",
+    "app.js",
+    "src",
+    "package.json",
+    "npm-shrinkwrap.json",
+    "config"
+  ],
+  "scripts": {
+    "start": "node ./app.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "devDependencies": {
+      "eslint": "^8.57.0",
+      "eslint-config-prettier": "^8.10.0",
+      "eslint-plugin-prettier": "^4.2.1",
+      "eslint-plugin-unicorn": "^52.0.0",
+      "prettier": "^2.8.8"
+  },
+  "dependencies": {
+    "bull": "4.12.6",
+    "nconf": "0.12.1",
+    "execa": "9.1.0",
+    "intel": "1.2.0",
+    "joi" : "17.13.1",
+    "js-yaml": "4.1.0"
+  }
+}

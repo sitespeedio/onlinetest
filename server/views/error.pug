@@ -1,0 +1,16 @@
+extends ./layouts/default.pug
+
+block content
+  section.section
+      .container
+          p.has-text-centered.mb-2
+            img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
+          article.message.is-danger
+            .message-header
+              p #{errors ? errors : 'Error'}
+            if logs
+              .message-body#logs(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left') !{logs.join('<br>')}
+            if message
+              p.message-body #{message}
+          p.has-text-centered
+            a.button.is-primary.is-medium(href='/') #{getText('index.button.backtostart')}

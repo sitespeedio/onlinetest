@@ -1,0 +1,9 @@
+{
+  "extends": "clock",
+  "validateExtensions": null,
+  "validateIndentation": null,
+  "disallowIdLiterals": null,
+  "disallowAttributeInterpolation": null,
+  "validateAttributeSeparator": " ",
+  "requireLineFeedAtFileEnd": null
+}
