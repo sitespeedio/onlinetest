@@ -27,8 +27,12 @@ jobs:
     - name: Start dependencies
       run: docker-compose -f docker-compose.yml up -d
     - name: Start the server
-      run: node server/app.js &
+      run: |
+        npm install --prefix server
+        node server/app.js &
     - name: Start the testrunner
-      run: node testrunner/app.js &
+      run: |
+        npm install --prefix testrunner
+        node testrunner/app.js &
     - name: Add a test
       run: sitespeed.io https://www.sitespeed.io -n 1 --api.hostname 127.0.0.1  --api.location default
