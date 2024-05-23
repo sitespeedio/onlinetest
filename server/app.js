@@ -13,7 +13,7 @@ import { SitespeedioServer } from './src/server.js';
 import { getLocalFilePath } from './src/util/fileutil.js';
 
 const require = createRequire(import.meta.url);
-const version = require('../../package.json').version;
+const version = require('./package.json').version;
 const defaultConfig = getLocalFilePath('../../config/default.yaml');
 
 nconf.argv();
