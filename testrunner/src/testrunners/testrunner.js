@@ -120,11 +120,11 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   try {
     const process = execa(binary, parameters);
     process.stdout.on('data', chunk => {
-      logger.debug(chunk.toString());
+      logger.info(chunk.toString());
       job.log(chunk.toString());
     });
     process.stderr.on('data', chunk => {
-      logger.debug(chunk.toString());
+      logger.info(chunk.toString());
       job.log(chunk.toString());
     });
     await process;
