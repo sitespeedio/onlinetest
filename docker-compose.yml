@@ -4,8 +4,7 @@ services:
       hostname: keydb
       ports:
         - "6379:6379"
-      environment:
-        - KEYDB_PASSWORD=${KEYDB_PASSWORD}
+      command: ["keydb-server", "--requirepass", "${KEYDB_PASSWORD}"]
       restart: always
     postgresql:
       image: postgres:16.2
