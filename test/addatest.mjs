@@ -10,7 +10,7 @@ export default async function (context, commands) {
     await commands.wait.byId('commandlinearea', 5000);
     await commands.addText.byId('--headless', 'commandlinearea');
     await commands.measure.start('RunTest');
-    await commands.click.byId('submittest');
-    await commands.wait.byXpath('/html/body/div[2]/h1',30000);
+    await commands.click.byIdAndWait('submittest');
+    // await commands.wait.byXpath('/html/body/div[2]/h1',30000);
     return commands.measure.stop();
   }
