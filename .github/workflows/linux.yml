@@ -20,7 +20,7 @@ jobs:
         cd sitespeed.io
         npm install
         npm link
-        echo "::add-path::$(npm bin -g)"
+        echo "$(npm bin -g)" >> $GITHUB_PATH
     - uses: actions/checkout@v4
     - name: Install Chrome
       run: |
