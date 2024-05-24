@@ -7,31 +7,33 @@ import express from 'express';
 import log from 'intel';
 const logger = log.getLogger('sitespeedio.server');
 
+import { getBaseFilePath } from '../util/fileutil.js';
+
 export function setupStatic(app) {
   app.use(
     '/img',
-    express.static(join('public', 'img'), {
+    express.static(getBaseFilePath(join('public', 'img')), {
       maxAge: '366 days'
     })
   );
 
   app.use(
     '/css',
-    express.static(join('public', 'css'), {
+    express.static(getBaseFilePath(join('public', 'css')), {
       maxAge: '366 days'
     })
   );
 
   app.use(
     '/js',
-    express.static(join('public', 'js'), {
+    express.static(getBaseFilePath(join('public', 'js')), {
       maxAge: '366 days'
     })
   );
 
   app.use(
     '/compare',
-    express.static(join('public', 'compare'), {
+    express.static(getBaseFilePath(join('public', 'compare')), {
       maxAge: '10 minutes'
     })
   );
