@@ -21,6 +21,11 @@ jobs:
         npm install
         npm link
         echo "$(npm bin -g)" >> $GITHUB_PATH
+        npm bin -g | tee -a $GITHUB_ENV
+    - name: Update PATH
+      run: echo "PATH=$(npm bin -g):$PATH" >> $GITHUB_ENV
+    - name: Run sitespeed.io
+      run: sitespeed.io --version
     - uses: actions/checkout@v4
     - name: Install Chrome
       run: |
