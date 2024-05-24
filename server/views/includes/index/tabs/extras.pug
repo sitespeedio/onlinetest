@@ -11,7 +11,7 @@ mixin radio(label, name)
     p.control.is-expanded
         input.input.is-large(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label')
     p.control
-        button.button.is-primary.is-large(accesskey='s') #{getText('index.button.analyze')} 
+        button.button.is-primary.is-large(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
 
 .level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
     +radio(getText('index.tab.extras.sustainable'),'sustainable')
