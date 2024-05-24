@@ -7,7 +7,7 @@ import log from 'intel';
 import nconf from 'nconf';
 
 import { queueHandler } from '../queue/queuehandler.js';
-import { getLocalFilePath } from '../util.js';
+import { getBaseFilePath } from '../util.js';
 const { join } = path;
 
 /**
@@ -103,7 +103,7 @@ function prepareSitespeedConfig(job) {
 
   jobConfig.extends =
     nconf.get('sitespeedioConfigFile') === undefined
-      ? getLocalFilePath('../config/sitespeedDefault.json')
+      ? getBaseFilePath('./config/sitespeedDefault.json')
       : path.resolve(nconf.get('sitespeedioConfigFile'));
 
   return jobConfig;

@@ -19,7 +19,7 @@ import {
   getDeviceQueue
 } from '../queuehandler.js';
 import { setConfigById } from '../configs.js';
-import { getLocalFilePath } from './fileutil.js';
+import { getBaseFilePath } from './fileutil.js';
 
 const logger = log.getLogger('sitespeedio.server');
 
@@ -31,7 +31,7 @@ async function getDefaultSitespeedConfiguration() {
     return JSON.parse(result.toString());
   }
   const result = await readFile(
-    path.resolve(getLocalFilePath('../../config/sitespeed.json'))
+    path.resolve(getBaseFilePath('./config/sitespeed.json'))
   );
   return JSON.parse(result.toString());
 }

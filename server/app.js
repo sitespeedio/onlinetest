@@ -10,11 +10,11 @@ import nconf from 'nconf';
 import yaml from 'js-yaml';
 
 import { SitespeedioServer } from './src/server.js';
-import { getLocalFilePath } from './src/util/fileutil.js';
+import { getBaseFilePath } from './src/util/fileutil.js';
 
 const require = createRequire(import.meta.url);
 const version = require('./package.json').version;
-const defaultConfig = getLocalFilePath('../../config/default.yaml');
+const defaultConfig = getBaseFilePath('./config/default.yaml');
 
 nconf.argv();
 
