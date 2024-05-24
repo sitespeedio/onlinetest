@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
@@ -19,6 +18,7 @@ jobs:
       run: |
         git clone https://github.com/sitespeedio/sitespeed.io.git
         npm install --prefix sitespeed.io -g
+    - uses: actions/checkout@v4
     - name: Install Chrome
       run: |
         wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
