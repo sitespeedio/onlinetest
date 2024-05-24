@@ -1,7 +1,8 @@
 import http from 'node:http';
 import { createSecureServer } from 'node:http2';
 // eslint-disable-next-line unicorn/import-style
-import { join } from 'node:path';
+
+import path from 'node:path';
 
 import express from 'express';
 import helmet from 'helmet';
@@ -24,6 +25,7 @@ import { api } from './routes/api/api.js';
 import { BasicAuth } from './middleware/basicauth.js';
 import { error404, error500 } from './middleware/errorhandler.js';
 import { setupStatic } from './static/index.js';
+import { getLocalFilePath } from './util/fileutil.js';
 
 const logger = log.getLogger('sitespeedio.server');
 
@@ -44,7 +46,7 @@ function setupExpressServer() {
   app.use(express.json());
 
   app.set('view engine', 'pug');
-  app.set('views', join('views'));
+  app.set('views', path.resolve(getLocalFilePath('../../views')));
 
   app.enable('view cache');
 
