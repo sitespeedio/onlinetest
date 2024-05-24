@@ -35,4 +35,4 @@ jobs:
         npm install --prefix testrunner
         node testrunner/app.js &
     - name: Add a test
-      run: sitespeed.io https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless
+      run: sitespeed.io https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json
