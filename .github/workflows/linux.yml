@@ -16,7 +16,9 @@ jobs:
       with:
         node-version: '20.x'
     - name: Install sitespeed.io
-      run: npm install sitespeed.io -g
+      run: |
+        git clone https://github.com/sitespeedio/sitespeed.io.git
+        npm install --prefix sitespeed.io -g
     - name: Install Chrome
       run: |
         wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
