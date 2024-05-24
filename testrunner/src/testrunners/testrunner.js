@@ -76,7 +76,7 @@ export default async function runJob(job) {
 async function createWorkingDirectory(job) {
   const baseWorkingDirectory = nconf.get('workingDirectory') || os.tmpdir();
 
-  const directory = `${baseWorkingDirectory}${job.queue.name}/${job.id}`;
+  const directory = `${baseWorkingDirectory}/${job.queue.name}/${job.id}`;
   await mkdir(directory, { recursive: true });
   return directory;
 }

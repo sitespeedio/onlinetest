@@ -10,15 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
     - name: Use Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
-    - name: Install sitespeed.io
-      run: |
-        git clone https://github.com/sitespeedio/sitespeed.io.git
-        npm install --prefix sitespeed.io -g
+    - uses: actions/checkout@v4
     - name: Install Chrome
       run: |
         wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - 
@@ -36,5 +32,9 @@ jobs:
       run: |
         npm install --prefix testrunner
         node testrunner/app.js &
-    - name: Add a test
-      run: sitespeed.io https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json
+    - name: Run a test
+      run: |
+        git clone https://github.com/sitespeedio/sitespeed.io.git
+        cd sitespeed.io
+        npm install
+        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json

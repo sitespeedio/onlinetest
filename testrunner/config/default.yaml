@@ -42,7 +42,7 @@ logging:
 
 # The working directory for the testrunner, where it temporary will put it files
 # By default it used the os.tmpdir
-# workingDirectory: "./"
+# workingDirectory: "."
 
 # The sitespeed.io executable. The default is a globally installed sitespeed.io
 executable: "sitespeed.io"
