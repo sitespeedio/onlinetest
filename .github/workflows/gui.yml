@@ -38,10 +38,7 @@ jobs:
         cd sitespeed.io
         npm install
         bin/sitespeed.js ../test/addatest.mjs --multi -n 1 --headless
-    - name: Display Logs
-      run: |
-        cd ..
-        echo "------ Server log:"
-        cat server.log
-        echo "------ Testrunner log:"
-        cat program.log
+    - name: Display Server log
+      run: cat server.log
+    - name: Display testrunner log
+      run: cat testrunner.log
