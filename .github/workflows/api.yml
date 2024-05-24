@@ -27,14 +27,18 @@ jobs:
     - name: Start the server
       run: |
         npm install --prefix server
-        node server/app.js &
+        node server/app.js > server.log 2>&1 &
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
-        node testrunner/app.js &
+        node testrunner/app.js > testrunner.log 2>&1 &
     - name: Run a test
       run: |
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
         npm install
         bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json
+    - name: Display Server log
+      run: cat server.log
+    - name: Display testrunner log
+      run: cat testrunner.log
