@@ -103,6 +103,7 @@ export default async function runJob(job) {
     };
   } catch (error) {
     logger.error('Failed to execute job: %s', error.message, job.data.url);
+    job.log('Job failed:' + error.message);
     await cleanupWorkingDirectory(workingDirectory, logger);
     throw error;
   }

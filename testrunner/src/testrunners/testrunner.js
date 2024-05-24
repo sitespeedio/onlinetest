@@ -64,6 +64,7 @@ export default async function runJob(job) {
     }
   } catch (error) {
     logger.error('Job execution failed: %s', error.message);
+    job.log('Job failed:' + error.message);
     throw error;
   } finally {
     if (workingDirectory) {
