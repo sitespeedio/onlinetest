@@ -18,7 +18,8 @@ jobs:
       run: |
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
-        npm install -g
+        npm install
+        npm link
     - uses: actions/checkout@v4
     - name: Install Chrome
       run: |
