@@ -20,6 +20,7 @@ jobs:
         cd sitespeed.io
         npm install
         npm link
+        echo "::add-path::$(npm bin -g)"
     - uses: actions/checkout@v4
     - name: Install Chrome
       run: |
