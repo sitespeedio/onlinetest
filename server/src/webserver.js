@@ -25,7 +25,7 @@ import { api } from './routes/api/api.js';
 import { BasicAuth } from './middleware/basicauth.js';
 import { error404, error500 } from './middleware/errorhandler.js';
 import { setupStatic } from './static/index.js';
-import { getLocalFilePath } from './util/fileutil.js';
+import { getBaseFilePath } from './util/fileutil.js';
 
 const logger = log.getLogger('sitespeedio.server');
 
@@ -46,7 +46,7 @@ function setupExpressServer() {
   app.use(express.json());
 
   app.set('view engine', 'pug');
-  app.set('views', path.resolve(getLocalFilePath('../../views')));
+  app.set('views', path.resolve(getBaseFilePath('./views')));
 
   app.enable('view cache');
 
