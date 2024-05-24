@@ -3,9 +3,9 @@ import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-export function getLocalFilePath(thePath) {
+export function getBaseFilePath(theFile) {
   const currentFileUrl = import.meta.url;
   const currentFilePath = fileURLToPath(currentFileUrl);
   const currentDirectory = dirname(currentFilePath);
-  return path.resolve(currentDirectory, thePath);
+  return path.resolve(currentDirectory, '../../', theFile);
 }

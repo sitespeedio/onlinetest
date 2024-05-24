@@ -15,9 +15,9 @@ const version = require('./package.json').version;
 
 import { SitespeedioTestRunner } from './src/sitespeedio-testrunner.js';
 import { validate } from './src/validateconfig.js';
-import { getLocalFilePath } from './src/util.js';
+import { getBaseFilePath } from './src/util.js';
 
-const defaultConfig = getLocalFilePath('../config/default.yaml');
+const defaultConfig = getBaseFilePath('./config/default.yaml');
 
 function getFilteredConfig() {
   const config = nconf.get();
