@@ -66,7 +66,8 @@ dateformat: "YYYY-MM-DD HH:mm:ss"
 # You can localize the text
 localization:
   defaultLocale: en
-  directory: ./locales
+  # You can also configure where the text is stored
+  # directory: ./locales
 
 # You can setup basic auth for accesss. If you configure both login and password
 # it will be applied. It's on all pages except the /api/ and /admin/
