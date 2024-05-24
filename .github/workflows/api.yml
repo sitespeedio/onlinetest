@@ -39,6 +39,8 @@ jobs:
         npm install
         bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json
     - name: Display Server log
+      if: failure() || success()
       run: cat server.log
     - name: Display testrunner log
+      if: failure() || success()
       run: cat testrunner.log

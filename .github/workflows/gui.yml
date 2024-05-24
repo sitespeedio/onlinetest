@@ -39,6 +39,8 @@ jobs:
         npm install
         bin/sitespeed.js ../test/addatest.mjs --multi -n 1 --headless
     - name: Display Server log
+      if: failure() || success()
       run: cat server.log
     - name: Display testrunner log
+      if: failure() || success()
       run: cat testrunner.log
