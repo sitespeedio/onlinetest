@@ -120,16 +120,17 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   try {
     const process = execa(binary, parameters);
     process.stdout.on('data', chunk => {
-      logger.info(chunk.toString());
+      logger.debug(chunk.toString());
       job.log(chunk.toString());
     });
     process.stderr.on('data', chunk => {
-      logger.info(chunk.toString());
+      logger.debug(chunk.toString());
       job.log(chunk.toString());
     });
     await process;
   } catch (error) {
     // if sitespeed.io exits with 0 zero, execa will throw an error
+    logger.error('Could not run sitespeed.io', error);
     exitCode = error.exitCode;
   }
   try {
