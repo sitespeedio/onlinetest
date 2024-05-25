@@ -1,4 +1,4 @@
-name: Test the API
+name: Lint the code
 on:
   push:
     branches:
