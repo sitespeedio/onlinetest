@@ -1,5 +1,6 @@
 import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+// import os from 'node:os';
 
 import { execa } from 'execa';
 import log from 'intel';
@@ -10,17 +11,18 @@ import { queueHandler } from '../queue/queuehandler.js';
 const { join } = path;
 
 export default async function runJob(job) {
-  const baseWorkingDirectory = nconf.get('workingDirectory');
-  const dockerContainer = nconf.get('docker:container');
-
   const logger = log.getLogger(`sitespeedio.dockertestrunner.${job.id}`);
   const dockerLogger = log.getLogger(
     `sitespeedio.dockertestrunner.process.${job.id}`
   );
-  const workingDirectory = join(baseWorkingDirectory, job.queue.name, job.id);
-
+  let workingDirectory;
   try {
     logger.info('Start with job');
+    const baseWorkingDirectory = './'; // nconf.get('workingDirectory') || os.tmpdir();
+    const dockerContainer = nconf.get('docker:container');
+
+    workingDirectory = join(baseWorkingDirectory, job.queue.name, job.id);
+
     await mkdir(workingDirectory, { recursive: true });
     const configFileName = `${job.queue.name}-${job.id}-config.json`;
     const resultFileName = `${job.queue.name}-${job.id}-result.json`;
@@ -104,7 +106,9 @@ export default async function runJob(job) {
   } catch (error) {
     logger.error('Failed to execute job: %s', error.message, job.data.url);
     job.log('Job failed:' + error.message);
-    await cleanupWorkingDirectory(workingDirectory, logger);
+    if (workingDirectory) {
+      await cleanupWorkingDirectory(workingDirectory, logger);
+    }
     throw error;
   }
 }
