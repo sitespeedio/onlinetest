@@ -70,7 +70,7 @@ export default async function runJob(job) {
       logger,
       dockerLogger
     );
-    logger.info('Finished with job');
+    logger.info('Finished with job with exit code: ' + testResult.exitCode);
     const resultQueue = await queueHandler.getQueue('result');
     let runTime = testResult.result.timestamp;
     if (
@@ -174,6 +174,7 @@ async function runDocker(
 
     await process;
   } catch (error) {
+    logger.error('Could not run Docker:' + error);
     exitCode = error.exitCode;
   }
 
