@@ -1,0 +1,25 @@
+name: Lint the code
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    - uses: actions/checkout@v4
+    - name: Lint the server
+      run: |
+        npm install --prefix server
+        npm run lint --prefix server
+    - name: Lint the testrunner
+      run: |
+        npm install --prefix testrunner
+        npm run lint --prefix testrunner
