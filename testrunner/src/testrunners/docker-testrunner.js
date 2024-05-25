@@ -1,6 +1,6 @@
 import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
-// import os from 'node:os';
+import os from 'node:os';
 
 import { execa } from 'execa';
 import log from 'intel';
@@ -18,11 +18,15 @@ export default async function runJob(job) {
   let workingDirectory;
   try {
     logger.info('Start with job');
-    const baseWorkingDirectory = './'; // nconf.get('workingDirectory') || os.tmpdir();
+    const baseWorkingDirectory = os.tmpdir();
     const dockerContainer = nconf.get('docker:container');
 
     workingDirectory = join(baseWorkingDirectory, job.queue.name, job.id);
-
+    const insideDockerDirectory = join(
+      '/sitespeed.io/',
+      job.queue.name,
+      job.id
+    );
     await mkdir(workingDirectory, { recursive: true });
     const configFileName = `${job.queue.name}-${job.id}-config.json`;
     const resultFileName = `${job.queue.name}-${job.id}-result.json`;
@@ -41,7 +45,8 @@ export default async function runJob(job) {
     const parameters = setupDockerParameters(
       job,
       dockerContainer,
-      workingDirectory,
+      baseWorkingDirectory,
+      insideDockerDirectory,
       configFileName,
       resultFileName
     );
@@ -131,7 +136,8 @@ async function handleScriptingFile(job, workingDirectory) {
 function setupDockerParameters(
   job,
   dockerContainer,
-  workingDirectory,
+  baseWorkingDirectory,
+  insideDockerDirectory,
   configFileName,
   resultFileName
 ) {
@@ -139,12 +145,12 @@ function setupDockerParameters(
     'run',
     '--rm',
     '--volume',
-    `${process.cwd()}:/sitespeed.io`,
+    `${baseWorkingDirectory}:/sitespeed.io`,
     dockerContainer,
     '--config',
-    join(workingDirectory, configFileName),
+    join(insideDockerDirectory, configFileName),
     '--storeResult',
-    join(workingDirectory, resultFileName)
+    join(insideDockerDirectory, resultFileName)
   ];
 
   if (job.data.config.webpagereplay) {
