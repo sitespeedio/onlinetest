@@ -32,6 +32,12 @@ jobs:
       run: |
         npm install --prefix testrunner
         node testrunner/app.js --logging.verbose true > testrunner.log 2>&1 &
+    - name: Install sitespeed.io globally
+      run: npm install sitespeed.io -g
+    - name: Show versions
+      run: |
+          docker --version
+          sitespeed.io --version
     - name: Run a test
       run: |
         git clone https://github.com/sitespeedio/sitespeed.io.git
