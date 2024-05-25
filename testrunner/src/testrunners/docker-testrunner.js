@@ -1,6 +1,6 @@
 import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
-import os from 'node:os';
+// import os from 'node:os';
 
 import { execa } from 'execa';
 import log from 'intel';
@@ -18,7 +18,7 @@ export default async function runJob(job) {
   let workingDirectory;
   try {
     logger.info('Start with job');
-    const baseWorkingDirectory = nconf.get('workingDirectory') || os.tmpdir();
+    const baseWorkingDirectory = './'; // nconf.get('workingDirectory') || os.tmpdir();
     const dockerContainer = nconf.get('docker:container');
 
     workingDirectory = join(baseWorkingDirectory, job.queue.name, job.id);
