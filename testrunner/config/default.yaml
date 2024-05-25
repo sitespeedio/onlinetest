@@ -32,7 +32,7 @@ redis:
   password: jgsay7f2fgfgda6acCa7g()jaba51!
 
 # Verbose log level or not
-logging:
+log:
   verbose: false
 
 # The default sitespeed.io configuration file used by the sitespeed.io instance

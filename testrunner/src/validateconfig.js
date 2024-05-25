@@ -54,7 +54,7 @@ const dockerSchema = Joi.object({
 const configSchema = Joi.object({
   location: locationSchema.required(),
   redis: redisSchema.required(),
-  logging: loggingSchema.required(),
+  log: loggingSchema.required(),
   sitespeedioConfigFile: Joi.string().optional(),
   workingDirectory: Joi.string().optional(),
   executable: Joi.string().required(),

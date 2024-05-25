@@ -12,7 +12,7 @@ const queues = [];
 
 export class SitespeedioTestRunner {
   constructor() {
-    const logVerbose = nconf.get('logging:verbose');
+    const logVerbose = nconf.get('log:verbose');
 
     log.basicConfig({
       format: '[%(date)s] %(levelname)s: [%(name)s] %(message)s',
