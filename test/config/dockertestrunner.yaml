@@ -1,0 +1,39 @@
+# The location information is passed on the the server
+location:
+  # The name of this location
+  name: "docker"
+  # The type of tests that you can run
+  setup:
+    - name: "Desktop Browsers"
+      type: "desktop"
+      browsers: ["chrome", "firefox", "edge"]
+      connectivity: ["native", "3g", "4g", "cable"]
+      useDocker: true
+
+# Where to connect to the message broker that is a Redis like thing
+redis:
+  port: null
+  host: null
+  password: jgsay7f2fgfgda6acCa7g()jaba51!
+
+# Verbose log level or not
+logging:
+  verbose: true
+
+# The default sitespeed.io configuration file used by the sitespeed.io instance
+# It will be merged by the server sitespeed.io config and what you add in the 
+# cli or gui
+# sitespeedioConfigFile:
+
+# The working directory for the testrunner, where it temporary will put it files
+# By default it used the os.tmpdir
+# workingDirectory: "."
+
+# The sitespeed.io executable. The default is a globally installed sitespeed.io
+executable: "sitespeed.io"
+
+# If you run sitespeed.io using Docker this is the container that is used.
+# If you use the latest, make sure to docker pull the container once a day
+# to get the latest version
+docker:
+  container: "sitespeedio/sitespeed.io-autobuild:main"
