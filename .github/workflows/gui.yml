@@ -1,4 +1,4 @@
-name: Test the API
+name: Test the GUI
 on:
   push:
     branches:
@@ -31,19 +31,19 @@ jobs:
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
-        node testrunner/app.js > testrunner.log 2>&1 &
+        node testrunner/app.js --logging.verbose true > testrunner.log 2>&1 &
     - name: Install sitespeed.io globally
       run: npm install sitespeed.io -g
     - name: Show versions
       run: |
-        docker --version
-        sitespeed.io --version
+          docker --version
+          sitespeed.io --version
     - name: Run a test
       run: |
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
         npm install
-        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json
+        bin/sitespeed.js ../test/scripts/addatest.mjs --multi -n 1 --headless
     - name: Display Server log
       if: failure() || success()
       run: cat server.log

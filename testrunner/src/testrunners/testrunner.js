@@ -31,7 +31,7 @@ export default async function runJob(job) {
       configFilePath,
       logger
     );
-    logger.info('Finished job');
+    logger.info('Finished job with exitCode %s', testResult.exitCode);
     const resultQueue = await queueHandler.getQueue('result');
 
     let runTime = testResult.result.timestamp;
@@ -130,6 +130,7 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     await process;
   } catch (error) {
     // if sitespeed.io exits with 0 zero, execa will throw an error
+    logger.error('Could not run sitespeed.io', error);
     exitCode = error.exitCode;
   }
   try {
