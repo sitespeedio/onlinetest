@@ -31,7 +31,7 @@ export default async function runJob(job) {
       configFilePath,
       logger
     );
-    logger.info('Finished job');
+    logger.info('Finished job with exitCode %s', testResult.exitCode);
     const resultQueue = await queueHandler.getQueue('result');
 
     let runTime = testResult.result.timestamp;

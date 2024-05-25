@@ -8,7 +8,7 @@ location:
       type: "desktop"
       browsers: ["chrome", "firefox", "edge"]
       connectivity: ["native", "3g", "4g", "cable"]
-      useDocker: true
+      useDocker: false
   
     - name: "Emulated Mobile"
       type: "emulatedMobile"
