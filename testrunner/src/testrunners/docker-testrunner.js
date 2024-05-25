@@ -1,5 +1,6 @@
 import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
 
 import { execa } from 'execa';
 import log from 'intel';
@@ -10,7 +11,7 @@ import { queueHandler } from '../queue/queuehandler.js';
 const { join } = path;
 
 export default async function runJob(job) {
-  const baseWorkingDirectory = nconf.get('workingDirectory');
+  const baseWorkingDirectory = nconf.get('workingDirectory') || os.tmpdir();
   const dockerContainer = nconf.get('docker:container');
 
   const logger = log.getLogger(`sitespeedio.dockertestrunner.${job.id}`);
