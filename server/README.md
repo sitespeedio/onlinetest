@@ -19,6 +19,13 @@ If you need to override a couple of configurations you can do that with the comm
 node ./app.js --redis.host MY_HOST
 ```
 
+By defalut the test regex is set to match Wikipedia domains and you probably want to change that. For example if you when testing just want to be able to test whatever domain you can add test:
+
+```
+node ./app.js --validTestDomains ".*"
+```
+
+
 You can also provide your own configuration file (recommended). The configuration file can be YAML or JSON:
 
 ```
