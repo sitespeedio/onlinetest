@@ -39,11 +39,7 @@ jobs:
           docker --version
           sitespeed.io --version
     - name: Run a test
-      run: |
-        git clone https://github.com/sitespeedio/sitespeed.io.git
-        cd sitespeed.io
-        npm install
-        bin/sitespeed.js ../test/scripts/addatest.mjs --multi -n 1 --headless
+      run: sitespeed.io ../test/scripts/addatest.mjs --multi -n 1 --headless
     - name: Display Server log
       if: failure() || success()
       run: cat server.log
