@@ -9,7 +9,18 @@ import { getText } from '../util/text.js';
 
 export const validateScripting = (request, response, next) => {
   const testDomain = nconf.get('validTestDomains');
-  const validRegEx = new RegExp(testDomain);
+  let validRegEx;
+  try {
+    validRegEx = new RegExp(testDomain);
+  } catch (error) {
+    log.error('Could not use regular expression', error);
+    request.inputValidationError = getText(
+      'error.nonmatchingdomain',
+      '',
+      testDomain
+    );
+    return next();
+  }
 
   if (request.body.scripting) {
     try {

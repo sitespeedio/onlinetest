@@ -11,7 +11,7 @@ const logger = log.getLogger('sitespeedio.server');
 
 export const validateURL = (request, response, next) => {
   const testDomain = nconf.get('validTestDomains');
-  const validRegEx = new RegExp(testDomain);
+
   // From the web or the API
   let url = request.body.url;
 
@@ -31,19 +31,29 @@ export const validateURL = (request, response, next) => {
     }
 
     const urlObject = new URL(url);
-    if (!validRegEx.test(urlObject.hostname)) {
-      logger.error(
-        'Non valid domain %s matching regex for url %s',
-        urlObject.hostname,
-        url
-      );
+    try {
+      const validRegEx = new RegExp(testDomain);
+      if (!validRegEx.test(urlObject.hostname)) {
+        logger.error(
+          'Non valid domain %s matching regex for url %s',
+          urlObject.hostname,
+          url
+        );
+        request.inputValidationError = getText(
+          'error.nonmatchingdomain',
+          url,
+          testDomain
+        );
+
+        return next();
+      }
+    } catch (error) {
+      log.error('Could not use the regular expression', error);
       request.inputValidationError = getText(
         'error.nonmatchingdomain',
         url,
         testDomain
       );
-
-      return next();
     }
   }
   next();
