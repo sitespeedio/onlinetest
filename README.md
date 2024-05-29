@@ -19,9 +19,9 @@ This project helps you set up your own online version of sitespeed.io. You get:
    - Easily find the results of your tests.
 
 
-## Quick Setup on your local machine
+## Quick setup on your local machine
 
-Follow these steps to quickly set up and run the online version of sitespeed.io. Make sure you have [Docker](https://www.docker.com), [docker-compose](https://docs.docker.com/compose/) and [NodeJS](https://nodejs.org/) installed on your machine.
+Follow these steps to quickly set up and run the online version of sitespeed.io. Make sure you have [Docker](https://www.docker.com), [docker-compose](https://docs.docker.com/compose/), [sitespeed.io](https://www.sitespeed.io/documentation/sitespeed.io/installation/) and [NodeJS](https://nodejs.org/) installed on your machine.
 
 1. **Clone the repository:**
 
@@ -72,14 +72,11 @@ Now you can open your web browser and navigate to [http://127.0.0.1:3000](http:/
 
 To get it up and running (the docker-compose file), you need:
 
-* **A Message broker**:
-   - A Redis-like data storage/message broker. The default setup uses [keydb](https://docs.keydb.dev) and has also been tested with [Valkey](https://github.com/valkey-io/valkey).
+* **A Message broker**: - A Redis-like data storage/message broker. The default setup uses [keydb](https://docs.keydb.dev) and has also been tested with [Valkey](https://github.com/valkey-io/valkey).
 
-* **A Database**:
-   - [PostgreSQL](https://www.postgresql.org) - the open source database.
+* **A Database**: - [PostgreSQL](https://www.postgresql.org) - the open source database.
 
-* **A Test Result Storage**:
-   - Somewhere to store test results. The default setup uses [minio](https://min.io), an open source implementation of S3 but you can use all the result storages that work with sitespeed.io: S3, Google Cloud Storage or your own storage where you can scp the result.
+* **A Test Result Storage**: - Somewhere to store test results. The default setup uses [minio](https://min.io), an open source implementation of S3 but you can use all the result storages that work with sitespeed.io: S3, Google Cloud Storage or your own storage where you can scp the result.
 
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 
