@@ -21,7 +21,7 @@ This project helps you set up your own online version of sitespeed.io. You get:
 
 ## Quick setup on your local machine
 
-Follow these steps to quickly set up and run the online version of sitespeed.io. Make sure you have [Docker](https://www.docker.com), [docker-compose](https://docs.docker.com/compose/), [sitespeed.io](https://www.sitespeed.io/documentation/sitespeed.io/installation/) and [NodeJS](https://nodejs.org/) installed on your machine.
+Follow these steps to quickly set up and run the online version of sitespeed.io on your local machine. Make sure you have [Docker](https://www.docker.com), [docker-compose](https://docs.docker.com/compose/), [sitespeed.io](https://www.sitespeed.io/documentation/sitespeed.io/installation/) and [NodeJS](https://nodejs.org/) installed on your machine.
 
 1. **Clone the repository:**
 
@@ -38,13 +38,13 @@ Follow these steps to quickly set up and run the online version of sitespeed.io.
 3. **Start the Docker containers (Redis/PostgreSQL/Minio):**
 
     ```bash
-    docker compose upen
+    docker compose up
     ```
 
 4. **Open a new terminal tab or window and navigate to the server directory:**
 
     ```bash
-    cd online/server
+    cd server
     ```
 
 5. **Start the server:**
@@ -56,7 +56,7 @@ Follow these steps to quickly set up and run the online version of sitespeed.io.
 6. **Open another new terminal tab or window and navigate to the testrunner directory:**
 
     ```bash
-    cd online/testrunner
+    cd ../testrunner
     ```
 
 7. **Start the testrunner:**
@@ -70,7 +70,7 @@ Now you can open your web browser and navigate to [http://127.0.0.1:3000](http:/
 
 ## What's in the box?
 
-To get it up and running (the docker-compose file), you need:
+To get it up and running (the [docker-compose file](https://github.com/sitespeedio/onlinetest/blob/main/docker-compose.yml)), you need:
 
 * **A Message broker**: - A Redis-like data storage/message broker. The default setup uses [keydb](https://docs.keydb.dev) and has also been tested with [Valkey](https://github.com/valkey-io/valkey).
 
