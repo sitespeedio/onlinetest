@@ -10,6 +10,21 @@
   "engines": {
 		"node": ">=20"
 	},
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sitespeedio/onlinetest.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sitespeedio/onlinetest/issues"
+  },
+  "homepage": "https://www.sitespeed.io/documentation/onlinetest/",
+  "author": {
+    "name": "Peter Hedenskog",
+    "url": "https://www.peterhedenskog.com"
+  },
   "engineStrict": true,
   "keywords": [
     "sitespeed.io",
@@ -38,13 +53,13 @@
     "pug-lint": "pug-lint views/"
   },
   "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^8.10.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-unicorn": "^52.0.0",
-    "prettier": "^2.8.8",
-    "pug-lint": "^2.7.0",
-    "pug-lint-config-clock": "^2.0.0"
+    "eslint": "8.57.0",
+    "eslint-config-prettier": "8.10.0",
+    "eslint-plugin-prettier": "4.2.1",
+    "eslint-plugin-unicorn": "52.0.0",
+    "prettier": "2.8.8",
+    "pug-lint": "2.7.0",
+    "pug-lint-config-clock": "2.0.0"
   },
   "dependencies": {
     "body-parser": "1.20.2",

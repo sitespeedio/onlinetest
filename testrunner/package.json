@@ -14,6 +14,18 @@
     "access": "public"
   },
   "engineStrict": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sitespeedio/onlinetest.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sitespeedio/onlinetest/issues"
+  },
+  "homepage": "https://www.sitespeed.io/documentation/onlinetest/",
+  "author": {
+    "name": "Peter Hedenskog",
+    "url": "https://www.peterhedenskog.com"
+  },
   "keywords": [
     "sitespeed.io",
     "webperf",
