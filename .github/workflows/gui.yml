@@ -39,7 +39,7 @@ jobs:
           docker --version
           sitespeed.io --version
     - name: Run a test
-      run: sitespeed.io ../test/scripts/addatest.mjs --multi -n 1 --headless
+      run: sitespeed.io ./test/scripts/addatest.mjs --multi -n 1 --headless
     - name: Display Server log
       if: failure() || success()
       run: cat server.log
