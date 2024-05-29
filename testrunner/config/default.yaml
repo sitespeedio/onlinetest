@@ -6,8 +6,13 @@ location:
   setup:
     - name: "Desktop Browsers"
       type: "desktop"
+      # If you do not use Docker, you need to make sure you 
+      # install the browsers yourself
       browsers: ["chrome", "firefox", "edge"]
       connectivity: ["native", "3g", "4g", "cable"]
+      # If you choose to run sitespeed.io docker containers make sure 
+      # to run: sudo modprobe ifb numifbs=1 
+      # on the host so that setting connectivity will work
       useDocker: false
   
     - name: "Emulated Mobile"
