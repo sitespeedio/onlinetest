@@ -27,5 +27,7 @@ You can also provide your own configuration file (recommended). The configuratio
 node ./app.js --config /path/to/config.yaml
 ```
 
+Take a copy of the [default configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/default.yaml) and adopt it to your own setup.
+
 ## Documentation
 I'm working on the documentation and you will find the full documentation at [https://www.sitespeed.io/documentation/onlinetest](https://www.sitespeed.io/documentation/onlinetest) when it's ready.
