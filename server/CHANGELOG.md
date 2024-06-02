@@ -1,6 +1,6 @@
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
-## 0.0.2 - UNRELEASED
+## 0.0.2 -  2024-06-02
 ### Fixed
 * Catch if the configured regular expression is broken [#7](https://github.com/sitespeedio/onlinetest/pull/7).
 * Make sure API submited tests also uses the default sitespeed.io configuration configured on the server [#9](https://github.com/sitespeedio/onlinetest/pull/9).
