@@ -154,7 +154,7 @@ export async function addTest(request) {
 }
 
 export async function addTestFromAPI(
-  config,
+  userConfig,
   location,
   url,
   scripting,
@@ -164,8 +164,12 @@ export async function addTestFromAPI(
   priority
 ) {
   const deviceId =
-    get(config, 'browsertime.firefox.android.deviceSerial') ||
-    get(config, 'browsertime.chrome.android.deviceSerial');
+    get(userConfig, 'browsertime.firefox.android.deviceSerial') ||
+    get(userConfig, 'browsertime.chrome.android.deviceSerial');
+
+  const defaultConfig = await getDefaultSitespeedConfiguration();
+  let config = {};
+  merge(config, defaultConfig, userConfig);
 
   const slug = get(config, 'slug', '');
   let queue = getQueueName(location, deviceId);
