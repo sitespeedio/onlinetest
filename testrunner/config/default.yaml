@@ -13,6 +13,13 @@ location:
       # If you choose to run sitespeed.io docker containers make sure 
       # to run: sudo modprobe ifb numifbs=1 
       # on the host so that setting connectivity will work
+      # Also remember that localhost inside the container isn't automatically
+      # the same as localhost on the server:
+      # https://www.sitespeed.io/documentation/sitespeed.io/docker/#access-localhost
+      # That means if you run everything locally and want to use sitespeed.io docker 
+      # containers, you need to set --s3.endpoint to something else than 127.0.0.1.
+      # On Mac you can use --s3.endpoint http://host.docker.internal:9000 and on Linux
+      # you can use yoru actual IP.
       useDocker: false
   
     - name: "Emulated Mobile"
