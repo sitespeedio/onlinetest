@@ -4,6 +4,8 @@
 [![Lint](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml)
 
 
+[Website](https://www.sitespeed.io/) | [Documentation](https://www.sitespeed.io/documentation/onlinetest/) | [Changelog server](https://github.com/sitespeedio/onlinetest/blob/main/server/CHANGELOG.md) | [Changelog testrunner](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/CHANGELOG.md) | [Mastodon](https://fosstodon.org/@sitespeedio)
+
 # Onlinetest - deploy your own version of sitespeed.io online.
 
 This project helps you set up your own online version of sitespeed.io. You get:
