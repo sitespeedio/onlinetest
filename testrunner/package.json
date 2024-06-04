@@ -55,7 +55,7 @@
       "prettier": "^2.8.8"
   },
   "dependencies": {
-    "bull": "4.12.6",
+    "bull": "4.12.9",
     "nconf": "0.12.1",
     "execa": "9.1.0",
     "intel": "1.2.0",

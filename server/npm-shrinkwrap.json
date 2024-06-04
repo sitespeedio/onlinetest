@@ -10,7 +10,7 @@
       "license": "AGPL-3.0-only",
       "dependencies": {
         "body-parser": "1.20.2",
-        "bull": "4.12.6",
+        "bull": "4.12.9",
         "compression": "1.7.4",
         "cookie-parser": "1.4.6",
         "dayjs": "1.11.10",
@@ -625,9 +625,9 @@
       }
     },
     "node_modules/bull": {
-      "version": "4.12.6",
-      "resolved": "https://registry.npmjs.org/bull/-/bull-4.12.6.tgz",
-      "integrity": "sha512-QViK1i938moggAtlwhmJ8RmLadswgWKlqOFX9w+WBIAuV2L8qrte1XOIs7KUrRc9fbIfJTziaq7NZEpuaMO4Lw==",
+      "version": "4.12.9",
+      "resolved": "https://registry.npmjs.org/bull/-/bull-4.12.9.tgz",
+      "integrity": "sha512-rqka/O9ZBfrKgI4fanhN6XW0AJ9WYRakjHlCJPjoHyh79xIvEjyU8hvs/CCeRdrbU6zSw8UNfDOjCUaQO1MTuQ==",
       "dependencies": {
         "cron-parser": "^4.2.1",
         "get-port": "^5.1.1",

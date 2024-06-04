@@ -9,7 +9,7 @@
       "version": "0.0.1",
       "license": "AGPL-3.0-only",
       "dependencies": {
-        "bull": "4.12.6",
+        "bull": "4.12.9",
         "execa": "9.1.0",
         "intel": "1.2.0",
         "joi": "17.13.1",
@@ -476,9 +476,9 @@
       }
     },
     "node_modules/bull": {
-      "version": "4.12.6",
-      "resolved": "https://registry.npmjs.org/bull/-/bull-4.12.6.tgz",
-      "integrity": "sha512-QViK1i938moggAtlwhmJ8RmLadswgWKlqOFX9w+WBIAuV2L8qrte1XOIs7KUrRc9fbIfJTziaq7NZEpuaMO4Lw==",
+      "version": "4.12.9",
+      "resolved": "https://registry.npmjs.org/bull/-/bull-4.12.9.tgz",
+      "integrity": "sha512-rqka/O9ZBfrKgI4fanhN6XW0AJ9WYRakjHlCJPjoHyh79xIvEjyU8hvs/CCeRdrbU6zSw8UNfDOjCUaQO1MTuQ==",
       "dependencies": {
         "cron-parser": "^4.2.1",
         "get-port": "^5.1.1",
