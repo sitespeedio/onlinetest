@@ -79,7 +79,7 @@
     "node-cache": "5.1.2",
     "node-uuid": "1.4.8",
     "pg": "8.11.5",
-    "pug": "3.0.2",
+    "pug": "3.0.3",
     "response-time": "2.3.2",
     "unique-names-generator": "4.7.1",
     "validator": "13.12.0",
