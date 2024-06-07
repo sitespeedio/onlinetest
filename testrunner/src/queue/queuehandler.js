@@ -30,6 +30,7 @@ class QueueHandler {
       port,
       host,
       password,
+      tls: nconf.get('redis:tls') ? { servername: host } : undefined,
       retryStrategy: times => {
         const delay = Math.min(times * 500, 3000);
         logger.info(`Retry MAIN attempt ${times}: Retrying in ${delay} ms`);
@@ -87,6 +88,7 @@ class QueueHandler {
         port,
         host,
         password,
+        tls: nconf.get('redis:tls') ? { servername: host } : undefined,
         retryStrategy: times => {
           const delay = Math.min(times * 200, 3000);
           logger.info(

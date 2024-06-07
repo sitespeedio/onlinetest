@@ -42,6 +42,7 @@ redis:
   port: null
   host: null
   password: jgsay7f2fgfgda6acCa7g()jaba51!
+  tls: undefined
 
 # Verbose log level or not
 log:
