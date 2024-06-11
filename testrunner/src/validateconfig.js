@@ -37,7 +37,8 @@ const locationSchema = Joi.object({
 const redisSchema = Joi.object({
   port: Joi.number().allow(null),
   host: Joi.string().allow(null),
-  password: Joi.string().allow(null)
+  password: Joi.string().allow(null),
+  tls: Joi.boolean().allow(null).optional()
 });
 
 // Logging schema
