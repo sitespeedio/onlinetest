@@ -10,6 +10,13 @@ import { queueHandler } from '../queue/queuehandler.js';
 
 const { join } = path;
 
+const parseDockerExtraParameters = parameters => {
+  if (!parameters) {
+    return [];
+  }
+  return parameters.split(' ').map(parameter => parameter.trim());
+};
+
 export default async function runJob(job) {
   const logger = log.getLogger(`sitespeedio.dockertestrunner.${job.id}`);
   const dockerLogger = log.getLogger(
@@ -20,6 +27,10 @@ export default async function runJob(job) {
     logger.info('Start with job');
     const baseWorkingDirectory = os.tmpdir();
     const dockerContainer = nconf.get('docker:container');
+
+    const dockerExtraParameters = parseDockerExtraParameters(
+      nconf.get('docker:extraparameters')
+    );
 
     workingDirectory = join(baseWorkingDirectory, job.queue.name, job.id);
     const insideDockerDirectory = join(
@@ -45,6 +56,7 @@ export default async function runJob(job) {
     const parameters = setupDockerParameters(
       job,
       dockerContainer,
+      dockerExtraParameters,
       baseWorkingDirectory,
       insideDockerDirectory,
       configFileName,
@@ -136,6 +148,7 @@ async function handleScriptingFile(job, workingDirectory) {
 function setupDockerParameters(
   job,
   dockerContainer,
+  dockerExtraParameters,
   baseWorkingDirectory,
   insideDockerDirectory,
   configFileName,
@@ -146,6 +159,7 @@ function setupDockerParameters(
     '--rm',
     '--volume',
     `${baseWorkingDirectory}:/sitespeed.io`,
+    ...dockerExtraParameters,
     dockerContainer,
     '--config',
     join(insideDockerDirectory, configFileName),
