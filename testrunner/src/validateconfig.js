@@ -48,7 +48,8 @@ const loggingSchema = Joi.object({
 
 // Docker schema
 const dockerSchema = Joi.object({
-  container: Joi.string().optional()
+  container: Joi.string().optional(),
+  extraparameters: Joi.string().allow(null).optional()
 });
 
 // Complete config schema

@@ -63,5 +63,7 @@ executable: "sitespeed.io"
 # If you run sitespeed.io using Docker this is the container that is used.
 # If you use the latest, make sure to docker pull the container once a day
 # to get the latest version
+# extraparameters will be passed omn to Docker, between docker run and the container name
 docker:
   container: "sitespeedio/sitespeed.io:latest"
+  extraparameters:
