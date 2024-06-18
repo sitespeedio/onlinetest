@@ -66,4 +66,4 @@ executable: "sitespeed.io"
 # extraparameters will be passed omn to Docker, between docker run and the container name
 docker:
   container: "sitespeedio/sitespeed.io:latest"
-  extraparameters:
+  extraparameters: "--cap-add=NET_ADMIN"
