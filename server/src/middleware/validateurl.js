@@ -24,7 +24,7 @@ export const validateURL = (request, response, next) => {
       url = 'https://' + url;
     }
 
-    if (url === 'undefined' || !isURL(url.toLowerCase())) {
+    if (url === 'undefined' || !isURL(url)) {
       logger.error('Non valid URL %s', url);
       request.inputValidationError = getText('error.urlnotvalid', url);
       return next();
