@@ -148,7 +148,9 @@ async function setupParameters(job, workingDirectory, configFileName) {
     '--config',
     join(workingDirectory, configFileName),
     '--storeResult',
-    join(workingDirectory, `${job.queue.name}-${job.id}-result.json`)
+    join(workingDirectory, `${job.queue.name}-${job.id}-result.json`),
+    '--disableAPI',
+    true
   ];
   const a = await handleScriptingAndUrl(job, workingDirectory);
   parameters.push(...a);

@@ -164,7 +164,9 @@ function setupDockerParameters(
     '--config',
     join(insideDockerDirectory, configFileName),
     '--storeResult',
-    join(insideDockerDirectory, resultFileName)
+    join(insideDockerDirectory, resultFileName),
+    '--disableAPI',
+    true
   ];
 
   if (job.data.config.webpagereplay) {
