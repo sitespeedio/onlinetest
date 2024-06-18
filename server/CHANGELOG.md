@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.0.4
+### Fixed
+* Make sure URLs are kept as is in the database and when sent to the testrunner [#22](https://github.com/sitespeedio/onlinetest/pull/22). This makes sense so your test can keep running as before when you move your tesing to server/testrunner.
+
 ## 0.0.3 -  2024-06-04
 ### Fixed
 * Updated to Pug 3.0.3 [#12](https://github.com/sitespeedio/onlinetest/pull/12).
