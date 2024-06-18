@@ -32,7 +32,7 @@ export const validateScripting = (request, response, next) => {
         return urlMatch[0].slice(1, -1);
       });
       for (let url of urls) {
-        if (isURL(url.toLowerCase())) {
+        if (isURL(url)) {
           const urlObject = new URL(url);
           if (validRegEx.test(urlObject.hostname) === false) {
             logger.error(

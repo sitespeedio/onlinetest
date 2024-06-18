@@ -130,7 +130,7 @@ export async function addTest(request) {
 
     await testRunnerQueue.add(
       {
-        url: url.toLowerCase(),
+        url: url,
         config,
         extras,
         scripting,
@@ -206,7 +206,7 @@ export async function addTestFromAPI(
 
   await testRunnerQueue.add(
     {
-      url: url.toLowerCase(),
+      url,
       config,
       scripting,
       scriptingName,
