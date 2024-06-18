@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## UNRELEASE
+### Fixed
+* Set --cap-add=NET_ADMIN as default for extraparameters (needed for throttling.
+
 ## 0.1.1 - 2024-06-18
 ### Fixed
 * Make sure that API calls aren't passed on within the testrunner [#21](https://github.com/sitespeedio/onlinetest/pull/21).
