@@ -1,8 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
-## UNRELEASE
+## 0.1.2 - 2024-06-19
 ### Fixed
 * Set --cap-add=NET_ADMIN as default for extraparameters (needed for throttling.
+* Fix using an extra configuration file in Docker. Before it added an extra folder (that makes it really hard to use) [#23](https://github.com/sitespeedio/onlinetest/pull/23).
 
 ## 0.1.1 - 2024-06-18
 ### Fixed
