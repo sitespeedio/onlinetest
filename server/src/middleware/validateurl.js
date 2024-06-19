@@ -13,7 +13,7 @@ export const validateURL = (request, response, next) => {
   const testDomain = nconf.get('validTestDomains');
 
   // If its an API call using script, do not validate the URL
-  if (request.body.api.scripting) {
+  if (request.body.api && request.body.api.scripting) {
     return next();
   }
 
