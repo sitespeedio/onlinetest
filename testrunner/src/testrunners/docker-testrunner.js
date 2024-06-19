@@ -44,8 +44,7 @@ export default async function runJob(job) {
 
     // Modify config for use with default settings
     if (nconf.get('sitespeedioConfigFile') !== undefined) {
-      job.data.config.extends =
-        './config/' + nconf.get('sitespeedioConfigFile');
+      job.data.config.extends = nconf.get('sitespeedioConfigFile');
     }
 
     await writeFile(

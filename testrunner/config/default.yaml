@@ -50,7 +50,8 @@ log:
 
 # The default sitespeed.io configuration file used by the sitespeed.io instance
 # It will be merged by the server sitespeed.io config and what you add in the 
-# cli or gui
+# cli or gui. If you use a Docker container, make sure to map a volume and use 
+# the full path to the configuration file
 # sitespeedioConfigFile:
 
 # The working directory for the testrunner, where it temporary will put it files
