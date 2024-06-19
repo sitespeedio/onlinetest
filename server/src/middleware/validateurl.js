@@ -12,6 +12,11 @@ const logger = log.getLogger('sitespeedio.server');
 export const validateURL = (request, response, next) => {
   const testDomain = nconf.get('validTestDomains');
 
+  // If its an API call using script, do not validate the URL
+  if (request.body.api.scripting) {
+    return next();
+  }
+
   // From the web or the API
   let url = request.body.url;
 
