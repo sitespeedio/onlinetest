@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.0.6
+### Fixed
+* Fix: Make sure that when passing on scripts using the API, only script and not the script name is validated [#25](https://github.com/sitespeedio/onlinetest/pull/25).
+
 ## 0.0.5
 ### Fixed
 * Doing a search there's a lot of data passed around. With [#24](https://github.com/sitespeedio/onlinetest/pull/24) we only pass on data that is showed on the result page.
