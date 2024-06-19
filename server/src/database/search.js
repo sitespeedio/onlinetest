@@ -5,6 +5,9 @@ import DatabaseHelper from './databasehelper.js';
 
 const logger = log.getLogger('sitespeedio.database.search');
 
+const LIMITED_COLUMS =
+  'id, location, test_type, run_date, browser_name, url, result_url, status, scripting_name, label, slug';
+
 /**
  *  Get a test by text (searching).
  */
@@ -23,7 +26,9 @@ export async function getTestByText(text, limit, page) {
   }
 
   const select =
-    'SELECT * FROM sitespeed_io_test_runs where ' +
+    'SELECT ' +
+    LIMITED_COLUMS +
+    ' FROM sitespeed_io_test_runs where ' +
     where.join(' AND ') +
     ' ORDER BY added_date DESC LIMIT $' +
     (parameters.length + 1) +

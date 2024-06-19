@@ -4,6 +4,9 @@ import DatabaseHelper from './databasehelper.js';
 
 const logger = log.getLogger('sitespeedio.database');
 
+const LIMITED_COLUMS =
+  'id, location, test_type, run_date, browser_name, url, result_url, status, scripting_name, label, slug';
+
 function logError(message, error) {
   if (error instanceof AggregateError) {
     for (const [index, theError] of error.errors.entries()) {
@@ -73,7 +76,9 @@ export async function updateStatus(id, status) {
  */
 export async function getLatestTests(limit, page) {
   const select =
-    'SELECT * FROM sitespeed_io_test_runs ORDER BY added_date DESC LIMIT $1 OFFSET $2';
+    'SELECT ' +
+    LIMITED_COLUMS +
+    ' FROM sitespeed_io_test_runs ORDER BY added_date DESC LIMIT $1 OFFSET $2';
   const count = 'SELECT count(*) FROM sitespeed_io_test_runs';
   const offset = (page - 1) * limit;
   const values = [limit, offset];
