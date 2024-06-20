@@ -117,7 +117,10 @@ block content
                   td
                     span.icon-text
                       span
-                        a(href=test.result_url) #{test.url ? shortURL(test.url, true) : test.scripting_name}
+                        if test.result_url
+                          a(href=test.result_url) #{test.url ? shortURL(test.url, true) : test.scripting_name}
+                        else
+                          span #{test.url ? shortURL(test.url, true) : test.scripting_name}
                         - let urlOnClick = test.url ? `addToSearch('url:${test.url}')` : `addToSearch('name:${ test.scripting_name}')`;
                       a(role='button' onclick=urlOnClick)
                         span.icon.is-small
