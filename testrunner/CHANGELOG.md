@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.1.3 - UNRELEASED
+### Fixed
+* Simplify Docker mapping inside the Docker testrunner [#27](https://github.com/sitespeedio/onlinetest/pull/27). This fixes running script files with the testrunner.
+
 ## 0.1.2 - 2024-06-19
 ### Fixed
 * Set --cap-add=NET_ADMIN as default for extraparameters (needed for throttling.
