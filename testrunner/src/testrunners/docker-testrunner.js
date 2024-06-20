@@ -116,13 +116,6 @@ export default async function runJob(job) {
   } catch (error) {
     logger.error('Failed to execute job: %s', error.message, job.data.url);
     job.log('Job failed:' + error.message);
-    if (workingDirectory) {
-      try {
-        await cleanupWorkingDirectory(workingDirectory, logger);
-      } catch {
-        /* no worries */
-      }
-    }
     throw error;
   }
 }
@@ -202,10 +195,11 @@ async function runDocker(
 
   try {
     const result = await readFile(join(workingDirectory, resultFileName));
-    await cleanupWorkingDirectory(workingDirectory, logger);
     return { result: JSON.parse(result.toString()), exitCode };
   } catch {
     return { result: {}, exitCode };
+  } finally {
+    await cleanupWorkingDirectory(workingDirectory, logger);
   }
 }
 
