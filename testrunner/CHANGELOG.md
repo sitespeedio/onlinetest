@@ -1,8 +1,10 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
-## 0.1.3 - UNRELEASED
+## 0.1.3 - 2024-06-20
 ### Fixed
 * Simplify Docker mapping inside the Docker testrunner [#27](https://github.com/sitespeedio/onlinetest/pull/27). This fixes running script files with the testrunner.
+* A better cleanup in the work directory for Docker [#28](https://github.com/sitespeedio/onlinetest/pull/28).
+
 
 ## 0.1.2 - 2024-06-19
 ### Fixed
