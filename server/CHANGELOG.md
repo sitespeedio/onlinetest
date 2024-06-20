@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.0.7 - UNRELEASED
+### Fixed
+* Only link to the search result when we actually have a result [#26](https://github.com/sitespeedio/onlinetest/pull/26).
+
 ## 0.0.6
 ### Fixed
 * Fix: Make sure that when passing on scripts using the API, only script and not the script name is validated [#25](https://github.com/sitespeedio/onlinetest/pull/25).
