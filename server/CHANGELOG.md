@@ -1,7 +1,7 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
-## 0.0.7 - UNRELEASED
+## 0.0.7 - 2024-06-20
 ### Fixed
 * Only link to the search result when we actually have a result [#26](https://github.com/sitespeedio/onlinetest/pull/26).
 
