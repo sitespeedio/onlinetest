@@ -33,11 +33,6 @@ export default async function runJob(job) {
     );
 
     workingDirectory = join(baseWorkingDirectory, job.queue.name, job.id);
-    const insideDockerDirectory = join(
-      '/sitespeed.io/',
-      job.queue.name,
-      job.id
-    );
     await mkdir(workingDirectory, { recursive: true });
     const configFileName = `${job.queue.name}-${job.id}-config.json`;
     const resultFileName = `${job.queue.name}-${job.id}-result.json`;
@@ -56,8 +51,7 @@ export default async function runJob(job) {
       job,
       dockerContainer,
       dockerExtraParameters,
-      baseWorkingDirectory,
-      insideDockerDirectory,
+      workingDirectory,
       configFileName,
       resultFileName
     );
@@ -123,7 +117,11 @@ export default async function runJob(job) {
     logger.error('Failed to execute job: %s', error.message, job.data.url);
     job.log('Job failed:' + error.message);
     if (workingDirectory) {
-      await cleanupWorkingDirectory(workingDirectory, logger);
+      try {
+        await cleanupWorkingDirectory(workingDirectory, logger);
+      } catch {
+        /* no worries */
+      }
     }
     throw error;
   }
@@ -138,18 +136,17 @@ async function handleScriptingFile(job, workingDirectory) {
     : `export default async function (context, commands) {${job.data.scripting}}`;
   const filename = join(
     workingDirectory,
-    (job.data.scriptingName || job.id) + scriptExtension
+    job.data.scriptingName || job.id + scriptExtension
   );
   await writeFile(filename, scriptContent);
-  return filename;
+  return job.data.scriptingName || job.id + scriptExtension;
 }
 
 function setupDockerParameters(
   job,
   dockerContainer,
   dockerExtraParameters,
-  baseWorkingDirectory,
-  insideDockerDirectory,
+  workingDirectory,
   configFileName,
   resultFileName
 ) {
@@ -157,13 +154,13 @@ function setupDockerParameters(
     'run',
     '--rm',
     '--volume',
-    `${baseWorkingDirectory}:/sitespeed.io`,
+    `${workingDirectory}:/sitespeed.io`,
     ...dockerExtraParameters,
     dockerContainer,
     '--config',
-    join(insideDockerDirectory, configFileName),
+    join('/sitespeed.io', configFileName),
     '--storeResult',
-    join(insideDockerDirectory, resultFileName),
+    join('/sitespeed.io', resultFileName),
     '--disableAPI',
     true
   ];
