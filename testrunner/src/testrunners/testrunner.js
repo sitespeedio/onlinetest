@@ -173,14 +173,11 @@ async function handleScriptingFile(job, workingDirectory) {
   const scriptExtension = job.data.scripting.includes('module.exports')
     ? '.cjs'
     : '.mjs';
-  const scriptContent = job.data.scripting.includes('export default')
-    ? job.data.scripting
-    : `export default async function (context, commands) {${job.data.scripting}}`;
   const filename = join(
     workingDirectory,
     (job.data.scriptingName || job.id) + scriptExtension
   );
-  await writeFile(filename, scriptContent);
+  await writeFile(filename, job.data.scripting);
   return filename;
 }
 
