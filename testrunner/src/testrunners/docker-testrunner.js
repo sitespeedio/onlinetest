@@ -24,7 +24,7 @@ export default async function runJob(job) {
   );
   let workingDirectory;
   try {
-    logger.info('Start with job');
+    logger.info(`Start with job ${job.id}`);
     const baseWorkingDirectory = os.tmpdir();
     const dockerContainer = nconf.get('docker:container');
 
@@ -82,7 +82,9 @@ export default async function runJob(job) {
       logger,
       dockerLogger
     );
-    logger.info('Finished with job with exit code: ' + testResult.exitCode);
+    logger.info(
+      `Finished with job ${job.id} with exit code ${testResult.exitCode}`
+    );
     const resultQueue = await queueHandler.getQueue('result');
     let runTime = testResult.result.timestamp;
     if (
@@ -114,7 +116,12 @@ export default async function runJob(job) {
       status: testResult.exitCode === 0 ? 'completed' : 'failed'
     };
   } catch (error) {
-    logger.error('Failed to execute job: %s', error.message, job.data.url);
+    logger.error(
+      'Failed to execute job %s: error: %s %s',
+      job.id,
+      error.message,
+      job.data.url
+    );
     job.log('Job failed:' + error.message);
     throw error;
   }
