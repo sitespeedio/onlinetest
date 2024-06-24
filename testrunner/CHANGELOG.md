@@ -1,8 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
-## 0.1.4 - UNRELEASED
+## 0.1.4 - 2024-06-24
 ### Fixed
 * Using common JS script files was broken, fixed in [#30](https://github.com/sitespeedio/onlinetest/pull/30).
+* Log test id in start log.
 
 ## 0.1.3 - 2024-06-20
 ### Fixed
