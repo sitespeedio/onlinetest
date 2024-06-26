@@ -1,5 +1,10 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.1.5 - 2024-06-26
+### Fixed
+* Update to Bull 4.14.0 [#32](https://github.com/sitespeedio/onlinetest/pull/32)
+* Only keep 200 of latest completed job in the queue (make this configurable in the future) [#33](https://github.com/sitespeedio/onlinetest/pull/33).
+
 ## 0.1.4 - 2024-06-24
 ### Fixed
 * Using common JS script files was broken, fixed in [#30](https://github.com/sitespeedio/onlinetest/pull/30).
