@@ -139,8 +139,8 @@ export async function addTest(request) {
       },
       {
         jobId,
-        removeOnComplete: 3600,
-        removeOnFail: 3600,
+        removeOnComplete: 200,
+        removeOnFail: 400,
         priority
       }
     );
@@ -199,8 +199,8 @@ export async function addTestFromAPI(
 
   const jobConfig = {
     jobId,
-    removeOnComplete: 3600,
-    removeOnFail: 3600,
+    removeOnComplete: 200,
+    removeOnFail: 400,
     priority: priority || 10
   };
 
