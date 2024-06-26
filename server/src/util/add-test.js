@@ -69,7 +69,7 @@ export async function addTest(request) {
   // The number of objects to keep in the queue before removal
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
   const removeOnFail = nconf.get('queue:removeOnFail') || 400;
-
+  const attempts = nconf.get('queue:attempts') || 1;
   const userConfig = {
     browsertime: {
       browser,
@@ -145,7 +145,8 @@ export async function addTest(request) {
         jobId,
         removeOnComplete,
         removeOnFail,
-        priority
+        priority,
+        attempts
       }
     );
 
@@ -170,6 +171,7 @@ export async function addTestFromAPI(
   // The number of objects to keep in the queue before removal
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
   const removeOnFail = nconf.get('queue:removeOnFail') || 400;
+  const attempts = nconf.get('queue:attempts') || 1;
 
   const deviceId =
     get(userConfig, 'browsertime.firefox.android.deviceSerial') ||
@@ -209,7 +211,8 @@ export async function addTestFromAPI(
     jobId,
     removeOnComplete,
     removeOnFail,
-    priority: priority || 10
+    priority: priority || 10,
+    attempts
   };
 
   await testRunnerQueue.add(
