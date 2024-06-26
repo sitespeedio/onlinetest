@@ -33,6 +33,11 @@ const locationSchema = Joi.object({
   setup: setupSchema.required()
 });
 
+const queueSchema = Joi.object({
+  removeOnComplete: Joi.number().allow(null).optional(),
+  removeOnFail: Joi.number().allow(null).optional()
+});
+
 // Redis schema
 const redisSchema = Joi.object({
   port: Joi.number().allow(null),
@@ -60,7 +65,8 @@ const configSchema = Joi.object({
   sitespeedioConfigFile: Joi.string().optional(),
   workingDirectory: Joi.string().optional(),
   executable: Joi.string().required(),
-  docker: dockerSchema.required()
+  docker: dockerSchema.required(),
+  queue: queueSchema.optional()
 });
 
 export function validate(config) {
