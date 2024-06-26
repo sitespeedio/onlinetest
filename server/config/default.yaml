@@ -83,3 +83,10 @@ admin:
   
 # The default sitspeed.io configuration file that will be merged to all tests.
 # defaultSitespeedioConfigFile: 
+
+# The number of jobs to keep in the queue
+# Depending on how many jobs you run and how much memory 
+# you have on your Redis/KeyDb instance you can tune this
+queue:
+  removeOnComplete: 200
+  removeOnFail: 400
