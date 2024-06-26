@@ -95,12 +95,18 @@ export default async function runJob(job) {
       runTime = testResult.result.browsertime[0].info.timestamp;
     }
 
-    resultQueue.add({
-      result: testResult.result,
-      id: job.id,
-      status: testResult.exitCode === 0 ? 'completed' : 'failed',
-      runTime
-    });
+    resultQueue.add(
+      {
+        result: testResult.result,
+        id: job.id,
+        status: testResult.exitCode === 0 ? 'completed' : 'failed',
+        runTime
+      },
+      {
+        removeOnComplete: 200,
+        removeOnFail: 200
+      }
+    );
 
     if (testResult.exitCode > 0) {
       throw new Error(

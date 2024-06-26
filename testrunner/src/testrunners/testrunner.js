@@ -42,12 +42,18 @@ export default async function runJob(job) {
       // The timestamp from Browsertime is more exact
       runTime = testResult.result.browsertime[0].info.timestamp;
     }
-    resultQueue.add({
-      result: testResult.result,
-      id: job.id,
-      status: testResult.exitCode === 0 ? 'completed' : 'failed',
-      runTime
-    });
+    resultQueue.add(
+      {
+        result: testResult.result,
+        id: job.id,
+        status: testResult.exitCode === 0 ? 'completed' : 'failed',
+        runTime
+      },
+      {
+        removeOnComplete: 200,
+        removeOnFail: 200
+      }
+    );
     if (testResult.exitCode > 0) {
       throw new Error(
         `sitespeed.io exited with a failure exit code ${testResult.exitCode}`
