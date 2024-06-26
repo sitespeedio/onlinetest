@@ -66,6 +66,10 @@ export async function addTest(request) {
 
   const defaultConfig = await getDefaultSitespeedConfiguration();
 
+  // The number of objects to keep in the queue before removal
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 400;
+
   const userConfig = {
     browsertime: {
       browser,
@@ -139,8 +143,8 @@ export async function addTest(request) {
       },
       {
         jobId,
-        removeOnComplete: 200,
-        removeOnFail: 400,
+        removeOnComplete,
+        removeOnFail,
         priority
       }
     );
@@ -163,6 +167,10 @@ export async function addTestFromAPI(
   testType,
   priority
 ) {
+  // The number of objects to keep in the queue before removal
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 400;
+
   const deviceId =
     get(userConfig, 'browsertime.firefox.android.deviceSerial') ||
     get(userConfig, 'browsertime.chrome.android.deviceSerial');
@@ -199,8 +207,8 @@ export async function addTestFromAPI(
 
   const jobConfig = {
     jobId,
-    removeOnComplete: 200,
-    removeOnFail: 400,
+    removeOnComplete,
+    removeOnFail,
     priority: priority || 10
   };
 
