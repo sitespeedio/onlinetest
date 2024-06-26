@@ -1,5 +1,10 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+
+## 0.2.0 - 2024-06-26
+### Added
+* Make removeOnComplete and removeOnFail in the queue configurable. If  you run a large installation with many many tests, you may want to increase the number of tests that will continue to live in the queue after the test has completed (removeOnComplete) [#35](https://github.com/sitespeedio/onlinetest/pull/35).
+
 ## 0.1.5 - 2024-06-26
 ### Fixed
 * Update to Bull 4.14.0 [#32](https://github.com/sitespeedio/onlinetest/pull/32)
