@@ -20,6 +20,11 @@ const { join } = path;
 export default async function runJob(job) {
   const logger = log.getLogger(`sitespeedio.testrunner.${job.id}`);
   let workingDirectory;
+
+  // The number of objects to keep in the queue before removal
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 200;
+
   // Make sure we vatch everything that can go wrong
   try {
     logger.info('Start job');
@@ -50,8 +55,8 @@ export default async function runJob(job) {
         runTime
       },
       {
-        removeOnComplete: 200,
-        removeOnFail: 200
+        removeOnComplete,
+        removeOnFail
       }
     );
     if (testResult.exitCode > 0) {

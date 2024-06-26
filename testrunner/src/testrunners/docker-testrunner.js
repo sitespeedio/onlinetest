@@ -22,6 +22,10 @@ export default async function runJob(job) {
   const dockerLogger = log.getLogger(
     `sitespeedio.dockertestrunner.process.${job.id}`
   );
+  // The number of objects to keep in the queue before removal
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 200;
+
   let workingDirectory;
   try {
     logger.info(`Start with job ${job.id}`);
@@ -103,8 +107,8 @@ export default async function runJob(job) {
         runTime
       },
       {
-        removeOnComplete: 200,
-        removeOnFail: 200
+        removeOnComplete,
+        removeOnFail
       }
     );
 
