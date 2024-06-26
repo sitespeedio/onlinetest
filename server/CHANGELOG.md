@@ -1,6 +1,11 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.1.0 - 2024-06-26
+### Added
+* Make removeOnComplete and removeOnFail in the queue configurable. If  you run a large installation with many many tests, you may want to increase the number of tests that will continue to live in the queue after the test has completed (removeOnComplete) [#36](https://github.com/sitespeedio/onlinetest/pull/36).
+* Make attempts (number of tries if a test fail) configurable. By default there is one try [#37](https://github.com/sitespeedio/onlinetest/pull/37).
+
 ## 0.0.8 - 2024-06-26
 ### Fixed
 * Update to PG 8.12.0 [#34](https://github.com/sitespeedio/onlinetest/pull/34).
