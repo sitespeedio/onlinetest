@@ -1,6 +1,12 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.0.8 - 2024-06-26
+### Fixed
+* Update to PG 8.12.0 [#34](https://github.com/sitespeedio/onlinetest/pull/34).
+* Update to Bull 4.14.0 [#32](https://github.com/sitespeedio/onlinetest/pull/32)
+* Only keep 200 of latest completed job in the queue (make this configurable in the future) [#33](https://github.com/sitespeedio/onlinetest/pull/33).
+
 ## 0.0.7 - 2024-06-20
 ### Fixed
 * Only link to the search result when we actually have a result [#26](https://github.com/sitespeedio/onlinetest/pull/26).
