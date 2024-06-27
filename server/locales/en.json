@@ -74,6 +74,7 @@
   "search.result.compare": "Compare",
   "search.result.nomatch": "No tests found matching the search criteria.",
   "search.result.showing": "Showing %s - %s of %s",
+  "search.result.slug": "Slug",
   "search.result.of": "of",
   "search.pagetitle": "Search for tests",
   "search.pagedescription": "Here you can search for finished tests.",
