@@ -140,7 +140,7 @@ function generateMatch(parameters) {
 
   if (parameters.testType) {
     where.push('test_type = $' + (parameters_.length + 1));
-    parameters_.push(parameters.testType.toLowerCase());
+    parameters_.push(parameters.testType);
   }
 
   if (parameters.before) {
