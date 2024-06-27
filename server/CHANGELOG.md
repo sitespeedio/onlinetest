@@ -1,9 +1,13 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.2.1 - 2024-06-27
+### Fixed
+* Search: Fix for searching for test type [#42](https://github.com/sitespeedio/onlinetest/pull/42).
+
 ## 0.2.0 - 2024-06-27
 ### Added
-* Search:  Add a clear search field button and make location and test type linkable in search result [#39](https://github.com/sitespeedio/onlinetest/pull/39).
+* Search: Add a clear search field button and make location and test type linkable in search result [#39](https://github.com/sitespeedio/onlinetest/pull/39).
 * Search: Show 100 search result as default and make it configurable [#38](https://github.com/sitespeedio/onlinetest/pull/38).
 * Search: Add last hour search button [#40](https://github.com/sitespeedio/onlinetest/pull/40)
 * Search: Make it confirable to see the slug column in search result [#41](https://github.com/sitespeedio/onlinetest/pull/41)
