@@ -38,6 +38,10 @@ disableGUI: false
 # You can disable searching through the GUI
 disableSearchGUI: false
 
+# How many max entries do you want per page?
+search:
+  resultPerPage: 100
+
 ## Configure the GUI
 html:
   css:
