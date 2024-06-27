@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import log from 'intel';
 
+import { createRequire } from 'node:module';
+
 import { getConfigByTestId } from '../../configs.js';
 import { getQueueById } from '../../queuehandler.js';
 import { getTest, getTestHar } from '../../database/index.js';
@@ -15,6 +17,9 @@ import { getText } from '../../util/text.js';
 import { validateQueue } from '../../middleware/validatequeue.js';
 const logger = log.getLogger('sitespeedio.server.api');
 
+const require = createRequire(import.meta.url);
+const version = require('../../../package.json').version;
+
 /**
  * Routes for the API. sitespeed.io CLI can call the API to add your own test.
  */
@@ -23,7 +28,7 @@ export const api = Router();
 
 api.get('/', function (request, response) {
   response.json({
-    message: 'The sitespeed.io online API'
+    message: `The sitespeed.io online API version: ${version} `
   });
 });
 

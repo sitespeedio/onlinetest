@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createRequire } from 'node:module';
 
 import nconf from 'nconf';
 import log from 'intel';
@@ -15,6 +16,9 @@ import { getQueueSize } from '../../queuehandler.js';
 
 export const index = Router();
 const logger = log.getLogger('sitespeedio.server');
+
+const require = createRequire(import.meta.url);
+const version = require('../../../package.json').version;
 
 index.get('/', async function (request, response) {
   const testDomain = nconf.get('validTestDomains');
@@ -34,7 +38,8 @@ index.get('/', async function (request, response) {
     testDomains: testDomain,
     nconf,
     getText,
-    queueNamesAndSize
+    queueNamesAndSize,
+    serverVersion: version
   });
 });
 

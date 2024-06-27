@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createRequire } from 'node:module';
 
 import nconf from 'nconf';
 
@@ -6,6 +7,9 @@ import { getText } from '../../util/text.js';
 import { getLatestTests } from '../../database/index.js';
 import { getTestByText } from '../../database/search.js';
 import dayjs from 'dayjs';
+
+const require = createRequire(import.meta.url);
+const version = require('../../../package.json').version;
 
 export const search = Router();
 
@@ -54,6 +58,7 @@ search.get('/', async function (request, response) {
     totalPages: totalPages,
     firstResultIndex,
     lastResultIndex,
-    searchQuery: decodeURIComponent(request.query.search || '')
+    searchQuery: decodeURIComponent(request.query.search || ''),
+    serverVersion: version
   });
 });
