@@ -25,7 +25,7 @@ function shortURL(url, longVersion) {
 }
 
 search.get('/', async function (request, response) {
-  const limit = request.query.limit || 50;
+  const limit = request.query.limit || nconf.get('search:resultPerPage') || 100;
   const currentPage = Number.parseInt(request.query.page, 10) || 1;
   let result = await (request.query.search === '' ||
   request.query.search === undefined
