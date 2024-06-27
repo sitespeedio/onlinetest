@@ -113,6 +113,8 @@ block content
               tr 
                 th #{getText('search.result.urlscriptname')}
                 th #{getText('search.result.label')}
+                if nconf.get('search:showSlug') === true
+                  th #{getText('search.result.slug')}
                 th #{getText('search.result.rundate')}
                 th #{getText('search.result.location')}
                 th #{getText('search.result.type')}
@@ -135,6 +137,10 @@ block content
                   td 
                     - let labelOnClick = `addToSearch('label:${test.label}')`;
                     a(role='button' onclick=labelOnClick) #{test.label}
+                  if nconf.get('search:showSlug') === true
+                    td 
+                      - let slugOnClick = `addToSearch('slug:${test.slug}')`;
+                      a(role='button' onclick=slugOnClick) #{test.slug}
                   td #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
                   td 
                     - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
