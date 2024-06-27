@@ -19,7 +19,12 @@ block content
           search.value += ' ' + text;
         }
       }
-      
+    }
+    function clearSearch() {
+      var search = document.getElementById('search');
+      if (search) {
+        search.value = '';
+      }
     }
   section.section
     .container
@@ -40,6 +45,7 @@ block content
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:yesterday\')' role='button') #{getText('search.button.yesterday')}
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:lastweek\')' role='button') #{getText('search.button.lastweek')}
           button.button.is-warning.is-medium(accesskey='h' onclick='toggleSearchHelp()') #{getText('search.button.help')}
+          button.button.is-warning.is-medium(accesskey='h' onclick='clearSearch()') #{getText('search.button.clear')}
 
         .content.p-5.has-background-white(style='display:none' id='searchHelp')
             h2.mb-3  #{getText('search.help.heading')}
@@ -129,8 +135,12 @@ block content
                     - let labelOnClick = `addToSearch('label:${test.label}')`;
                     a(role='button' onclick=labelOnClick) #{test.label}
                   td #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
-                  td #{test.location}
-                  td.is-capitalized #{test.test_type}
+                  td 
+                    - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
+                    a(role='button' onclick=locationOnClick) #{test.location}
+                  td.is-capitalized 
+                    - let testOnClick = 'addToSearch(\'testType:' + test.test_type + '\')';
+                    a(role='button' onclick=testOnClick) #{test.test_type}
                   td #{test.status}
                   td
                     - let browserOnClick = 'addToSearch(\'browser:' + test.browser_name + '\')';

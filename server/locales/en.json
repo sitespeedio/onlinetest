@@ -46,6 +46,7 @@
   "search.button.search": "Search",
   "search.button.next": "Next",
   "search.button.previous": "Previous",
+  "search.button.clear": "Clear",
   "search.input.placeholder": "'Write the URL and use commands like date:2022-10-22",
   
   "search.help.heading": "Search commands",
