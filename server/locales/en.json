@@ -38,6 +38,7 @@
   "index.waitingtorunnext": "Waiting to run next.",
   "index.inqueue": "There are %s jobs in the queue and your job is place %s in the queue",
 
+  "search.button.lasthour": "Last hour",
   "search.button.today": "Today",
   "search.button.yesterday": "Yesterday",
   "search.button.lastweek": "Last week",

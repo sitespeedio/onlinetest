@@ -41,6 +41,7 @@ block content
                 button.button.is-primary.is-large(accesskey='s' name='searchbutton') #{getText('search.button.search')}
       p.control
         .buttons.py-2
+          button.button.is-primary.is-medium(onclick='addToSearch(\'when:lasthour\')' role='button') #{getText('search.button.lasthour')}
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:today\')' role='button') #{getText('search.button.today')}
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:yesterday\')' role='button') #{getText('search.button.yesterday')}
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:lastweek\')' role='button') #{getText('search.button.lastweek')}

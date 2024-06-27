@@ -106,6 +106,11 @@ function generateMatch(parameters) {
 
   if (parameters.when) {
     switch (parameters.when) {
+      case 'lasthour': {
+        where.push('run_date >= $' + (parameters_.length + 1));
+        parameters_.push(dayjs().subtract(1, 'hour').toISOString());
+        break;
+      }
       case 'today': {
         where.push('DATE(run_date) = $' + (parameters_.length + 1));
         parameters_.push(dayjs().format('YYYY-MM-DD'));
