@@ -21,6 +21,8 @@ import {
 import { setConfigById } from '../configs.js';
 import { getBaseFilePath } from './fileutil.js';
 
+import { updateStatus } from '../database/index.js';
+
 const logger = log.getLogger('sitespeedio.server');
 
 async function getDefaultSitespeedConfiguration() {
@@ -132,23 +134,32 @@ export async function addTest(request) {
 
     logger.info(`Adding test with id ${jobId} in queue ${queueName}`);
 
-    await testRunnerQueue.add(
-      {
-        url: url,
-        config,
-        extras,
-        scripting,
-        scriptingName,
-        label
-      },
-      {
-        jobId,
-        removeOnComplete,
-        removeOnFail,
-        priority,
-        attempts
-      }
-    );
+    try {
+      await testRunnerQueue.add(
+        {
+          url: url,
+          config,
+          extras,
+          scripting,
+          scriptingName,
+          label
+        },
+        {
+          jobId,
+          removeOnComplete,
+          removeOnFail,
+          priority,
+          attempts
+        }
+      );
+    } catch (error) {
+      log.error(
+        `Setting status to failed for ${jobId} because queue is down`,
+        error
+      );
+      await updateStatus(jobId, 'failed');
+      throw new Error('Could not connect to queue');
+    }
 
     setConfigById(jobId, url, scriptingName, config, queueName);
     setIdAndQueue(jobId, testRunnerQueue);
@@ -215,16 +226,25 @@ export async function addTestFromAPI(
     attempts
   };
 
-  await testRunnerQueue.add(
-    {
-      url,
-      config,
-      scripting,
-      scriptingName,
-      label
-    },
-    jobConfig
-  );
+  try {
+    await testRunnerQueue.add(
+      {
+        url,
+        config,
+        scripting,
+        scriptingName,
+        label
+      },
+      jobConfig
+    );
+  } catch (error) {
+    log.error(
+      `Setting status to failed for ${jobId} because queue is down`,
+      error
+    );
+    await updateStatus(jobId, 'failed');
+    throw new Error('Could not connect to queue');
+  }
 
   setConfigById(jobId, url, scriptingName, config, queue);
   setIdAndQueue(jobId, testRunnerQueue);
