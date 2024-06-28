@@ -21,26 +21,35 @@ const require = createRequire(import.meta.url);
 const version = require('../../../package.json').version;
 
 index.get('/', async function (request, response) {
-  const testDomain = nconf.get('validTestDomains');
-  const testRunners = getTestRunners();
-  const queueNamesAndSize = {};
-  for (const runner of testRunners) {
-    for (const setup of runner.setup) {
-      queueNamesAndSize[setup.queue] = await getQueueSize(setup.queue);
+  try {
+    const testDomain = nconf.get('validTestDomains');
+    const testRunners = getTestRunners();
+    const queueNamesAndSize = {};
+    for (const runner of testRunners) {
+      for (const setup of runner.setup) {
+        queueNamesAndSize[setup.queue] = await getQueueSize(setup.queue);
+      }
     }
+    response.render('index', {
+      bodyId: 'index',
+      title: getText('index.pagetitle'),
+      description: getText('index.pagedescripton'),
+      serverConfig: testRunners,
+      testDomains: testDomain,
+      nconf,
+      getText,
+      queueNamesAndSize,
+      serverVersion: version
+    });
+  } catch {
+    response.render('500', {
+      title: '500: Something is broken?',
+      description: '500',
+      message: 'The queue system is down, check your logs',
+      nconf,
+      getText
+    });
   }
-
-  response.render('index', {
-    bodyId: 'index',
-    title: getText('index.pagetitle'),
-    description: getText('index.pagedescripton'),
-    serverConfig: testRunners,
-    testDomains: testDomain,
-    nconf,
-    getText,
-    queueNamesAndSize,
-    serverVersion: version
-  });
 });
 
 index.post(
