@@ -17,11 +17,15 @@ function getRedis() {
       'You use the default password for Redis/KeyDB, please change it!'
     );
   }
-  return new Redis({
+  const redis = new Redis({
     port: REDIS_PORT,
     host: REDIS_HOST,
     password: REDIS_PASSWORD
   });
+  redis.on('error', error => {
+    logger.error('Could not connect to Redis/KeyDB', error);
+  });
+  return redis;
 }
 
 export async function publish(channel, message) {
