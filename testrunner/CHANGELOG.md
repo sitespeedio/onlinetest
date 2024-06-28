@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
-
+## 0.3.0 - UNRELEASED 
+### Added
+* search: Make label configurable in search result [#46](https://github.com/sitespeedio/onlinetest/pull/46).
+* search: Make run date readable [#45](https://github.com/sitespeedio/onlinetest/pull/45).
+* Show version number in footer and API [#44](https://github.com/sitespeedio/onlinetest/pull/44).
 
 ## 0.2.0 - 2024-06-26
 ### Added
