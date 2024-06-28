@@ -1,7 +1,13 @@
 extends ./layouts/default.pug
-block content
 
+block content
   section.section
-      .container
-          p.has-text-centered.mb-2
-             img(src='/img/404.png' alt='Ooops something is broken?')
+    .container
+      .level
+        .level-item.has-text-centered
+          img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
+      .level
+        .level-item.has-text-centered
+          p.control.is-expanded
+            label.label.is-large
+              | #{message}

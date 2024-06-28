@@ -21,6 +21,7 @@ export const error500 = function (error, request, response) {
     title: '500: Something is broken?',
     description: '500',
     nconf,
+    message: error.message,
     getText
   });
 };
