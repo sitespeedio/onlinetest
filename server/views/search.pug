@@ -141,7 +141,7 @@ block content
                     td 
                       - let slugOnClick = `addToSearch('slug:${test.slug}')`;
                       a(role='button' onclick=slugOnClick) #{test.slug}
-                  td #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
+                  td.run-date #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
                   td 
                     - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
                     a(role='button' onclick=locationOnClick) #{test.location}
