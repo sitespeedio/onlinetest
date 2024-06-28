@@ -112,7 +112,8 @@ block content
             table.table.is-striped.is-fullwidth
               tr 
                 th #{getText('search.result.urlscriptname')}
-                th #{getText('search.result.label')}
+                if nconf.get('search:showLabel') === true
+                  th #{getText('search.result.label')}
                 if nconf.get('search:showSlug') === true
                   th #{getText('search.result.slug')}
                 th #{getText('search.result.rundate')}
@@ -134,9 +135,10 @@ block content
                       a(role='button' onclick=urlOnClick)
                         span.icon.is-small
                           img(src='/img/icons/content-copy.svg' alt='Go to URL')
-                  td 
-                    - let labelOnClick = `addToSearch('label:${test.label}')`;
-                    a(role='button' onclick=labelOnClick) #{test.label}
+                  if nconf.get('search:showLabel') === true
+                    td 
+                      - let labelOnClick = `addToSearch('label:${test.label}')`;
+                      a(role='button' onclick=labelOnClick) #{test.label}
                   if nconf.get('search:showSlug') === true
                     td 
                       - let slugOnClick = `addToSearch('slug:${test.slug}')`;

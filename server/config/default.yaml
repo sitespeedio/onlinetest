@@ -43,7 +43,8 @@ search:
   resultPerPage: 100
   # Show slug column in search result
   showSlug: false
-
+  # Show the label column in the search result
+  showLabel: true
 ## Configure the GUI
 html:
   css:
