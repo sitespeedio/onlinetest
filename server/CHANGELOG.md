@@ -1,5 +1,12 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
+
+## 0.3.1 - 2024-06-29
+### Fixed
+* If the queue system is down when you add a new test, make sure the status of the test in the database is failed [#50](https://github.com/sitespeedio/onlinetest/pull/50).
+* If the queue is not up when you access the start page, make sure that at least after X seconds you get a error page [#53](https://github.com/sitespeedio/onlinetest/pull/53).
+
+
 ## 0.3.0 - 2024-06-28
 ### Added
 * search: Make label configurable in search result [#46](https://github.com/sitespeedio/onlinetest/pull/46).
