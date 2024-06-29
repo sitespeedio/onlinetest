@@ -56,6 +56,10 @@ class QueueHandler {
       }
     });
 
+    this.redis.on('error', error => {
+      logger.error('Error in KeyDB/Redis connection %s', error);
+    });
+
     // If the server comes online, lets tell it that we are ready
     this.redis.on('message', (channel, message) => {
       if (channel === 'server' && message === 'start') {
