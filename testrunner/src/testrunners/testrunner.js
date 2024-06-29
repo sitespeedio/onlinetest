@@ -47,7 +47,7 @@ export default async function runJob(job) {
       // The timestamp from Browsertime is more exact
       runTime = testResult.result.browsertime[0].info.timestamp;
     }
-    resultQueue.add(
+    await resultQueue.add(
       {
         result: testResult.result,
         id: job.id,
