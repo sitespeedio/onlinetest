@@ -6,6 +6,9 @@ services:
         - "6379:6379"
       command: ["keydb-server", "--requirepass", "${KEYDB_PASSWORD}"]
       restart: always
+      volumes:
+        - keydb_data:/data
+        - ./keydb.conf:/usr/local/etc/keydb/keydb.conf
     postgresql:
       image: postgres:16.2
       hostname: postgresql
@@ -46,3 +49,5 @@ services:
 volumes:
   postgres-data:
   minio-data:
+  keydb_data:
+    driver: local
