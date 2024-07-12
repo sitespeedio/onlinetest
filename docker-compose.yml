@@ -4,11 +4,11 @@ services:
       hostname: keydb
       ports:
         - "6379:6379"
-      command: ["keydb-server", "--requirepass", "${KEYDB_PASSWORD}"]
+      command: ["keydb-server", "/etc/keydb/keydb.conf", "--server-threads" , "2"]
       restart: always
       volumes:
         - keydb_data:/data
-        - ./keydb.conf:/usr/local/etc/keydb/keydb.conf
+        - ./keydb.conf:/etc/keydb/keydb.conf 
     postgresql:
       image: postgres:16.2
       hostname: postgresql
