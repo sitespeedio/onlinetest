@@ -1,6 +1,5 @@
 import http from 'node:http';
 import { createSecureServer } from 'node:http2';
-// eslint-disable-next-line unicorn/import-style
 
 import path from 'node:path';
 
