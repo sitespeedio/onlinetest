@@ -10,9 +10,9 @@
       "license": "AGPL-3.0-only",
       "dependencies": {
         "bull": "4.15.1",
-        "execa": "9.1.0",
+        "execa": "9.3.0",
         "intel": "1.2.0",
-        "joi": "17.13.1",
+        "joi": "17.13.3",
         "js-yaml": "4.1.0",
         "nconf": "0.12.1"
       },
@@ -1059,9 +1059,9 @@
       }
     },
     "node_modules/execa": {
-      "version": "9.1.0",
-      "resolved": "https://registry.npmjs.org/execa/-/execa-9.1.0.tgz",
-      "integrity": "sha512-lSgHc4Elo2m6bUDhc3Hl/VxvUDJdQWI40RZ4KMY9bKRc+hgMOT7II/JjbNDhI8VnMtrCb7U/fhpJIkLORZozWw==",
+      "version": "9.3.0",
+      "resolved": "https://registry.npmjs.org/execa/-/execa-9.3.0.tgz",
+      "integrity": "sha512-l6JFbqnHEadBoVAVpN5dl2yCyfX28WoBAGaoQcNmLLSedOxTxcn2Qa83s8I/PA5i56vWru2OHOtrwF7Om2vqlg==",
       "dependencies": {
         "@sindresorhus/merge-streams": "^4.0.0",
         "cross-spawn": "^7.0.3",
@@ -1077,7 +1077,7 @@
         "yoctocolors": "^2.0.0"
       },
       "engines": {
-        "node": ">=18"
+        "node": "^18.19.0 || >=20.5.0"
       },
       "funding": {
         "url": "https://github.com/sindresorhus/execa?sponsor=1"
@@ -1593,9 +1593,9 @@
       "integrity": "sha1-6PvzdNxVb/iUehDcsFctYz8s+hA="
     },
     "node_modules/joi": {
-      "version": "17.13.1",
-      "resolved": "https://registry.npmjs.org/joi/-/joi-17.13.1.tgz",
-      "integrity": "sha512-vaBlIKCyo4FCUtCm7Eu4QZd/q02bWcxfUO6YSXAZOWF6gzcLBeba8kwotUdYJjDLW8Cz8RywsSOqiNJZW0mNvg==",
+      "version": "17.13.3",
+      "resolved": "https://registry.npmjs.org/joi/-/joi-17.13.3.tgz",
+      "integrity": "sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA==",
       "dependencies": {
         "@hapi/hoek": "^9.3.0",
         "@hapi/topo": "^5.1.0",
