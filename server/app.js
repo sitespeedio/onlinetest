@@ -25,13 +25,13 @@ if (nconf.get('help')) {
     '--config       Path to a JSON/yaml configuration file that will replace default config.'
   );
   console.log('--version        The version number.');
-  // eslint-disable-next-line unicorn/no-process-exit
+
   process.exit();
 }
 
 if (nconf.get('version')) {
   console.log(version);
-  // eslint-disable-next-line unicorn/no-process-exit
+
   process.exit();
 }
 
@@ -55,7 +55,7 @@ try {
   nconf.defaults(configFromFile);
 } catch (error) {
   console.error('Error reading configuration file:', error);
-  // eslint-disable-next-line unicorn/no-process-exit
+
   process.exit(1);
 }
 
