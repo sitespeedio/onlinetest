@@ -83,7 +83,7 @@ export async function addTest(request) {
     sustainable: sustainable ? { enable: true } : undefined,
     crux: crux ? { key: cruxKey || undefined, enable: true } : undefined,
     lighthouse: useLighthouse ? { enable: true } : undefined,
-    android: !!testType === 'android'
+    android: testType === 'android'
   };
 
   let config = {};
