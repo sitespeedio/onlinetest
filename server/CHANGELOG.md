@@ -7,6 +7,8 @@
 * Default to max 50 finished jobs in the queue [#58](https://github.com/sitespeedio/onlinetest/pull/58).
 * Update dev dependencies like ESLint 9 [#62](https://github.com/sitespeedio/onlinetest/pull/62).
 * Update DayJS 1.11.11 [#63](https://github.com/sitespeedio/onlinetest/pull/63)
+* Make sure all uncaught errors are caught [#64](https://github.com/sitespeedio/onlinetest/pull/64)
+* Add a keydb configuration file [#56](https://github.com/sitespeedio/onlinetest/pull/56)
 
 ## 0.3.1 - 2024-06-29
 ### Fixed
