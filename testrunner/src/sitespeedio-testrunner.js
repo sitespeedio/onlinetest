@@ -66,6 +66,12 @@ export class SitespeedioTestRunner {
     }
 
     await queueHandler.start();
+
+    process.on('uncaughtException', error => {
+      // ioredis configuration is tricky to get right
+      // this can spam the log but at least we catch everything
+      logger.error('Uncaught Exception thrown:', error);
+    });
   }
 
   async stop() {
