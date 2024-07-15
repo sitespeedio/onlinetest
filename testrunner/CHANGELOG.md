@@ -1,12 +1,14 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
-## 0.2.2 -2024-07-15
+## 0.3.2 -2024-07-15
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).
 * Default to max 50 finished jobs in the queue [#58](https://github.com/sitespeedio/onlinetest/pull/58).
 * Upgrade dev dependencies: unicorn [#61](https://github.com/sitespeedio/onlinetest/pull/61), eslint [#60](https://github.com/sitespeedio/onlinetest/pull/60), 
 * Update joi and execa [#59](https://github.com/sitespeedio/onlinetest/pull/59).
 * Make sure all uncaught errors are caught [#64](https://github.com/sitespeedio/onlinetest/pull/64)
+### Added
+* Version bump to sync tags.
 
 ## 0.2.1 - 2024-06-30
 ### Fixed
