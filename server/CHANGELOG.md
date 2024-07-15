@@ -1,7 +1,7 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
-## 0.3.2 - UNRELEASED
+## 0.3.2 - 2024-07-15
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).
 * Default to max 50 finished jobs in the queue [#58](https://github.com/sitespeedio/onlinetest/pull/58).
