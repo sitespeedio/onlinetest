@@ -1,6 +1,13 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.3.2 - UNRELEASED
+### Fixed
+* Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).
+* Default to max 50 finished jobs in the queue [#58](https://github.com/sitespeedio/onlinetest/pull/58).
+* Update dev dependencies like ESLint 9 [#62](https://github.com/sitespeedio/onlinetest/pull/62).
+* Update DayJS 1.11.11 [#63](https://github.com/sitespeedio/onlinetest/pull/63)
+
 ## 0.3.1 - 2024-06-29
 ### Fixed
 * If the queue system is down when you add a new test, make sure the status of the test in the database is failed [#50](https://github.com/sitespeedio/onlinetest/pull/50).
