@@ -57,7 +57,7 @@ export default async function runJob(job) {
       workingDirectory,
       configFileName,
       resultFileName,
-      job.data.extras.includes('--webpagereplay')
+      job.data.extras && job.data.extras.includes('--webpagereplay')
     );
 
     if (job.data.scripting) {
