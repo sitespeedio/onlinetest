@@ -52,12 +52,13 @@ export default async function runJob(job) {
     );
 
     const parameters = setupDockerParameters(
-      job,
       dockerContainer,
       dockerExtraParameters,
       workingDirectory,
       configFileName,
-      resultFileName
+      resultFileName,
+      (job.data.extras && job.data.extras.includes('--webpagereplay')) ||
+        job.data.config.webpagereplay
     );
 
     if (job.data.scripting) {
@@ -150,12 +151,12 @@ async function handleScriptingFile(job, workingDirectory) {
 }
 
 function setupDockerParameters(
-  job,
   dockerContainer,
   dockerExtraParameters,
   workingDirectory,
   configFileName,
-  resultFileName
+  resultFileName,
+  usingWebPageReplay
 ) {
   const baseParameters = [
     'run',
@@ -172,9 +173,9 @@ function setupDockerParameters(
     true
   ];
 
-  if (job.data.config.webpagereplay) {
-    baseParameters.splice(1, 0, '--cap-add=NET_ADMIN');
-    baseParameters.splice(2, 0, '-e', 'REPLAY=true', '-e', 'LATENCY=100');
+  //
+  if (usingWebPageReplay) {
+    baseParameters.splice(1, 0, '-e', 'REPLAY=true', '-e', 'LATENCY=100');
   }
   return baseParameters;
 }
