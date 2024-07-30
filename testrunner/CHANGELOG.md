@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.4.0 - 2024-07-30
+### Added
+* Made it possible to map a baseline directory in Docker so you can run compare plugin tests [#66](https://github.com/sitespeedio/onlinetest/pull/66).
+
 ## 0.3.3 - 2024-07-30
 ### Fixed
 * Fix for running WebPageReplay [#65](https://github.com/sitespeedio/onlinetest/pull/65).
