@@ -58,7 +58,9 @@ export default async function runJob(job) {
       configFileName,
       resultFileName,
       (job.data.extras && job.data.extras.includes('--webpagereplay')) ||
-        job.data.config.webpagereplay
+        job.data.config.webpagereplay,
+      (job.data.extras && job.data.extras.includes('--compare.')) ||
+        job.data.config.compare
     );
 
     if (job.data.scripting) {
@@ -156,7 +158,8 @@ function setupDockerParameters(
   workingDirectory,
   configFileName,
   resultFileName,
-  usingWebPageReplay
+  usingWebPageReplay,
+  usingBaseline
 ) {
   const baseParameters = [
     'run',
@@ -177,6 +180,12 @@ function setupDockerParameters(
   if (usingWebPageReplay) {
     baseParameters.splice(1, 0, '-e', 'REPLAY=true', '-e', 'LATENCY=100');
   }
+
+  if (usingBaseline) {
+    const baselineDirectory = nconf.get('docker:baselinedir') || '"$(pwd)"';
+    baseParameters.splice(1, 0, '-v', `${baselineDirectory}:/baseline`);
+  }
+
   return baseParameters;
 }
 
