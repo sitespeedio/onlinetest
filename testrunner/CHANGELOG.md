@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.3.3 - 2024-07-30
+### Fixed
+* Fix for running WebPageReplay [#65](https://github.com/sitespeedio/onlinetest/pull/65).
+
 ## 0.3.2 -2024-07-15
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).
