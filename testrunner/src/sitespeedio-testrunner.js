@@ -1,10 +1,14 @@
 import log from 'intel';
 import nconf from 'nconf';
 import os from 'node:os';
+import { createRequire } from 'node:module';
 
 import run from './testrunners/testrunner.js';
 import runDocker from './testrunners/docker-testrunner.js';
 import { queueHandler } from './queue/queuehandler.js';
+
+const require = createRequire(import.meta.url);
+const version = require('../package.json').version;
 
 const logger = log.getLogger('sitespeedio.testrunner');
 
@@ -30,7 +34,7 @@ export class SitespeedioTestRunner {
       logger.info('No hostname found in configuration. Will use %s', hostname);
     }
 
-    logger.info(`Starting testrunner ${hostname}`);
+    logger.info(`Starting testrunner ${hostname} version ${version}`);
 
     const testRunners = [];
     // Setup the queues for each job
