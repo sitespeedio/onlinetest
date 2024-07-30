@@ -19,14 +19,14 @@ location:
       # That means if you run everything locally and want to use sitespeed.io docker 
       # containers, you need to set --s3.endpoint to something else than 127.0.0.1.
       # On Mac you can use --s3.endpoint http://host.docker.internal:9000 and on Linux
-      # you can use yoru actual IP.
-      useDocker: false
+      # you can use your actual IP.
+      useDocker: true
   
     - name: "Emulated Mobile"
       type: "emulatedMobile"
       browsers: ["chrome"]
       connectivity: ["native", "3g", "4g", "cable"]
-      useDocker: false
+      useDocker: true
 
     # Here's an example of setting up a Android phone
     #- name: "Android"
