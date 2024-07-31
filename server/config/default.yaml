@@ -41,9 +41,9 @@ disableSearchGUI: false
 # How many max entries do you want per page?
 search:
   resultPerPage: 100
-  # Show slug column in search result
+  # Show slug in search result
   showSlug: false
-  # Show the label column in the search result
+  # Show the label in the search result
   showLabel: true
 ## Configure the GUI
 html:
