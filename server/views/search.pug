@@ -112,10 +112,11 @@ block content
             table.table.is-striped.is-fullwidth
               tr 
                 th #{getText('search.result.urlscriptname')}
-                if nconf.get('search:showLabel') === true
-                  th #{getText('search.result.label')}
-                if nconf.get('search:showSlug') === true
-                  th #{getText('search.result.slug')}
+                th
+                  if nconf.get('search:showLabel') === true
+                    | #{getText('search.result.label')}
+                  if nconf.get('search:showSlug') === true
+                    | #{getText('search.result.slug')}
                 th #{getText('search.result.rundate')}
                 th #{getText('search.result.location')}
                 th #{getText('search.result.type')}
@@ -135,14 +136,13 @@ block content
                       a(role='button' onclick=urlOnClick)
                         span.icon.is-small
                           img(src='/img/icons/content-copy.svg' alt='Go to URL')
-                  if nconf.get('search:showLabel') === true
                     td 
                       - let labelOnClick = `addToSearch('label:${test.label}')`;
-                      a(role='button' onclick=labelOnClick) #{test.label}
-                  if nconf.get('search:showSlug') === true
-                    td 
                       - let slugOnClick = `addToSearch('slug:${test.slug}')`;
-                      a(role='button' onclick=slugOnClick) #{test.slug}
+                      if nconf.get('search:showLabel') === true
+                        a(role='button' onclick=labelOnClick) #{test.label}
+                      if nconf.get('search:showSlug') === true
+                        a(role='button' onclick=slugOnClick) #{test.slug}
                   td.run-date #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
                   td 
                     - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
