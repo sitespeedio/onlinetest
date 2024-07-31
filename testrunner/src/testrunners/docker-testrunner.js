@@ -30,7 +30,8 @@ export default async function runJob(job) {
   try {
     logger.info(`Start with job ${job.id}`);
     const baseWorkingDirectory = os.tmpdir();
-    const dockerContainer = nconf.get('docker:container');
+    const dockerContainer =
+      job.data.dockerContainer || nconf.get('docker:container');
 
     const dockerExtraParameters = parseDockerExtraParameters(
       nconf.get('docker:extraparameters')

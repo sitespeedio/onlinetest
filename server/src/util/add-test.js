@@ -177,7 +177,8 @@ export async function addTestFromAPI(
   scriptingName,
   label,
   testType,
-  priority
+  priority,
+  dockerContainer
 ) {
   // The number of objects to keep in the queue before removal
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
@@ -233,7 +234,8 @@ export async function addTestFromAPI(
         config,
         scripting,
         scriptingName,
-        label
+        label,
+        dockerContainer
       },
       jobConfig
     );
