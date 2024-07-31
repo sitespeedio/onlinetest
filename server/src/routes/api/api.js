@@ -181,6 +181,7 @@ api.post(
       let scriptingName = userConfig.api.scriptingName;
       let label = userConfig.api.label;
       let priority = userConfig.api.priority;
+      let container = userConfig.api.dockerContainer;
 
       const location = userConfig.api.location;
 
@@ -196,7 +197,8 @@ api.post(
         scriptingName,
         label,
         testType,
-        priority
+        priority,
+        container
       );
       response.json({ id });
     } catch (error) {
