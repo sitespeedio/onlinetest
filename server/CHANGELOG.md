@@ -1,6 +1,11 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.4.0 - 2024-08-02
+### Added
+* Merged slug/label column in search result [#68](https://github.com/sitespeedio/onlinetest/pull/68)
+* Make it possible to choose container that runs the test, using the API [#69](https://github.com/sitespeedio/onlinetest/pull/69/)
+ 
 ## 0.3.2 - 2024-07-15
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).

@@ -1,5 +1,10 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.5.0 - 2024-08-02
+### Added 
+* When running compare plugin tests using Docker, set the baseline directory automatically [#70](https://github.com/sitespeedio/onlinetest/pull/70)
+* * Make it possible to choose container that runs the test, using the API [#69](https://github.com/sitespeedio/onlinetest/pull/69/)
+
 ## 0.4.1 - 2024-07-30
 ### Fixed
 * Log testrunner version on startup [#67](https://github.com/sitespeedio/onlinetest/pull/67).
