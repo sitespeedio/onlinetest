@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.5.2 - 2024-08-02
+### Fixed
+* Fix a bug setting the baseline for compare plugin [#71](https://github.com/sitespeedio/onlinetest/pull/71).
+
 ## 0.5.1 - 2024-08-02
 ### Fixed
 * Correct version in package.json
