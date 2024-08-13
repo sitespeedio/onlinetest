@@ -8,6 +8,7 @@ RUN npm ci --omit=dev
 
 COPY . .
 COPY docker/start.sh /usr/src/app/start.sh
+COPY docker/dockerdefault.yaml /usr/src/app/config/default.yaml
 
 RUN useradd --user-group --create-home --shell /bin/false sitespeed && \
     chown -R sitespeed:sitespeed /usr/src/app && \
