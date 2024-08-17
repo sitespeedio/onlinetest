@@ -1,4 +1,11 @@
 services:
+    sitespeedio-server:
+      image: sitespeedio/server:latest
+      ports:
+        - "3000:3000"
+      depends_on:
+        - postgresql
+        - keydb
     keydb:
       image: eqalpha/keydb:latest
       hostname: keydb
