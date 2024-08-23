@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.4.1 - 2024-08-23
+### Fixed
+* FIx bug so you can choose emulated mobile in GUI [#76](https://github.com/sitespeedio/onlinetest/pull/76).
+
 ## 0.4.0 - 2024-08-02
 ### Added
 * Merged slug/label column in search result [#68](https://github.com/sitespeedio/onlinetest/pull/68)
