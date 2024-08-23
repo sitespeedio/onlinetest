@@ -86,6 +86,10 @@ export async function addTest(request) {
     android: testType === 'android'
   };
 
+  if (testType === 'emulatedMobile') {
+    userConfig.mobile = true;
+  }
+
   let config = {};
   merge(config, defaultConfig, userConfig);
 
