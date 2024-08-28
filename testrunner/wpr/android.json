@@ -1,0 +1,22 @@
+{
+  "android": true,
+  "replay": true,
+    "browsertime": {
+      "chrome": {
+        "args": [
+          "host-resolver-rules=MAP *:80 127.0.0.1:8085,MAP *:443 127.0.0.1:8086,EXCLUDE localhost",
+          "ignore-certificate-errors-spki-list=PhrPvGIaAMmd29hj8BCZOq096yj7uMpRNHpn5PDxI6I=",
+          "user-data-dir=/data/local/tmp/chrome/"
+        ]
+      },
+      "firefox": {
+        "preference": [
+          "network.dns.forceResolve:127.0.0.1",
+          "security.OCSP.enabled:0",
+          "network.socket.forcePort:80=8085;443=8086"
+          
+        ],
+        "acceptInsecureCerts": true
+      }
+    }
+  }

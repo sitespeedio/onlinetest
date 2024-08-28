@@ -40,7 +40,8 @@
     "src",
     "package.json",
     "npm-shrinkwrap.json",
-    "config"
+    "config",
+    "wpr"
   ],
   "scripts": {
     "start": "node ./app.js",
