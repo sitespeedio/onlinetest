@@ -40,7 +40,8 @@
     "src",
     "package.json",
     "npm-shrinkwrap.json",
-    "config"
+    "config",
+    "wpr"
   ],
   "scripts": {
     "start": "node ./app.js",
@@ -58,6 +59,7 @@
     "bull": "4.15.1",
     "nconf": "0.12.1",
     "execa": "9.3.0",
+    "lodash.get": "4.4.2",
     "intel": "1.2.0",
     "joi" : "17.13.3",
     "js-yaml": "4.1.0"

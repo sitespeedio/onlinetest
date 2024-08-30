@@ -5,6 +5,7 @@ import os from 'node:os';
 import { execa } from 'execa';
 import log from 'intel';
 import nconf from 'nconf';
+import get from 'lodash.get';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { getBaseFilePath } from '../util.js';
@@ -116,7 +117,6 @@ function prepareSitespeedConfig(job) {
     nconf.get('sitespeedioConfigFile') === undefined
       ? getBaseFilePath('./config/sitespeedDefault.json')
       : path.resolve(nconf.get('sitespeedioConfigFile'));
-
   return jobConfig;
 }
 
@@ -126,10 +126,31 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     workingDirectory,
     configFileName
   );
-  const binary = nconf.get('executable');
+
+  let binary = nconf.get('executable');
+  let environment = {};
+  if (
+    (job.data.extras && job.data.extras.includes('--webpagereplay')) ||
+    job.data.config.webpagereplay
+  ) {
+    binary = './wpr/replay.sh';
+    environment = {
+      env: {
+        ANDROID: true
+      }
+    };
+    const deviceId =
+      get(job.data.config, 'browsertime.firefox.android.deviceSerial') ||
+      get(job.data.config, 'browsertime.chrome.android.deviceSerial');
+
+    if (deviceId) {
+      environment.env.DEVICE_SERIAL = deviceId;
+    }
+  }
+
   let exitCode = 0;
   try {
-    const process = execa(binary, parameters);
+    const process = execa(binary, parameters, environment);
     process.stdout.on('data', chunk => {
       logger.debug(chunk.toString());
       job.log(chunk.toString());
