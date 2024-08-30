@@ -116,20 +116,6 @@ function prepareSitespeedConfig(job) {
     nconf.get('sitespeedioConfigFile') === undefined
       ? getBaseFilePath('./config/sitespeedDefault.json')
       : path.resolve(nconf.get('sitespeedioConfigFile'));
-
-  // HACK
-  // jobConfig.extends = getBaseFilePath('./wpr/android.json');
-  jobConfig.android = true;
-  jobConfig.replay = true;
-  jobConfig.browsertime.chrome = {
-    args: [
-      'host-resolver-rules=MAP *:80 127.0.0.1:8085,MAP *:443 127.0.0.1:8086,EXCLUDE localhost',
-      'ignore-certificate-errors-spki-list=PhrPvGIaAMmd29hj8BCZOq096yj7uMpRNHpn5PDxI6I=',
-      'user-data-dir=/data/local/tmp/chrome/'
-    ]
-  };
-  console.log(job.data.config);
-
   return jobConfig;
 }
 

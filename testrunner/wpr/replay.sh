@@ -29,6 +29,7 @@ then
     if [ "$FIRST_DEVICE" == "no_device" ]
     then
         echo "Could not find a phone connected to the computer. Try with adb devices"
+        exit 1
     fi
 
     DEVICE_SERIAL=${DEVICE_SERIAL:-$FIRST_DEVICE}
@@ -45,12 +46,12 @@ WPR_PARAMS="--http_port $WPR_HTTP_PORT --https_port $WPR_HTTPS_PORT --https_cert
 
 # First step is recording your page
 declare -i RESULT=0
-echo "Start WebPageReplay Record logging to $WPR_RECORD_LOG"
+echo "Start WebPageReplay record"
 $WPR_BINARY record $WPR_PARAMS > "$WPR_RECORD_LOG" 2>&1 &
 RECORD_PID=$!
 RESULT+=$?
 sleep 3
-"$BROWSERTIME" "$@"
+"$BROWSERTIME" "$@" --browsertime.chrome.webPageReplayHostResolver --browsertime.chrome.webPageReplayHTTPPort $WPR_HTTP_PORT --browsertime.chrome.webPageReplayHTTPSPort $WPR_HTTPS_PORT --browsertime.chrome.webPageReplayRecord true --browsertime.firefox.preference network.dns.forceResolve:127.0.0.1
 RESULT+=$?
 
 kill -2 $RECORD_PID
@@ -61,29 +62,23 @@ echo 'Stopped WebPageReplay record'
 # If everything worked fine, replay the page
 if [ $RESULT -eq 0 ]
 then
-    echo 'Start WebPageReplay Replay'
-    "$WPR_BINARY" replay $WPR_PARAMS > "$WPR_REPLAY_LOG" 2>&1 &
+    echo 'Start WebPageReplay replay'
+    "$WPR_BINARY" replay $WPR_PARAMS  > "$WPR_REPLAY_LOG" 2>&1 &
     REPLAY_PID=$!
     if [ $? -eq 0 ]
     then
-        #echo 'Pre warm the Replay server with one access'
-        #sleep 10
-        #"$BROWSERTIME" "$@"
-        #sleep 10
         echo 'Run the test against WebPageReplay'
-        echo "$@"
-        "$SITESPEEDIO" "$@" &
+        "$SITESPEEDIO" "$@" --browsertime.firefox.preference security.OCSP.enabled:0 --browsertime.firefox.preference network.dns.forceResolve:127.0.0.1 --browsertime.chrome.webPageReplayHostResolver --browsertime.chrome.webPageReplayHTTPPort $WPR_HTTP_PORT --browsertime.chrome.webPageReplayHTTPSPort $WPR_HTTPS_PORT --replay &
         SITESPEEDIO_PID=$!
         wait $SITESPEEDIO_PID
         if kill -0 $REPLAY_PID 2>/dev/null; then
             kill -2 $REPLAY_PID
             wait $REPLAY_PID
-        else
-            echo "Process $REPLAY_PID does not exist."
+            exit 0
         fi
         echo 'Stopped WebPageReplay replay'
     else
-        echo "Replay server didn't start correctly, check the log $WPR_REPLAY_LOG" >&2
+        echo "Replay server didn't start correctly, check the logs $WPR_REPLAY_LOG" >&2
     fi
 else
     echo "Recording or accessing the URL failed, will not replay" >&2
