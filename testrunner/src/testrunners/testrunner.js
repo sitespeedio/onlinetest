@@ -5,6 +5,7 @@ import os from 'node:os';
 import { execa } from 'execa';
 import log from 'intel';
 import nconf from 'nconf';
+import get from 'lodash.get';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { getBaseFilePath } from '../util.js';
@@ -127,16 +128,29 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   );
 
   let binary = nconf.get('executable');
+  let environment = {};
   if (
     (job.data.extras && job.data.extras.includes('--webpagereplay')) ||
     job.data.config.webpagereplay
   ) {
     binary = './wpr/replay.sh';
+    environment = {
+      env: {
+        ANDROID: true
+      }
+    };
+    const deviceId =
+      get(job.data.config, 'browsertime.firefox.android.deviceSerial') ||
+      get(job.data.config, 'browsertime.chrome.android.deviceSerial');
+
+    if (deviceId) {
+      environment.env.DEVICE_SERIAL = deviceId;
+    }
   }
 
   let exitCode = 0;
   try {
-    const process = execa(binary, parameters, { env: { ANDROID: true } });
+    const process = execa(binary, parameters, environment);
     process.stdout.on('data', chunk => {
       logger.debug(chunk.toString());
       job.log(chunk.toString());

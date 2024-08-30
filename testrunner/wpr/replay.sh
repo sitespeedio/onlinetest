@@ -37,8 +37,6 @@ then
     # Reverse the traffic for the android device back to the computer
     adb -s "$DEVICE_SERIAL" reverse tcp:"$WPR_HTTP_PORT" tcp:"$WPR_HTTP_PORT"
     adb -s "$DEVICE_SERIAL" reverse tcp:"$WPR_HTTPS_PORT" tcp:"$WPR_HTTPS_PORT"
-
-    # Make sure to kill all subprocesses in exit
 fi
 
 # Parameters used to start WebPageReplay
@@ -74,7 +72,6 @@ then
         if kill -0 $REPLAY_PID 2>/dev/null; then
             kill -2 $REPLAY_PID
             wait $REPLAY_PID
-            exit 0
         fi
         echo 'Stopped WebPageReplay replay'
     else
@@ -82,4 +79,9 @@ then
     fi
 else
     echo "Recording or accessing the URL failed, will not replay" >&2
+fi
+
+if [ "$RUN_ON_ANDROID" = true ] 
+then 
+    adb -s "$DEVICE_SERIAL" reverse --remove-all
 fi
