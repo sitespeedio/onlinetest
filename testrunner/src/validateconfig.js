@@ -6,6 +6,7 @@ import Joi from 'joi';
 const setupSchema = Joi.array().items(
   Joi.object({
     name: Joi.string().required(),
+    hostname: Joi.string().optional(),
     type: Joi.string().valid('desktop', 'emulatedMobile', 'android').required(),
     browsers: Joi.array()
       .items(Joi.string().valid('chrome', 'firefox', 'edge', 'safari'))
