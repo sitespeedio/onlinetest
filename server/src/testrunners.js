@@ -11,8 +11,8 @@ function mergeByHostname(target, source) {
   }
 }
 
-function removeByHostname(target, hostnameToRemove) {
-  delete target[hostnameToRemove];
+function removeByHostname(hostnameToRemove) {
+  delete testRunners[hostnameToRemove];
 }
 
 export function addTestRunner(config) {
@@ -20,7 +20,7 @@ export function addTestRunner(config) {
 }
 
 export function removeTestRunner(config) {
-  removeByHostname(testRunners, config.hostname);
+  removeByHostname(config.hostname);
 }
 
 export function getTestRunners() {

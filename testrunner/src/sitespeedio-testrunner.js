@@ -82,6 +82,11 @@ export class SitespeedioTestRunner {
     try {
       const serverConfig = nconf.get('location');
 
+      const hostname = os.hostname();
+      if (serverConfig.hostname === undefined) {
+        serverConfig.hostname = hostname;
+      }
+
       const testRunnerQueue = await queueHandler.getQueue('testrunners');
 
       if (testRunnerQueue.client.status === 'ready') {
