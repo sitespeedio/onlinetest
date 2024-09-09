@@ -1,53 +1,34 @@
-import merge from 'lodash.merge';
+const testRunners = {};
 
-const testRunners = [];
-const testRunnersById = [];
+function mergeByHostname(target, source) {
+  if (target[source.hostname]) {
+    target[source.hostname].setup = [
+      ...target[source.hostname].setup,
+      ...source.setup
+    ];
+  } else {
+    target[source.hostname] = { ...source };
+  }
+}
+
+function removeByHostname(target, hostnameToRemove) {
+  delete target[hostnameToRemove];
+}
 
 export function addTestRunner(config) {
-  const index = testRunners.findIndex(
-    testRunner => testRunner.name == config.name
-  );
-  testRunnersById.push(config);
-  if (index === -1) {
-    testRunners.push(config);
-  } else {
-    // Maybe we have multiple testrunners for the same location etc
-    merge(testRunners[index], config);
-  }
+  mergeByHostname(testRunners, config);
 }
 
 export function removeTestRunner(config) {
-  // Runners need to have uniqie ids.
-  // First remove the runner
-  testRunnersById.splice(
-    testRunnersById.findIndex(
-      testRunner => testRunner.hostname === config.hostname
-    ),
-    1
-  );
-
-  // Update the merged version
-  const index = testRunners.findIndex(
-    testRunner => testRunner.name == config.name
-  );
-  let updatedSetup = {};
-  for (let testRunner of testRunnersById) {
-    if ((testRunner.name = config.name)) {
-      merge(updatedSetup, testRunner);
-    }
-  }
-
-  if (Object.keys(updatedSetup) > 0) {
-    testRunners[index] = updatedSetup;
-  } else {
-    testRunners.splice(index, 1);
-  }
+  removeByHostname(testRunners, config.hostname);
 }
+
 export function getTestRunners() {
-  return testRunners;
+  return Object.values(testRunners);
 }
 
 export function getTestRunnersConfiguration(name) {
-  const index = testRunners.findIndex(testRunner => testRunner.name === name);
-  return testRunners[index];
+  return Object.values(testRunners).find(
+    testRunner => testRunner.name === name
+  );
 }

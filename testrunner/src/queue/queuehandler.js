@@ -13,7 +13,7 @@ class QueueHandler {
     this.queues = {};
   }
 
-  async start() {
+  async start(serverConfig) {
     const port = nconf.get('redis:port') ?? 6379;
     const host = nconf.get('redis:host') ?? '127.0.0.1';
     const password = nconf.get('redis:password');
@@ -72,7 +72,6 @@ class QueueHandler {
     });
 
     // Lets tell the world (or the testsrunners queue) that we are live
-    const serverConfig = nconf.get('location');
     const testRunnersQueue = await this.getQueue('testrunners');
     testRunnersQueue.add({ type: 'start', serverConfig: serverConfig });
   }
