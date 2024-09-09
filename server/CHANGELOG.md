@@ -1,9 +1,14 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.4.2 - 2024-09-09
+### Fixed
+* Device id was broken in the front end [#80](https://github.com/sitespeedio/onlinetest/pull/80) and [#81](https://github.com/sitespeedio/onlinetest/pull/81).
+* The internal configuration was broken in the way that removing/adding testrunners failed removing correct configurations [#84](https://github.com/sitespeedio/onlinetest/pull/84). This fix also needs [#83](https://github.com/sitespeedio/onlinetest/pull/83) in the testrunners.
+
 ## 0.4.1 - 2024-08-23
 ### Fixed
-* FIx bug so you can choose emulated mobile in GUI [#76](https://github.com/sitespeedio/onlinetest/pull/76).
+* Fix bug so you can choose emulated mobile in GUI [#76](https://github.com/sitespeedio/onlinetest/pull/76).
 
 ## 0.4.0 - 2024-08-02
 ### Added
