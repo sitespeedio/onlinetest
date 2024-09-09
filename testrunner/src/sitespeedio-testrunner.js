@@ -29,7 +29,7 @@ export class SitespeedioTestRunner {
 
     // If hostname isn't configured add it
     const hostname = os.hostname();
-    if (nconf.get('hostname') !== undefined) {
+    if (nconf.get('hostname') === undefined) {
       serverConfig.hostname = hostname;
       logger.info('No hostname found in configuration. Will use %s', hostname);
     }
