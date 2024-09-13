@@ -23,7 +23,12 @@ export const validateQueue = (request, response, next) => {
     const testRunnerQueue = getExistingQueue(queueName);
 
     if (!testRunnerQueue) {
-      logger.info('Access to a non existing queue %s', queueName);
+      logger.info(
+        'Access to a non existing queue %s for location %s deviceId %s',
+        queueName,
+        location,
+        deviceId
+      );
       request.inputValidationError = getText('error.nonexistingqueue');
       return next();
     }
