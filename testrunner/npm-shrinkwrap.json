@@ -1,15 +1,15 @@
 {
   "name": "@sitespeed.io/testrunner",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "@sitespeed.io/testrunner",
-      "version": "0.5.2",
+      "version": "0.5.3",
       "license": "AGPL-3.0-only",
       "dependencies": {
-        "bull": "4.15.1",
+        "bull": "4.16.3",
         "execa": "9.3.0",
         "intel": "1.2.0",
         "joi": "17.13.3",
@@ -499,9 +499,9 @@
       }
     },
     "node_modules/bull": {
-      "version": "4.15.1",
-      "resolved": "https://registry.npmjs.org/bull/-/bull-4.15.1.tgz",
-      "integrity": "sha512-knVKiZdrXbRkB+fWqNryDz85b3JfsT3dBrZexkztwvTH/AFmpHvsC933VB3JX18aJCz47E+xdO57xbDvxljoAg==",
+      "version": "4.16.3",
+      "resolved": "https://registry.npmjs.org/bull/-/bull-4.16.3.tgz",
+      "integrity": "sha512-BZbPzNiKXczfZPXBTVhcN73b+CQFHTzVb7yJi1bSYld4/8bDc9oh/j/dYTsQBgOAZIZahFeHO6dPHbVEXXCvCg==",
       "dependencies": {
         "cron-parser": "^4.2.1",
         "get-port": "^5.1.1",
