@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY package.json npm-shrinkwrap.json ./
 
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev && npm cache clean --force
 
 COPY . .
 COPY docker/start.sh /usr/src/app/start.sh
