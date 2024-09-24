@@ -1,6 +1,12 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.4.3 - UNRELEASED 
+### Fixed
+* Express 5.0.0 [#86](https://github.com/sitespeedio/onlinetest/pull/86).
+* Update body parser [#88](https://github.com/sitespeedio/onlinetest/pull/88).
+* Bull 4.16.3 [#87](https://github.com/sitespeedio/onlinetest/pull/87)
+
 ## 0.4.2 - 2024-09-09
 ### Fixed
 * Device id was broken in the front end [#80](https://github.com/sitespeedio/onlinetest/pull/80) and [#81](https://github.com/sitespeedio/onlinetest/pull/81).
