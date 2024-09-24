@@ -1,6 +1,6 @@
 {
   "name": "@sitespeed.io/server",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "description": "The sitespeed.io server",
   "type": "module",
   "exports": "./app.js",
@@ -8,8 +8,8 @@
     "sitespeed.io-server": "./app.js"
   },
   "engines": {
-		"node": ">=20"
-	},
+    "node": ">=20"
+  },
   "publishConfig": {
     "access": "public"
   },
