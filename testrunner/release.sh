@@ -5,7 +5,7 @@ set -e
 # You need np for this to work
 # npm install --global np
 
-np $* --no-yarn
+np $* --no-yarn --tag-version-prefix=testrunner-v
 
 # bin/browsertime.js --help > ../sitespeed.io/docs/documentation/browsertime/configuration/config.md
 
