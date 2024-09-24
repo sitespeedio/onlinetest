@@ -1,7 +1,7 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
-## 0.4.3 - UNRELEASED 
+## 0.4.3 - 2024-09-24
 ### Fixed
 * Express 5.0.0 [#86](https://github.com/sitespeedio/onlinetest/pull/86).
 * Update body parser [#88](https://github.com/sitespeedio/onlinetest/pull/88).
