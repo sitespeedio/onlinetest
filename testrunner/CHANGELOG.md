@@ -1,6 +1,6 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
-## 0.5.4 - UNRELEASED
+## 0.5.4 - 2024-09-24
 ### Fixed
 *  Bull 4.16.3 [#87](https://github.com/sitespeedio/onlinetest/pull/87)
 
