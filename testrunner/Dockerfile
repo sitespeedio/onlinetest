@@ -23,12 +23,5 @@ COPY docker/start.sh /usr/src/app/start.sh
 COPY docker/dockerdefault.yaml /usr/src/app/config/default.yaml
 
 RUN chmod +x /usr/src/app/start.sh
-# RUN useradd --user-group --create-home --shell /bin/false sitespeed && \
- #   chown -R sitespeed:sitespeed /usr/src/app && \
- #   chmod +x /usr/src/app/start.sh && \
-#    groupadd docker && \
-#    usermod -aG docker sitespeed
-
-# USER sitespeed
 
 ENTRYPOINT ["/usr/src/app/start.sh"]
