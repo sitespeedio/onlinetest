@@ -6,6 +6,7 @@ import { execa } from 'execa';
 import log from 'intel';
 import nconf from 'nconf';
 import get from 'lodash.get';
+import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { getBaseFilePath } from '../util.js';
@@ -117,7 +118,10 @@ function prepareSitespeedConfig(job) {
     nconf.get('sitespeedioConfigFile') === undefined
       ? getBaseFilePath('./config/sitespeedDefault.json')
       : path.resolve(nconf.get('sitespeedioConfigFile'));
-  return jobConfig;
+
+  const testrunnerConfig = nconf.get('sitespeed.io') || {};
+  const config = merge({}, testrunnerConfig, jobConfig);
+  return config;
 }
 
 async function runTest(job, workingDirectory, configFileName, logger) {
@@ -163,7 +167,7 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   } catch (error) {
     // if sitespeed.io exits with 0 zero, execa will throw an error
     logger.error('Could not run sitespeed.io', error);
-    exitCode = error.exitCode;
+    throw error;
   }
   try {
     const result = await readFile(
