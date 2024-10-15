@@ -29,7 +29,7 @@ export class SitespeedioTestRunner {
 
     // If hostname isn't configured add it
     const hostname = os.hostname();
-    if (nconf.get('hostname') !== undefined) {
+    if (serverConfig.hostname === undefined) {
       serverConfig.hostname = hostname;
       logger.info('No hostname found in configuration. Will use %s', hostname);
     }
@@ -69,7 +69,7 @@ export class SitespeedioTestRunner {
       }
     }
 
-    await queueHandler.start();
+    await queueHandler.start(serverConfig);
 
     process.on('uncaughtException', error => {
       // ioredis configuration is tricky to get right
@@ -81,6 +81,11 @@ export class SitespeedioTestRunner {
   async stop() {
     try {
       const serverConfig = nconf.get('location');
+
+      const hostname = os.hostname();
+      if (serverConfig.hostname === undefined) {
+        serverConfig.hostname = hostname;
+      }
 
       const testRunnerQueue = await queueHandler.getQueue('testrunners');
 

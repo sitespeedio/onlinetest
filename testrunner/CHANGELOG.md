@@ -1,5 +1,26 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 0.5.6 - 2024-09-24
+### Fixed
+*  Bull 4.16.3 [#87](https://github.com/sitespeedio/onlinetest/pull/87)
+
+## 0.5.3 - 2024-08-02
+### Fixed
+* Correctly set the hostname in the configuration file [#83](https://github.com/sitespeedio/onlinetest/pull/83).
+
+## 0.5.2 - 2024-08-02
+### Fixed
+* Fix a bug setting the baseline for compare plugin [#71](https://github.com/sitespeedio/onlinetest/pull/71).
+
+## 0.5.1 - 2024-08-02
+### Fixed
+* Correct version in package.json
+
+## 0.5.0 - 2024-08-02
+### Added 
+* When running compare plugin tests using Docker, set the baseline directory automatically [#70](https://github.com/sitespeedio/onlinetest/pull/70)
+* * Make it possible to choose container that runs the test, using the API [#69](https://github.com/sitespeedio/onlinetest/pull/69/)
+
 ## 0.4.1 - 2024-07-30
 ### Fixed
 * Log testrunner version on startup [#67](https://github.com/sitespeedio/onlinetest/pull/67).

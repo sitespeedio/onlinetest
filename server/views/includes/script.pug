@@ -33,13 +33,15 @@ script.
               document.getElementById('connectivity').add(new Option(connectivity,connectivity), undefined);
             }
 
-              for (let testType of location.setup.testTypes) {
-                document.getElementById('testType').add(new Option(testType,testType), undefined);
+            for (let setup of location.setup) {
+              if (setup.type) {
+                document.getElementById('testType').add(new Option(setup.type, setup.type), undefined);
+              }
             }
 
             for (let setup of location.setup) {
-              if (setup.id) {
-                document.getElementById('deviceId').add(new Option(setup.id,setup.id), undefined);
+              if (setup.deviceId) {
+                document.getElementById('deviceId').add(new Option(setup.deviceId,setup.deviceId), undefined);
               }
             }
           } 

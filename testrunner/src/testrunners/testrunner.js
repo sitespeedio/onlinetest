@@ -5,6 +5,8 @@ import os from 'node:os';
 import { execa } from 'execa';
 import log from 'intel';
 import nconf from 'nconf';
+import get from 'lodash.get';
+import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { getBaseFilePath } from '../util.js';
@@ -117,7 +119,9 @@ function prepareSitespeedConfig(job) {
       ? getBaseFilePath('./config/sitespeedDefault.json')
       : path.resolve(nconf.get('sitespeedioConfigFile'));
 
-  return jobConfig;
+  const testrunnerConfig = nconf.get('sitespeed.io') || {};
+  const config = merge({}, testrunnerConfig, jobConfig);
+  return config;
 }
 
 async function runTest(job, workingDirectory, configFileName, logger) {
@@ -126,10 +130,31 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     workingDirectory,
     configFileName
   );
-  const binary = nconf.get('executable');
+
+  let binary = nconf.get('executable');
+  let environment = {};
+  if (
+    (job.data.extras && job.data.extras.includes('--webpagereplay')) ||
+    job.data.config.webpagereplay
+  ) {
+    binary = './wpr/replay.sh';
+    environment = {
+      env: {
+        ANDROID: true
+      }
+    };
+    const deviceId =
+      get(job.data.config, 'browsertime.firefox.android.deviceSerial') ||
+      get(job.data.config, 'browsertime.chrome.android.deviceSerial');
+
+    if (deviceId) {
+      environment.env.DEVICE_SERIAL = deviceId;
+    }
+  }
+
   let exitCode = 0;
   try {
-    const process = execa(binary, parameters);
+    const process = execa(binary, parameters, environment);
     process.stdout.on('data', chunk => {
       logger.debug(chunk.toString());
       job.log(chunk.toString());
@@ -142,7 +167,7 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   } catch (error) {
     // if sitespeed.io exits with 0 zero, execa will throw an error
     logger.error('Could not run sitespeed.io', error);
-    exitCode = error.exitCode;
+    throw error;
   }
   try {
     const result = await readFile(

@@ -19,7 +19,6 @@ import {
   getDeviceQueue
 } from '../queuehandler.js';
 import { setConfigById } from '../configs.js';
-import { getBaseFilePath } from './fileutil.js';
 
 import { updateStatus } from '../database/index.js';
 
@@ -30,12 +29,9 @@ async function getDefaultSitespeedConfiguration() {
     const result = await readFile(
       path.resolve(nconf.get('defaultSitespeedioConfigFile'))
     );
+    log.info('Using configiguration from defaultSitespeedioConfigFile');
     return JSON.parse(result.toString());
-  }
-  const result = await readFile(
-    path.resolve(getBaseFilePath('./config/sitespeed.json'))
-  );
-  return JSON.parse(result.toString());
+  } else return nconf.get('sitespeed.io') || {};
 }
 
 const uniqueNamesConfig = {
@@ -85,6 +81,10 @@ export async function addTest(request) {
     lighthouse: useLighthouse ? { enable: true } : undefined,
     android: testType === 'android'
   };
+
+  if (testType === 'emulatedMobile') {
+    userConfig.mobile = true;
+  }
 
   let config = {};
   merge(config, defaultConfig, userConfig);

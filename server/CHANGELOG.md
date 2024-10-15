@@ -1,6 +1,26 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 0.4.5 - 2024-09-24
+### Fixed
+* Express 5.0.0 [#86](https://github.com/sitespeedio/onlinetest/pull/86).
+* Update body parser [#88](https://github.com/sitespeedio/onlinetest/pull/88).
+* Bull 4.16.3 [#87](https://github.com/sitespeedio/onlinetest/pull/87)
+
+## 0.4.2 - 2024-09-09
+### Fixed
+* Device id was broken in the front end [#80](https://github.com/sitespeedio/onlinetest/pull/80) and [#81](https://github.com/sitespeedio/onlinetest/pull/81).
+* The internal configuration was broken in the way that removing/adding testrunners failed removing correct configurations [#84](https://github.com/sitespeedio/onlinetest/pull/84). This fix also needs [#83](https://github.com/sitespeedio/onlinetest/pull/83) in the testrunners.
+
+## 0.4.1 - 2024-08-23
+### Fixed
+* Fix bug so you can choose emulated mobile in GUI [#76](https://github.com/sitespeedio/onlinetest/pull/76).
+
+## 0.4.0 - 2024-08-02
+### Added
+* Merged slug/label column in search result [#68](https://github.com/sitespeedio/onlinetest/pull/68)
+* Make it possible to choose container that runs the test, using the API [#69](https://github.com/sitespeedio/onlinetest/pull/69/)
+ 
 ## 0.3.2 - 2024-07-15
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).

@@ -160,6 +160,12 @@ block content
                         input(type='checkbox' value=test.id name='har')
                       else 
                         input(type='checkbox' value=test.id name='har' disabled)
+          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
+            button.button.is-link.is-medium.mr-2(
+              onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
+            button.button.is-link.is-medium(
+              onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
+          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons 
             button.button.is-primary.is-medium(accesskey='c') #{getText('search.button.compare')}
         else 
           .message.is-fullwidth.is-large.has-background-white.has-text-centered

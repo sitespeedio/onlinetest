@@ -16,7 +16,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['sitespeed-result/*', 'default/*']
+    ignores: ['sitespeed-result/*', 'default/*', 'wpr/*']
   },
   ...compat.extends('eslint:recommended', 'plugin:unicorn/recommended'),
   {

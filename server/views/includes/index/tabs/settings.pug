@@ -44,9 +44,10 @@ block content
                 option(value=connectivity) #{connectivity}
 
         +dropdown(getText('index.tab.settings.device'),'deviceId')
-            each setup in serverConfig[0].setup[0]
-                if setup.id
-                    option(value=setup.id) #{setup.id} (#{queueNamesAndSize[setup.queue]})
+            if (serverConfig[0].setup[0].type === 'android')
+                each setup in serverConfig[0].setup
+                    if setup.deviceId
+                        option(value=setup.deviceId) #{setup.deviceId} (#{queueNamesAndSize[setup.queue]})
 
         +dropdown(getText('index.tab.settings.iterations'),'iterations')
             option 1
