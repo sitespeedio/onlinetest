@@ -68,7 +68,8 @@ const configSchema = Joi.object({
   workingDirectory: Joi.string().optional(),
   executable: Joi.string().required(),
   docker: dockerSchema.required(),
-  queue: queueSchema.optional()
+  queue: queueSchema.optional(),
+  sitespeedio: Joi.object().optional().unknown(true)
 });
 
 export function validate(config) {

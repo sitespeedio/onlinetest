@@ -83,6 +83,7 @@
   "error.validation.missinglocation": "Missing location",
   "error.validation.missingtesttype": "Missing testType",
   "error.validation.nomatchingtestwithid": "There are no test with id %s",
+  "error.missingresultbaseurl":"Missing resultBaseURL setup for sitespeeed.io. You need to fix that in your configuration.",
   "error.testfailed": "The test failed to run",
   "error.parsingscript": "Could not parse the script",
   "error.urlnotvalid": "The URL %s is not a valid URL",

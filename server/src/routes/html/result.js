@@ -1,4 +1,5 @@
 import nconf from 'nconf';
+import log from 'intel';
 
 import { Router } from 'express';
 import { getConfigByTestId } from '../../configs.js';
@@ -8,6 +9,7 @@ import { getText } from '../../util/text.js';
 import { getTest } from '../../database/index.js';
 
 export const result = Router();
+const logger = log.getLogger('sitespeedio.server');
 
 result.get('/:id', async function (request, response) {
   const id = request.params.id;
@@ -17,7 +19,17 @@ result.get('/:id', async function (request, response) {
     if (job) {
       const status = await job.getState();
       if (status === 'completed') {
-        return response.redirect(job.returnvalue.pageSummaryUrl);
+        if (job.returnvalue.pageSummaryUrl) {
+          return response.redirect(job.returnvalue.pageSummaryUrl);
+        } else {
+          logger.error('Missing resultBaseURL setup for sitespeeed.io');
+          return response.render('error', {
+            id: id,
+            nconf,
+            message: getText('error.missingresultbaseurl'),
+            getText
+          });
+        }
       } else if (status === 'failed') {
         const { logs } = await workQueue.getJobLogs(id);
         return response.render('error', {
@@ -75,7 +87,17 @@ result.get('/:id', async function (request, response) {
         getText
       });
     } else if (testResult.status === 'completed') {
-      return response.redirect(testResult.result_url);
+      if (testResult.result_url) {
+        return response.redirect(testResult.result_url);
+      } else {
+        logger.error('Missing resultBaseURL setup for sitespeeed.io');
+        return response.render('error', {
+          id: id,
+          nconf,
+          message: getText('error.missingresultbaseurl'),
+          getText
+        });
+      }
     } else if (testResult.status === 'failed') {
       return response.render('error', {
         status: testResult,
