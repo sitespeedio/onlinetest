@@ -5,6 +5,7 @@ import os from 'node:os';
 import { execa } from 'execa';
 import log from 'intel';
 import nconf from 'nconf';
+import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
 
@@ -47,16 +48,19 @@ export default async function runJob(job) {
       job.data.config.extends = nconf.get('sitespeedioConfigFile');
     }
 
+    const testrunnerConfig = nconf.get('sitespeed.io') || {};
+    const config = merge({}, testrunnerConfig, job.data.config);
+
     // If we use baseline setup the directory by default
     if (
       (job.data.extras && job.data.extras.includes('--compare.')) ||
-      job.data.config.compare
+      config.compare
     ) {
       // This is inside the container and we always use /baseline
       if (job.data.config.compare) {
-        job.data.config.compare.baselinePath = '/baseline';
+        config.compare.baselinePath = '/baseline';
       } else {
-        job.data.config.compare = {
+        config.compare = {
           baselinePath: '/baseline'
         };
       }
@@ -64,7 +68,7 @@ export default async function runJob(job) {
 
     await writeFile(
       join(workingDirectory, configFileName),
-      JSON.stringify(job.data.config)
+      JSON.stringify(config)
     );
 
     const parameters = setupDockerParameters(
