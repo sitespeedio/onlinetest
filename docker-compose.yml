@@ -33,7 +33,7 @@ services:
         - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       command: server /data --console-address ":9001"
     mc:
-      image: minio/mc:RELEASE.2024-05-09T17-04-24Z
+      image: minio/mc:RELEASE.2024-10-08T09-37-26Z
       depends_on:
         - minio
       entrypoint: >
