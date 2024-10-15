@@ -167,7 +167,7 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   } catch (error) {
     // if sitespeed.io exits with 0 zero, execa will throw an error
     logger.error('Could not run sitespeed.io', error);
-    exitCode = error.exitCode;
+    throw error;
   }
   try {
     const result = await readFile(
