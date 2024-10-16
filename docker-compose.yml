@@ -1,57 +1,56 @@
 services:
-    keydb:
-      image: eqalpha/keydb:${KEYDB_DOCKER_VERSION}
-      hostname: keydb
-      ports:
-        - "6379:6379"
-      command: ["keydb-server", "/etc/keydb/keydb.conf", "--server-threads" , "2"]
-      restart: always
-      networks:
-        - skynet
-      volumes:
-        - keydb_data:/data
-        - ./keydb.conf:/etc/keydb/keydb.conf 
-    postgresql:
-      image: postgres:${POSTGRESQL_DOCKER_VERSION}
-      hostname: postgresql
-      #ports:
-      #  - "5432:5432"
-      networks:
-        - skynet
-      environment:
-        - POSTGRES_USER=${POSTGRES_USER}
-        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-        - POSTGRES_DB=sitespeedio
-      volumes:
-        - ./server/database/setup/:/docker-entrypoint-initdb.d
-        - postgres-data:/var/lib/postgresql/data
-    minio:
-      image: minio/minio:${MINIO_DOCKER_VERSION}
-      volumes:
-        - minio-data:/data
-      ports:
-        - "9000:9000"
-      # - "9001:9001"
-      environment:
-        - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-        - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      command: server /data --console-address ":9001"
-      networks:
-        - skynet
-    mc:
-      image: minio/mc:${MINIO_MC_DOCKER_VERSION}
-      depends_on:
-        - minio
-      networks:
-        - skynet
-      entrypoint: >
-        /bin/sh -c "
-        /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
-        (/usr/bin/mc mb --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
-        /usr/bin/mc ilm rule add --expire-days 30 sitespeedio/sitespeedio &&
-        /usr/bin/mc anonymous set public sitespeedio/sitespeedio &&
-        /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
-        echo 'MinIO and lifecycle policy setup complete.'"
+  keydb:
+    image: eqalpha/keydb:${KEYDB_DOCKER_VERSION}
+    hostname: keydb
+    ports:
+      - "6379:6379"
+    command: ["keydb-server", "/etc/keydb/keydb.conf", "--server-threads" , "2"]
+    restart: always
+    networks:
+      - skynet
+    volumes:
+      - keydb_data:/data
+      - ./keydb.conf:/etc/keydb/keydb.conf 
+  postgresql:
+    image: postgres:${POSTGRESQL_DOCKER_VERSION}
+    hostname: postgresql
+    #ports:
+    #  - "5432:5432"
+    networks:
+      - skynet
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=sitespeedio
+    volumes:
+      - ./server/database/setup/:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+  minio:
+    image: minio/minio:${MINIO_DOCKER_VERSION}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    networks:
+      - skynet
+  mc:
+    image: minio/mc:${MINIO_MC_DOCKER_VERSION}
+    depends_on:
+      - minio
+    networks:
+      - skynet
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
+      (/usr/bin/mc mb --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
+      /usr/bin/mc ilm rule add --expire-days 30 sitespeedio/sitespeedio &&
+      /usr/bin/mc anonymous set public sitespeedio/sitespeedio &&
+      /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
+      echo 'MinIO and lifecycle policy setup complete.'"
 volumes:
   postgres-data:
   minio-data:
