@@ -14,8 +14,8 @@ services:
   postgresql:
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
     hostname: postgresql
-    #ports:
-    #  - "5432:5432"
+    ports:
+      - "5432:5432"
     networks:
       - skynet
     environment:
