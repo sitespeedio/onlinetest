@@ -68,7 +68,7 @@ executable: "sitespeed.io"
 # baselinedir is the directory that is mapped where baseline data is stored
 docker:
   container: "sitespeedio/sitespeed.io:35"
-  extraparameters: "--cap-add=NET_ADMIN --network=skynet"
+  extraparameters: "--cap-add=NET_ADMIN"
   #baselinedir: "$(pwd)"
 
 # The number of jobs to keep in the queue

@@ -62,7 +62,9 @@ nconf.env({
   whitelist: [
     'redis_host',
     'redis_port',
-    'redid_password',
+    'redis_password',
+    'docker_extraparameters',
+    'docker_container',
     'sitespeed.io_s3_endpoint',
     'sitespeed.io_s3_bucketname',
     'sitespeed.io_s3_key',
