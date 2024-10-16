@@ -2,18 +2,22 @@ services:
     keydb:
       image: eqalpha/keydb:${KEYDB_DOCKER_VERSION}
       hostname: keydb
-      ports:
-        - "6379:6379"
+      #ports:
+      #  - "6379:6379"
       command: ["keydb-server", "/etc/keydb/keydb.conf", "--server-threads" , "2"]
       restart: always
+      networks:
+        - skynet
       volumes:
         - keydb_data:/data
         - ./keydb.conf:/etc/keydb/keydb.conf 
     postgresql:
       image: postgres:${POSTGRESQL_DOCKER_VERSION}
       hostname: postgresql
-      ports:
-        - "5432:5432"
+      #ports:
+      #  - "5432:5432"
+      networks:
+        - skynet
       environment:
         - POSTGRES_USER=${POSTGRES_USER}
         - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -27,15 +31,19 @@ services:
         - minio-data:/data
       ports:
         - "9000:9000"
-        - "9001:9001"
+      # - "9001:9001"
       environment:
         - MINIO_ROOT_USER=${MINIO_ROOT_USER}
         - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       command: server /data --console-address ":9001"
+      networks:
+        - skynet
     mc:
       image: minio/mc:${MINIO_MC_DOCKER_VERSION}
       depends_on:
         - minio
+      networks:
+        - skynet
       entrypoint: >
         /bin/sh -c "
         /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD} &&
@@ -44,9 +52,58 @@ services:
         /usr/bin/mc anonymous set public sitespeedio/sitespeedio &&
         /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
         echo 'MinIO and lifecycle policy setup complete.'"
+
+    sitespeed.io-server:
+      image: sitespeedio/server:latest
+      environment:
+        redis_host: keydb
+        redis_port: 6379
+        redis_password: ${KEYDB_PASSWORD}
+        database_user: ${POSTGRES_USER}
+        database_server: postgresql
+        database_name: sitespeedio
+        database_password: ${POSTGRES_PASSWORD}
+        database_port: 5432
+      ports:
+        - "3000:3000"
+      networks:
+        - skynet
+      depends_on:
+        - keydb
+        - postgresql
+        - minio
+    sitespeed.io-testrunner:
+      image: sitespeedio/testrunner:latest
+      environment:
+        redis_host: keydb
+        redis_port: 6379
+        redis_password: ${KEYDB_PASSWORD}
+        sitespeed.io_s3_endpoint: "http://minio:9000" 
+        sitespeed.io_s3_bucketname: 'sitespeedio'
+        sitespeed.io_s3_key: 'sitespeedio'
+        sitespeed.io_s3_secret:  "tracksofmytears"
+        sitespeed.io_s3_region: "motown"
+        sitespeed.io_s3_options_forcePathStyle: true
+        sitespeed.io_s3_removeLocalResult: true
+        sitespeed.io_resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - /tmp:/tmp
+      cap_add:
+        - NET_ADMIN
+      depends_on:
+        - keydb
+        - minio
+        - sitespeed.io-server
+      networks:
+        - skynet
+    
 volumes:
   postgres-data:
   minio-data:
   keydb_data:
     driver: local
 
+networks:
+  skynet:
+    name: skynet

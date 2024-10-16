@@ -19,9 +19,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY . .
-COPY docker/start.sh /usr/src/app/start.sh
 COPY docker/dockerdefault.yaml /usr/src/app/config/default.yaml
 
-RUN chmod +x /usr/src/app/start.sh
-
-ENTRYPOINT ["/usr/src/app/start.sh"]
+ENTRYPOINT ["node", "app.js"]
+CMD []

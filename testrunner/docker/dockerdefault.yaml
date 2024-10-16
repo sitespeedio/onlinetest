@@ -62,13 +62,13 @@ log:
 executable: "sitespeed.io"
 
 # If you run sitespeed.io using Docker this is the container that is used.
-# If you use the latest, make sure to docker pull the container once a day
-# to get the latest version
+# If you use the major, make sure to docker pull the container once a day
+# to get the latest major version update.
 # extraparameters will be passed on to Docker, between docker run and the container name
-# baselineDddir is the directory that is mappedd where baseline data is stored
+# baselinedir is the directory that is mapped where baseline data is stored
 docker:
   container: "sitespeedio/sitespeed.io:35"
-  extraparameters: "--cap-add=NET_ADMIN"
+  extraparameters: "--cap-add=NET_ADMIN --network=skynet"
   #baselinedir: "$(pwd)"
 
 # The number of jobs to keep in the queue

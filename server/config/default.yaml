@@ -15,7 +15,7 @@ redis:
 # Configure the postgresql database
 database:
   user: sitespeedio
-  server: localhost
+  server: 127.0.0.1
   name: sitespeedio
   password: jhde7gFArda33Saa1!4dd2dagJ
   port: 5432
@@ -87,9 +87,6 @@ admin:
   basicAuth:
     login: appojke
     password: monkeyboy 
-  
-# The default sitspeed.io configuration file that will be merged to all tests.
-# defaultSitespeedioConfigFile: 
 
 # The number of jobs to keep in the queue
 # Depending on how many jobs you run and how much memory 
@@ -98,12 +95,18 @@ queue:
   removeOnComplete: 50
   removeOnFail: 50
 
+
+# The default sitspeed.io configuration file that will be merged to all tests.
+# defaultSitespeedioConfigFile: 
+
+# If you don't setup a default sitespeed.io configuration, you can add 
+# your sitespeed.io configuration directly in this block
 sitespeed.io:
-  s3:
-    endpoint: "http://127.0.0.1:9000"
-    bucketname: "sitespeedio"
-    key: "sitespeedio"
-    secret: "tracksofmytears"
-    region: "motown"
+  #s3:
+    # endpoint: "http://127.0.0.1:9000"
+    #bucketname: "sitespeedio"
+    #key: "sitespeedio"
+    #secret: "tracksofmytears"
+    #region: "motown"
     
-  resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
+  # resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
