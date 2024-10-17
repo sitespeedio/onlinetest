@@ -18,7 +18,7 @@ jobs:
     - name: Install Docker and dependencies
       run: brew install docker docker-machine docker-compose
     - name: Start dependencies
-      run: docker compose -f docker-compose.yml -f docker-compose-local.yml up -d
+      run: docker-compose -f docker-compose.yml -f docker-compose-local.yml up -d
     - name: Show versions
       run: |
         docker --version
