@@ -56,6 +56,25 @@ const configFile = nconf.get('config') || defaultConfig;
 const fileExtension = extname(configFile).toLowerCase();
 let configFromFile;
 
+nconf.env({
+  parseValues: true,
+  separator: '_',
+  whitelist: [
+    'redis_host',
+    'redis_port',
+    'redis_password',
+    'docker_extraparameters',
+    'docker_container',
+    'sitespeed.io_s3_endpoint',
+    'sitespeed.io_s3_bucketname',
+    'sitespeed.io_s3_key',
+    'sitespeed.io_s3_secret',
+    'sitespeed.io_s3_region',
+    'sitespeed.io_s3_options_forcePathStyle',
+    'sitespeed.io_resultBaseURL'
+  ]
+});
+
 try {
   const fileContent = fs.readFileSync(
     path.resolve(process.cwd(), configFile),

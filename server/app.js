@@ -41,6 +41,8 @@ const configFile = nconf.get('config')
 const fileExtension = extname(configFile).toLowerCase();
 let configFromFile;
 
+nconf.env({ parseValues: true, separator: '_' });
+
 try {
   const fileContent = fs.readFileSync(configFile, 'utf8');
   if (fileExtension === '.json') {
