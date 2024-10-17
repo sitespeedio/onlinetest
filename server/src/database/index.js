@@ -149,7 +149,7 @@ export async function getTestHar(id) {
   }
 }
 
-export async function testConnection(retries = 3, delay = 3000) {
+export async function testConnection(retries = 3, delay = 5000) {
   const test = 'SELECT 1 FROM sitespeed_io_test_runs';
   try {
     const result = await DatabaseHelper.getInstance().query(test);
@@ -158,6 +158,9 @@ export async function testConnection(retries = 3, delay = 3000) {
     logError('Could not get a connection to the database', error);
 
     if (retries > 0) {
+      logError(
+        `Retrying in ${delay / 1000} seconds... (${retries} retries left)`
+      );
       await new Promise(resolve => setTimeout(resolve, delay));
       return testConnection(retries - 1, delay);
     } else {
