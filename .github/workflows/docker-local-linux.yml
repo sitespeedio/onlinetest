@@ -30,7 +30,7 @@ jobs:
         bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location docker --headless --api.json --s3.endpoint "http://${{ env.HOST_IP }}:9000"
     - name: Display Server log
       if: failure() || success()
-      run: docker log onlinetest-sitespeed.io-server-1
+      run: docker logs onlinetest-sitespeed.io-server-1
     - name: Display testrunner log
       if: failure() || success()
-      run: docker log onlinetest-sitespeed.io-testrunner-1
+      run: docker logs onlinetest-sitespeed.io-testrunner-1
