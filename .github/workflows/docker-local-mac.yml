@@ -1,4 +1,4 @@
-name: Test running everything in Docker using Linux
+name: Test running everything in Docker using Mac
 on:
   push:
     branches:
