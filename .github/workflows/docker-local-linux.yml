@@ -1,0 +1,38 @@
+name: Test running everything in Docker using Linux
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+    - uses: actions/checkout@v4
+    - name: Start dependencies
+      run: docker compose -f docker-compose.yml -f docker-compose-local.yml up -d
+    - name: Show versions
+      run: |
+        docker --version
+        docker network ls
+        docker network inspect skynet
+    - name: Get host IP
+      run: echo "HOST_IP=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
+    - name: Run a test
+      run: |
+        git clone https://github.com/sitespeedio/sitespeed.io.git
+        cd sitespeed.io
+        npm install
+        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location docker --headless --api.json --s3.endpoint "http://${{ env.HOST_IP }}:9000"
+    - name: Display Server log
+      if: failure() || success()
+      run: docker logs onlinetest-sitespeed.io-server-1
+    - name: Display testrunner log
+      if: failure() || success()
+      run: docker logs onlinetest-sitespeed.io-testrunner-1

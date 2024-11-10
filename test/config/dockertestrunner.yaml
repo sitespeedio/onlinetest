@@ -37,3 +37,13 @@ executable: "sitespeed.io"
 # to get the latest version
 docker:
   container: "sitespeedio/sitespeed.io-autobuild:main"
+
+sitespeed.io:
+  s3:
+    endpoint: "http://127.0.0.1:9000"
+    bucketname: "sitespeedio"
+    key: "sitespeedio"
+    secret: "tracksofmytears"
+    region: "motown"
+    
+  resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
