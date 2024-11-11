@@ -27,6 +27,7 @@ jobs:
     - name: Show versions
       run: |
         docker --version
+        docker ps
         docker network ls
         docker network inspect skynet
     - name: Get host IP
