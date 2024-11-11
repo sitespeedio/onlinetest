@@ -61,11 +61,6 @@ try {
   process.exit(1);
 }
 
-process.on('uncaughtException', error => {
-  console.log('Uncaught Exception thrown:', error);
-  console.log('Trace', error.stack);
-});
-
 const server = new SitespeedioServer();
 server.start();
 
