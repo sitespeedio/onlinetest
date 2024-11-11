@@ -15,7 +15,14 @@ jobs:
       with:
         node-version: '20.x'
     - uses: actions/checkout@v4
+    - name: Build server
+      run: docker build --load --tag sitespeedio/server:local-action -f ./server/Dockerfile server
+    - name: Build testrunner
+      run: docker build --load  --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
     - name: Start dependencies
+      env:
+        SITESPEED_IO_SERVER_VERSION: "local-action"
+        SITESPEED_IO_TESTRUNNER_VERSION: "local-action"
       run: docker compose -f docker-compose.yml -f docker-compose-local.yml up -d
     - name: Show versions
       run: |
