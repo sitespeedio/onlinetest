@@ -10,6 +10,7 @@ services:
       database_name: sitespeedio
       database_password: ${POSTGRES_PASSWORD}
       database_port: 5432
+      validTestDomains: ${VALID_TEST_DOMAINS}
     ports:
       - "3000:3000"
     networks:
@@ -24,11 +25,12 @@ services:
       redis_host: keydb
       redis_port: 6379
       redis_password: ${KEYDB_PASSWORD}
+      docker_container: ${SITESPEED_IO_CONTAINER}
       docker_extraparameters: '--cap-add=NET_ADMIN --network=skynet'
       sitespeed.io_s3_endpoint: "http://minio:9000" 
       sitespeed.io_s3_bucketname: 'sitespeedio'
-      sitespeed.io_s3_key: 'sitespeedio'
-      sitespeed.io_s3_secret:  "tracksofmytears"
+      sitespeed.io_s3_key: ${MINIO_USER}
+      sitespeed.io_s3_secret:  ${MINIO_PASSWORD}
       sitespeed.io_s3_region: "motown"
       sitespeed.io_s3_options_forcePathStyle: true
       sitespeed.io_s3_removeLocalResult: true
