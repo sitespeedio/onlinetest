@@ -156,7 +156,10 @@ export async function testConnection(retries = 3, delay = 5000) {
     const result = await databaseHelper.query(test);
     return result.rows[0];
   } catch (error) {
-    logError('Could not get a connection to the database', error);
+    logError(
+      `Could not get a connection to the database (retries ${retries})`,
+      error
+    );
 
     if (retries > 0) {
       logError(
