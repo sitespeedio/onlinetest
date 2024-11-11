@@ -162,7 +162,7 @@ export async function testConnection(retries = 3, delay = 5000) {
     );
 
     if (retries > 0) {
-      logError(
+      logger.error(
         `Retrying in ${delay / 1000} seconds... (${retries} retries left)`
       );
       await new Promise(resolve => setTimeout(resolve, delay));
