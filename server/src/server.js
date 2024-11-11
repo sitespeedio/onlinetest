@@ -114,6 +114,13 @@ export class SitespeedioServer {
   }
 
   async start() {
+    process.on('uncaughtException', error => {
+      // ioredis configuration is tricky to get right
+      // this can spam the log but at least we catch everything
+      logger.error('Uncaught Exception thrown:', error);
+      logger.error('Trace', error.stack);
+    });
+
     try {
       await testConnection();
     } catch (error) {
@@ -127,12 +134,6 @@ export class SitespeedioServer {
     await setupResultQueue();
     // Tell the world that we are starting
     await publish('server', 'start');
-
-    process.on('uncaughtException', error => {
-      // ioredis configuration is tricky to get right
-      // this can spam the log but at least we catch everything
-      logger.error('Uncaught Exception thrown:', error);
-    });
   }
 
   async stop() {
