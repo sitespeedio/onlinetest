@@ -1,6 +1,6 @@
 services:
   sitespeed.io-server:
-    image: sitespeedio/server:latest
+    image: sitespeedio/server:${SITESPEED_IO_SERVER_VERSION}
     environment:
       redis_host: keydb
       redis_port: 6379
@@ -19,7 +19,7 @@ services:
       - postgresql
       - minio
   sitespeed.io-testrunner:
-    image: sitespeedio/testrunner:latest
+    image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
     environment:
       redis_host: keydb
       redis_port: 6379
@@ -32,7 +32,7 @@ services:
       sitespeed.io_s3_region: "motown"
       sitespeed.io_s3_options_forcePathStyle: true
       sitespeed.io_s3_removeLocalResult: true
-      sitespeed.io_resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
+      sitespeed.io_resultBaseURL: ${RESULT_BASE_URL}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /tmp:/tmp
