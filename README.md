@@ -7,7 +7,9 @@
 
 # Onlinetest - deploy your own version of sitespeed.io online.
 
-Setup your own online version of sitespeed.io. You get:
+Setup your own online version of sitespeed.io.
+
+![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/blob/main/img/startscreen.png)
 
 * **A server with GUI and API**:
    - Add tests using a HTML frontend (you can style the frontend using your own CSS)
