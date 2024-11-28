@@ -8,7 +8,7 @@
 
 # Onlinetest - deploy your own version of sitespeed.io online.
 
-This project helps you set up your own online version of sitespeed.io. You get:
+Setup your own online version of sitespeed.io. You get:
 
 * **A server with GUI and API**:
    - Add tests using a HTML frontend
@@ -23,7 +23,7 @@ This project helps you set up your own online version of sitespeed.io. You get:
 
 ## Quick setup on your local machine
 
-Follow these steps to quickly set up and run the online version of sitespeed.io on your local machine. Make sure you have [Docker](https://www.docker.com), [docker-compose](https://docs.docker.com/compose/), [sitespeed.io](https://www.sitespeed.io/documentation/sitespeed.io/installation/) and [NodeJS](https://nodejs.org/) installed on your machine.
+Follow these steps to quickly set up and run the online version of sitespeed.io on your local Linux or Mac OS machine. Make sure you have [Docker](https://www.docker.com) and [docker compose](https://docs.docker.com/compose/) installed.
 
 1. **Clone the repository:**
 
@@ -37,37 +37,48 @@ Follow these steps to quickly set up and run the online version of sitespeed.io 
     cd onlinetest
     ```
 
-3. **Start the Docker containers (Redis/PostgreSQL/Minio):**
+3. **Start the Docker containers (Redis/PostgreSQL/Minio/sitespeed.io server and testrunner):**
 
     ```bash
-    docker compose up
-    ```
-
-4. **Open a new terminal tab or window and navigate to the server directory:**
-
-    ```bash
-    cd server
-    ```
-
-5. **Start the server:**
-
-    ```bash
-    node app.js
-    ```
-
-6. **Open another new terminal tab or window and navigate to the testrunner directory:**
-
-    ```bash
-    cd ../testrunner
-    ```
-
-7. **Start the testrunner:**
-
-    ```bash
-    node app.js
+    docker compose -f docker-compose.yml -f docker-compose.app.yml up
     ```
 
 Now you can open your web browser and navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) to run your first test.
+
+
+### Configuration
+You can configure everything that you are used to configure with sitespeed.io + more. Use the **.env** file to configure your setup.
+
+### Change which pages/URLs you can test
+There's a regular expression that validates the domain of the URL that you want to test. You can use this to make sure a public instance only can tests pages on your web sites.
+
+```VALID_TEST_DOMAINS=".*"```
+
+### Update sitespeed.io version
+By default latest major release of sitespeed.io is configured, it looks like this in the **.env** file:
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:35"`
+
+When 36 is released you just switch to:
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:36"`
+
+To get latest version of 35 you need to periodically pull down the version:
+```docker pull sitespeedio/sitespeed.io:35```
+
+If you want to run a specific version, you can pin the version to a specific version:
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:35.0.0"`
+
+#### Access the result
+Running on your own machine the result is served from localhost. If you deploy on a server you want to change that:
+
+```RESULT_BASE_URL="http://127.0.0.1:9000/sitespeedio"```
+
+By default the result is served by MinIO on port 9000.
+
+
+#### Update server and testrunner
+SITESPEED_IO_SERVER_VERSION=latest
+SITESPEED_IO_TESTRUNNER_VERSION=latest
+
 
 
 ## What's in the box?
