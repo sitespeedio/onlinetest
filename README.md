@@ -3,7 +3,6 @@
 [![Using Docker](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml)
 [![Lint](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml)
 
-
 [Website](https://www.sitespeed.io/) | [Documentation](https://www.sitespeed.io/documentation/onlinetest/) | [Changelog server](https://github.com/sitespeedio/onlinetest/blob/main/server/CHANGELOG.md) | [Changelog testrunner](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/CHANGELOG.md) | [Mastodon](https://fosstodon.org/@sitespeedio)
 
 # Onlinetest - deploy your own version of sitespeed.io online.
@@ -11,8 +10,8 @@
 Setup your own online version of sitespeed.io. You get:
 
 * **A server with GUI and API**:
-   - Add tests using a HTML frontend
-   - Add tests using the the command line (using sitespeed.io) through the API
+   - Add tests using a HTML frontend (you can style the frontend using your own CSS)
+   - Add tests using [the command line](https://www.sitespeed.io/documentation/onlinetest/#using-the-api) (using `sitespeed.io --api.key`)
 
 * **Test Runners**:
    - Run your tests on different platforms: desktop, emulated mobile and Android.
@@ -21,7 +20,7 @@ Setup your own online version of sitespeed.io. You get:
    - Easily find the results of your tests.
 
 
-## Quick setup on your local machine
+## Quick setup on your local machine (using Docker)
 
 Follow these steps to quickly set up and run the online version of sitespeed.io on your local Linux or Mac OS machine. Make sure you have [Docker](https://www.docker.com) and [docker compose](https://docs.docker.com/compose/) installed.
 
@@ -45,9 +44,12 @@ Follow these steps to quickly set up and run the online version of sitespeed.io 
 
 Now you can open your web browser and navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) to run your first test.
 
+If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to set different connectivites inside of Docker. On Mac you can only run native connectivity when you run inside of Docker.
+
+You can also run the server and testrunner [directly]() using NodeJS if you don't want to run Docker.
 
 ### Configuration
-You can configure everything that you are used to configure with sitespeed.io + more. Use the **.env** file to configure your setup.
+You can configure everything that you are used to configure with sitespeed.io + more. Use the **[.env](https://github.com/sitespeedio/onlinetest/blob/main/.env)** file to configure your setup.
 
 ### Change which pages/URLs you can test
 There's a regular expression that validates the domain of the URL that you want to test. You can use this to make sure a public instance only can tests pages on your web sites.
@@ -72,14 +74,44 @@ Running on your own machine the result is served from localhost. If you deploy o
 
 ```RESULT_BASE_URL="http://127.0.0.1:9000/sitespeedio"```
 
-By default the result is served by MinIO on port 9000.
-
+By default the result is served by [MinIO](https://min.io) on port 9000. If you serve the result on the URL `https://sitespeed.domain.com` you change your result base to: ```RESULT_BASE_URL="https://sitespeed.domain.com/sitespeedio"```
 
 #### Update server and testrunner
-SITESPEED_IO_SERVER_VERSION=latest
-SITESPEED_IO_TESTRUNNER_VERSION=latest
+You can configure which version of the server and the testrunner you want to use. You can either use latest stable version or specify a specific tag. In the *.env* file you configure which Docker tag to use.
 
+```
+SITESPEED_IO_SERVER_VERSION=1
+SITESPEED_IO_TESTRUNNER_VERSION=1
+```
 
+## Using NodeJS
+If you do not want to use Docker for the server and the testrunner you can use NodeJS libraries directly. Install the testrunner and the server:
+
+```bash
+npm install @sitespeed.io/server -g
+npm install @sitespeed.io/testrunner -g
+```
+
+You then need the depencencies (PostgreSQL/KeyDB etc) and the easiet way to get them running is to use the docker compose file:
+
+```bash
+git clone https://github.com/sitespeedio/onlinetest.git
+cd onlinetest
+docker compose up
+```
+
+Then start the testrunner and the server:
+
+```bash
+sitespeed.io-testrunner
+sitespeed.io-server --config path/to/file
+```
+
+In the real world you want to also supply your own configuration files:
+```bash
+sitespeed.io-testrunner --config path/to/testrunnerfile
+sitespeed.io-server --config path/to/file
+```
 
 ## What's in the box?
 
