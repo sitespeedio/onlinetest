@@ -9,7 +9,7 @@
 
 Setup your own online version of sitespeed.io.
 
-![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/blob/main/img/startscreen.png)
+![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/refs/heads/main/img/startscreen.png)
 
 * **A server with GUI and API**:
    - Add tests using a HTML frontend (you can style the frontend using your own CSS)
