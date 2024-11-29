@@ -11,9 +11,9 @@ Setup your own online version of sitespeed.io. You get:
 
 * **A server with GUI and API**:
    - Add tests using a HTML frontend (you can style the frontend using your own CSS)
+   ![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/refs/heads/main/img/startscreen.png)
    - Add tests using [the command line](https://www.sitespeed.io/documentation/onlinetest/#using-the-api) (using `sitespeed.io --api.key`)
-    ![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/refs/heads/main/img/startscreen.png)
-
+    
 * **Test Runners**:
    - Run your tests on different platforms: desktop, emulated mobile and Android.
 
@@ -50,7 +50,9 @@ If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to 
 You can also run the server and testrunner [directly]() using NodeJS if you don't want to run Docker.
 
 ### Configuration
-You can configure everything that you are used to configure with sitespeed.io + more. Use the **[.env](https://github.com/sitespeedio/onlinetest/blob/main/.env)** file to configure your setup.
+You can configure everything that you are used to configure with sitespeed.io + more. The server and the testrunner takes `--config /path/to/file`.
+
+You can also use the **[.env](https://github.com/sitespeedio/onlinetest/blob/main/.env)** file for some common configuration to setup the server/testrunner.
 
 ### Change which pages/URLs you can test
 There's a regular expression that validates the domain of the URL that you want to test. You can use this to make sure a public instance only can tests pages on your web sites.
@@ -105,10 +107,11 @@ Then start the testrunner and the server:
 
 ```bash
 sitespeed.io-testrunner
-sitespeed.io-server --config path/to/file
+sitespeed.io-server s
 ```
 
-In the real world you want to also supply your own configuration files:
+In the real world you want to also supply your own configuration files. Default [server configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/default.yaml) and [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/default.yaml):
+
 ```bash
 sitespeed.io-testrunner --config path/to/testrunnerfile
 sitespeed.io-server --config path/to/file
