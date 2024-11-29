@@ -60,6 +60,10 @@ class QueueHandler {
       logger.error('Error in KeyDB/Redis connection %s', error);
     });
 
+    // Lets tell the world (or the testsrunners queue) that we are live
+    const testRunnersQueue = await this.getQueue('testrunners');
+    testRunnersQueue.add({ type: 'start', serverConfig: serverConfig });
+
     // If the server comes online, lets tell it that we are ready
     this.redis.on('message', (channel, message) => {
       if (channel === 'server' && message === 'start') {
@@ -71,9 +75,6 @@ class QueueHandler {
       }
     });
 
-    // Lets tell the world (or the testsrunners queue) that we are live
-    const testRunnersQueue = await this.getQueue('testrunners');
-    testRunnersQueue.add({ type: 'start', serverConfig: serverConfig });
   }
 
   async getQueue(name) {
