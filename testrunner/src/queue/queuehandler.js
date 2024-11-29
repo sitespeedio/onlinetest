@@ -74,7 +74,6 @@ class QueueHandler {
         });
       }
     });
-
   }
 
   async getQueue(name) {
