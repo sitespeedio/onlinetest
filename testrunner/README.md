@@ -36,11 +36,11 @@ You can choose to either run the tests using the sitespeed.io container or insta
 
 If you choose to use Docker, set `useDocker` to true in the configuration. Then all you need to do is to make sure to have Docker installed on the server.
 
-You can configure which Docker container to use. Normally when you run sitespeed.io you should configure the exact sitespeed.io version like *sitespeedio/sitespeed.io:36.0.0* to know exact which version you are using. However if you want to deploy your testrunner and then let it auto update, you can use *sitespeedio/sitespeed.io:latest* as the tag and then make sure that you once per day update the container `docker pull sitespeedio/sitespeed.io:latest`.
+You can configure which Docker container to use. Normally when you run sitespeed.io you should configure the exact sitespeed.io version like *sitespeedio/sitespeed.io:36.0.0* to know exact which version you are using. However if you want to deploy your testrunner and then let it auto update to a stable release, you can use *sitespeedio/sitespeed.io:36* as the tag and then make sure that you once per day update the container `docker pull sitespeedio/sitespeed.io:36`.
 
 ```yaml
 docker:
-  container: "sitespeedio/sitespeed.io:latest"
+  container: "sitespeedio/sitespeed.io:36"
 ```
 
 If you do not use Docker you can follow [these instructions](https://www.sitespeed.io/documentation/sitespeed.io/installation/) to install sitespeed.io. If you plan to run Android tests, make sure to install FFMPEG and the Python dependencies needed to get visual metrics.
