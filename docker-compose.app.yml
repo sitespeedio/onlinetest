@@ -25,6 +25,7 @@ services:
       redis_host: keydb
       redis_port: 6379
       redis_password: ${KEYDB_PASSWORD}
+      location_name: ${LOCATION_NAME}
       docker_container: ${SITESPEED_IO_CONTAINER}
       docker_extraparameters: '--cap-add=NET_ADMIN --network=skynet'
       sitespeed.io_s3_endpoint: "http://minio:9000" 
