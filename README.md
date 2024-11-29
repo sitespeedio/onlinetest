@@ -12,8 +12,8 @@ Setup your own online version of sitespeed.io. You get:
 * **A server with GUI and API**:
    - Add tests using a HTML frontend (you can style the frontend using your own CSS)
    ![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/refs/heads/main/img/startscreen.png)
-   - Add tests using [the command line](https://www.sitespeed.io/documentation/onlinetest/#using-the-api) (using `sitespeed.io --api.key`)
-    
+   - Add tests using [the command line](https://www.sitespeed.io/documentation/onlinetest/#using-the-api) (using `sitespeed.io --api.hostname my.host.com --api.location default https://www.sitespeed.io`)
+   
 * **Test Runners**:
    - Run your tests on different platforms: desktop, emulated mobile and Android.
 
