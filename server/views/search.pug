@@ -36,7 +36,7 @@ block content
         input(type='hidden' name='page' value='1' id='page') 
         .field.is-grouped
             p.control.is-expanded
-                input.input.is-large(type='text' placeholder=getText('search.input.placeholder') name='search' id='search' autofocus value=searchQuery)  
+                input.input.is-large(type='text' placeholder=getText('search.input.placeholder', dayjs().format('YYYY-MM-DD')) name='search' id='search' autofocus value=searchQuery)  
             p.control
                 button.button.is-primary.is-large(accesskey='s' name='searchbutton') #{getText('search.button.search')}
       p.control

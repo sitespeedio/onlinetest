@@ -48,7 +48,7 @@
   "search.button.next": "Next",
   "search.button.previous": "Previous",
   "search.button.clear": "Clear",
-  "search.input.placeholder": "'Write the URL and use commands like date:2022-10-22",
+  "search.input.placeholder": "Write the URL and use commands like date: %s",
   
   "search.help.heading": "Search commands",
   "search.help.description": "You can combine your search commands. To find a test for a URL, date and browser you can search like this",
