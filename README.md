@@ -19,6 +19,7 @@ Setup your own online version of sitespeed.io. You get:
 
 * **Search Functionality**:
    - Easily find the results of your tests.
+      ![Search screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/refs/heads/main/img/search.png)
 
 
 ## Quick setup on your local machine (using Docker)
