@@ -23,7 +23,7 @@ jobs:
       env:
         SITESPEED_IO_SERVER_VERSION: "local-action"
         SITESPEED_IO_TESTRUNNER_VERSION: "local-action"
-      run: docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
+      run: docker compose -f docker-compose.yml -f docker-compose.app.yml up -d
     - name: Show versions
       run: |
         docker --version
