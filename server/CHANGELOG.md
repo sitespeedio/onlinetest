@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.0.1 - 2024-12-06
+### Fixed
+* Fixed the release flow so the Docker containers get the correct tag.
+
 ## 1.0.0 - 2024-12-06
 Hello and welcome to 1.0.0! In this release we aim to make it easier to run the full setup in Docker!
 
