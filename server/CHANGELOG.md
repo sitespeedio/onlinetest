@@ -1,12 +1,13 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
-## 1.0.0 - UNRELEASED
+## 1.0.0 - 2024-12-06
 Hello and welcome to 1.0.0! In this release we aim to make it easier to run the full setup in Docker!
 
-
 ### Breaking change
-With the release of 1.0.0 we makes it possible to configure sitespeed.io with the server/testrunner.yml file [#92](https://github.com/sitespeedio/onlinetest/pull/92). That makes things so much easier when doing a default setup. However with this change we also retire the *config/sitespeed.json* configuration on the server. If you used that, you need to move that configuration to the yaml file for the server.
+With the release of 1.0.0 we makes it possible to configure sitespeed.io with the server/testrunner.yml file [#92](https://github.com/sitespeedio/onlinetest/pull/92). 
+
+That makes things so much easier when doing a default setup. However with this change we also retire the *config/sitespeed.json* configuration on the server. If you used that, you need to move that configuration to the yaml file for the server.
 
 To start the server and a test runner locally on your machine you use docker compose:
 ```docker compose -f docker-compose.yml -f docker-compose.app.yml up```
@@ -14,14 +15,10 @@ To start the server and a test runner locally on your machine you use docker com
 If you only wants to start the dependencies:
 ```docker compose -f docker-compose.yml up```
 
-When you run the dockerized version of the testrunner, the default setuop use the last major version of sitespeed.io.
-
-The configuration uses latest released stable version of sitespeed.io.
+When you run the dockerised version of the testrunner, the default setup use the last major version of sitespeed.io.
 
 ### Added
-* A new Docker setup [#95](https://github.com/sitespeedio/onlinetest/pull/95).
-
-
+* A new Docker setup [#95](https://github.com/sitespeedio/onlinetest/pull/95)
 
 ## 0.4.5 - 2024-09-24
 ### Fixed
