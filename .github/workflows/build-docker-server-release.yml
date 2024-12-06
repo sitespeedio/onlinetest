@@ -28,8 +28,8 @@ jobs:
             VERSION_TAG=${GITHUB_REF#refs/tags/}
             echo "Git tag: $VERSION_TAG"
   
-            VERSION=${VERSION_TAG#v}
-            echo "Full version without 'v': $VERSION"
+            VERSION=${VERSION_TAG#server-v}
+            echo "Full version without 'server-v': $VERSION"
   
             MAJOR_VERSION=${VERSION%%.*}
             echo "Major version: $MAJOR_VERSION"
