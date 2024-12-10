@@ -72,4 +72,4 @@ Setting the same queue like this will make both phones take on tests on the same
 ```
 
 ## Documentation
-I'm working on the documentation and you will find the full documentation at [https://www.sitespeed.io/documentation/onlinetest](https://www.sitespeed.io/documentation/onlinetest) when it's ready.
+[Read the onlinetest documenation](https://www.sitespeed.io/documentation/onlinetest).
