@@ -2,7 +2,7 @@
 
 The sitespeed.io server is the server in the server/testrunner setup. You can have one server per setup.
 
-The server will add tests in a Redis (like) queue. When you start the runner, it needs to be able to connect to the queue and a Postgresql instance.
+The server will add tests in a KeyDB (Redis like) queue. When you start the runner, it needs to be able to connect to the queue and a Postgresql instance.
 
 
 ## Start
