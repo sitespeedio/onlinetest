@@ -1,12 +1,12 @@
 {
   "name": "@sitespeed.io/testrunner",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "@sitespeed.io/testrunner",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "license": "AGPL-3.0-only",
       "dependencies": {
         "bull": "4.16.4",
