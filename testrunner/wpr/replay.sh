@@ -7,11 +7,15 @@ set -eu
 BROWSERTIME=sitespeed.io-wpr
 SITESPEEDIO=sitespeed.io
 
+# Get the script directory
+cd "$(dirname "$0")"
+MY_DIR="$(pwd)"
+
 # WebPageReplay setup
 WPR_BINARY=wpr
-WPR_CERT_FILE=./wpr/wpr_cert.pem
-WPR_KEY_FILE=./wpr/wpr_key.pem
-WPR_SCRIPTS=./wpr/deterministic.js
+WPR_CERT_FILE="$MY_DIR"/wpr_cert.pem
+WPR_KEY_FILE="$MY_DIR"/wpr_key.pem
+WPR_SCRIPTS="$MY_DIR"/deterministic.js
 WPR_HTTP_PORT=8085
 WPR_HTTPS_PORT=8086
 WPR_ARCHIVE=/tmp/archive.wprgo
@@ -69,11 +73,12 @@ then
         "$SITESPEEDIO" "$@" --browsertime.firefox.preference security.OCSP.enabled:0 --browsertime.firefox.preference network.dns.forceResolve:127.0.0.1 --browsertime.chrome.webPageReplayHostResolver --browsertime.chrome.webPageReplayHTTPPort $WPR_HTTP_PORT --browsertime.chrome.webPageReplayHTTPSPort $WPR_HTTPS_PORT --replay &
         SITESPEEDIO_PID=$!
         wait $SITESPEEDIO_PID
-        if kill -0 $REPLAY_PID 2>/dev/null; then
-            kill -2 $REPLAY_PID
-            wait $REPLAY_PID
+        if kill -0 "$REPLAY_PID" 2>/dev/null; then
+            kill -s SIGTERM "$REPLAY_PID"
+            echo 'Stopped WebPageReplay replay'
+        else
+            echo "Replay PID $REPLAY_PID is not running."
         fi
-        echo 'Stopped WebPageReplay replay'
     else
         echo "Replay server didn't start correctly, check the logs $WPR_REPLAY_LOG" >&2
     fi
