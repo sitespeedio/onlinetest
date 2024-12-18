@@ -1,4 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
+
+## 1.0.2 - 2024-12-18
+### Fixed
+* Fix broken path to the WebPageReplay script when running as npm package and fix so you also can run desktop test using WebPageReplay when you use npm [#107](https://github.com/sitespeedio/onlinetest/pull/107).
+
 ## 1.0.1 - 2024-12-06
 ### Fixed
 * Fixed the release flow so the Docker containers get the correct tag.
