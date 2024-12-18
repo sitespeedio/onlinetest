@@ -1,6 +1,7 @@
 import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
+import { fileURLToPath } from 'node:url';
 
 import { execa } from 'execa';
 import log from 'intel';
@@ -11,6 +12,7 @@ import merge from 'lodash.merge';
 import { queueHandler } from '../queue/queuehandler.js';
 import { getBaseFilePath } from '../util.js';
 const { join } = path;
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 /**
  * Main function to handle job execution. This testrunner will use
@@ -137,12 +139,19 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     (job.data.extras && job.data.extras.includes('--webpagereplay')) ||
     job.data.config.webpagereplay
   ) {
-    binary = './wpr/replay.sh';
-    environment = {
-      env: {
-        ANDROID: true
-      }
-    };
+    binary = path.resolve(__dirname, '../../wpr/replay.sh');
+
+    if (
+      (job.data.extras && job.data.extras.includes('--android')) ||
+      job.data.config.android
+    ) {
+      environment = {
+        env: {
+          ANDROID: true
+        }
+      };
+    }
+
     const deviceId =
       get(job.data.config, 'browsertime.firefox.android.deviceSerial') ||
       get(job.data.config, 'browsertime.chrome.android.deviceSerial');
