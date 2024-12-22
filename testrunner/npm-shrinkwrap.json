@@ -9,7 +9,7 @@
       "version": "1.0.3",
       "license": "AGPL-3.0-only",
       "dependencies": {
-        "bull": "4.16.4",
+        "bull": "4.16.5",
         "execa": "9.5.1",
         "intel": "1.2.0",
         "joi": "17.13.3",
@@ -533,11 +533,11 @@
       }
     },
     "node_modules/bull": {
-      "version": "4.16.4",
-      "resolved": "https://registry.npmjs.org/bull/-/bull-4.16.4.tgz",
-      "integrity": "sha512-CF+nGsJyfsCC9MJL8hFxqXzbwq+jGBXhaz1j15G+5N/XtKIPFUUy5O1mfWWKbKunfuH/x+UV4NYRQDHSkjCOgA==",
+      "version": "4.16.5",
+      "resolved": "https://registry.npmjs.org/bull/-/bull-4.16.5.tgz",
+      "integrity": "sha512-lDsx2BzkKe7gkCYiT5Acj02DpTwDznl/VNN7Psn7M3USPG7Vs/BaClZJJTAG+ufAR9++N1/NiUTdaFBWDIl5TQ==",
       "dependencies": {
-        "cron-parser": "^4.2.1",
+        "cron-parser": "^4.9.0",
         "get-port": "^5.1.1",
         "ioredis": "^5.3.2",
         "lodash": "^4.17.21",
@@ -728,14 +728,14 @@
       }
     },
     "node_modules/cron-parser": {
-      "version": "4.2.1",
-      "resolved": "https://registry.npmjs.org/cron-parser/-/cron-parser-4.2.1.tgz",
-      "integrity": "sha512-5sJBwDYyCp+0vU5b7POl8zLWfgV5fOHxlc45FWoWdHecGC7MQHCjx0CHivCMRnGFovghKhhyYM+Zm9DcY5qcHg==",
+      "version": "4.9.0",
+      "resolved": "https://registry.npmjs.org/cron-parser/-/cron-parser-4.9.0.tgz",
+      "integrity": "sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==",
       "dependencies": {
-        "luxon": "^1.28.0"
+        "luxon": "^3.2.1"
       },
       "engines": {
-        "node": ">=0.8"
+        "node": ">=12.0.0"
       }
     },
     "node_modules/cross-spawn": {
@@ -1757,11 +1757,11 @@
       "integrity": "sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ=="
     },
     "node_modules/luxon": {
-      "version": "1.28.1",
-      "resolved": "https://registry.npmjs.org/luxon/-/luxon-1.28.1.tgz",
-      "integrity": "sha512-gYHAa180mKrNIUJCbwpmD0aTu9kV0dREDrwNnuyFAsO1Wt0EVYSZelPnJlbj9HplzXX/YWXHFTL45kvZ53M0pw==",
+      "version": "3.5.0",
+      "resolved": "https://registry.npmjs.org/luxon/-/luxon-3.5.0.tgz",
+      "integrity": "sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==",
       "engines": {
-        "node": "*"
+        "node": ">=12"
       }
     },
     "node_modules/min-indent": {
