@@ -53,11 +53,11 @@
     "pug-lint": "pug-lint views/"
   },
   "devDependencies": {
-    "eslint": "9.15.0",
+    "eslint": "9.17.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",
     "eslint-plugin-unicorn": "56.0.1",
-    "prettier": "3.4.0",
+    "prettier": "3.4.2",
     "pug-lint": "2.7.0",
     "pug-lint-config-clock": "2.0.0"
   },

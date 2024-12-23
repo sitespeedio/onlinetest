@@ -22,11 +22,11 @@
         "sitespeed.io-testrunner": "app.js"
       },
       "devDependencies": {
-        "eslint": "9.15.0",
+        "eslint": "9.17.0",
         "eslint-config-prettier": "9.1.0",
         "eslint-plugin-prettier": "5.2.1",
         "eslint-plugin-unicorn": "56.0.1",
-        "prettier": "3.4.0"
+        "prettier": "3.4.2"
       },
       "engines": {
         "node": ">=20"
@@ -161,9 +161,9 @@
       }
     },
     "node_modules/@eslint/js": {
-      "version": "9.15.0",
-      "resolved": "https://registry.npmjs.org/@eslint/js/-/js-9.15.0.tgz",
-      "integrity": "sha512-tMTqrY+EzbXmKJR5ToI8lxu7jaN5EdmrBFJpQk5JmSlyLsx6o4t27r883K5xsLuCYCpfKBCGswMSWXsM+jB7lg==",
+      "version": "9.17.0",
+      "resolved": "https://registry.npmjs.org/@eslint/js/-/js-9.17.0.tgz",
+      "integrity": "sha512-Sxc4hqcs1kTu0iID3kcZDW3JHq2a77HO9P8CP6YEA/FpH3Ll8UXE2r/86Rz9YJLKme39S9vU5OWNjC6Xl0Cr3w==",
       "dev": true,
       "engines": {
         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
@@ -832,9 +832,9 @@
       }
     },
     "node_modules/eslint": {
-      "version": "9.15.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.15.0.tgz",
-      "integrity": "sha512-7CrWySmIibCgT1Os28lUU6upBshZ+GxybLOrmRzi08kS8MBuO8QA7pXEgYgY5W8vK3e74xv0lpjo9DbaGU9Rkw==",
+      "version": "9.17.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.17.0.tgz",
+      "integrity": "sha512-evtlNcpJg+cZLcnVKwsai8fExnqjGPicK7gnUtlNuzu+Fv9bI0aLpND5T44VLQtoMEnI57LoXO9XAkIXwohKrA==",
       "dev": true,
       "dependencies": {
         "@eslint-community/eslint-utils": "^4.2.0",
@@ -842,7 +842,7 @@
         "@eslint/config-array": "^0.19.0",
         "@eslint/core": "^0.9.0",
         "@eslint/eslintrc": "^3.2.0",
-        "@eslint/js": "9.15.0",
+        "@eslint/js": "9.17.0",
         "@eslint/plugin-kit": "^0.2.3",
         "@humanfs/node": "^0.16.6",
         "@humanwhocodes/module-importer": "^1.0.1",
@@ -851,7 +851,7 @@
         "@types/json-schema": "^7.0.15",
         "ajv": "^6.12.4",
         "chalk": "^4.0.0",
-        "cross-spawn": "^7.0.5",
+        "cross-spawn": "^7.0.6",
         "debug": "^4.3.2",
         "escape-string-regexp": "^4.0.0",
         "eslint-scope": "^8.2.0",
@@ -2048,9 +2048,9 @@
       }
     },
     "node_modules/prettier": {
-      "version": "3.4.0",
-      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.4.0.tgz",
-      "integrity": "sha512-/OXNZcLyWkfo13ofOW5M7SLh+k5pnIs07owXK2teFpnfaOEcycnSy7HQxldaVX1ZP/7Q8oO1eDuQJNwbomQq5Q==",
+      "version": "3.4.2",
+      "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.4.2.tgz",
+      "integrity": "sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==",
       "dev": true,
       "bin": {
         "prettier": "bin/prettier.cjs"
