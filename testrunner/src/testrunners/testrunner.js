@@ -29,7 +29,7 @@ export default async function runJob(job) {
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
   const removeOnFail = nconf.get('queue:removeOnFail') || 200;
 
-  // Make sure we vatch everything that can go wrong
+  // Make sure we catch everything that can go wrong
   try {
     logger.info('Start job');
     workingDirectory = await createWorkingDirectory(job);
