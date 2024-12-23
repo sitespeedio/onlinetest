@@ -58,7 +58,7 @@
   "dependencies": {
     "bull": "4.16.5",
     "nconf": "0.12.1",
-    "execa": "9.5.1",
+    "execa": "9.5.2",
     "lodash.get": "4.4.2",
     "lodash.merge": "4.6.2",
     "intel": "1.2.0",
