@@ -4,7 +4,7 @@ import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
 import { execa } from 'execa';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 import nconf from 'nconf';
 import get from 'lodash.get';
 import merge from 'lodash.merge';
@@ -22,7 +22,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
  *
  */
 export default async function runJob(job) {
-  const logger = log.getLogger(`sitespeedio.testrunner.${job.id}`);
+  const logger = getLogger(`sitespeedio.testrunner.${job.id}`);
   let workingDirectory;
 
   // The number of objects to keep in the queue before removal

@@ -2,9 +2,9 @@ import Queue from 'bull';
 import Redis from 'ioredis';
 import nconf from 'nconf';
 
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
-const logger = log.getLogger('sitespeedio.testrunner');
+const logger = getLogger('sitespeedio.testrunner');
 
 const delay = ms => new Promise(response => setTimeout(response, ms));
 

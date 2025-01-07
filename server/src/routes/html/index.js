@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { createRequire } from 'node:module';
 
 import nconf from 'nconf';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import { getTestRunners } from '../../testrunners.js';
 import { addTest } from '../../util/add-test.js';
@@ -15,7 +15,7 @@ import { validateQueue } from '../../middleware/validatequeue.js';
 import { getQueueSize } from '../../queuehandler.js';
 
 export const index = Router();
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 const require = createRequire(import.meta.url);
 const version = require('../../../package.json').version;

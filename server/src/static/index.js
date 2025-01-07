@@ -4,8 +4,8 @@ import { join } from 'node:path';
 import nconf from 'nconf';
 import express from 'express';
 
-import log from 'intel';
-const logger = log.getLogger('sitespeedio.server');
+import { getLogger } from '@sitespeed.io/log';
+const logger = getLogger('sitespeedio.server');
 
 import { getBaseFilePath } from '../util/fileutil.js';
 

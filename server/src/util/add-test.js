@@ -10,7 +10,7 @@ import {
   animals,
   names
 } from 'unique-names-generator';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import { saveTest } from '../database/index.js';
 import {
@@ -22,14 +22,14 @@ import { setConfigById } from '../configs.js';
 
 import { updateStatus } from '../database/index.js';
 
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 async function getDefaultSitespeedConfiguration() {
   if (nconf.get('defaultSitespeedioConfigFile')) {
     const result = await readFile(
       path.resolve(nconf.get('defaultSitespeedioConfigFile'))
     );
-    log.info('Using configiguration from defaultSitespeedioConfigFile');
+    logger.info('Using configiguration from defaultSitespeedioConfigFile');
     return JSON.parse(result.toString());
   } else return nconf.get('sitespeed.io') || {};
 }
@@ -153,7 +153,7 @@ export async function addTest(request) {
         }
       );
     } catch (error) {
-      log.error(
+      logger.error(
         `Setting status to failed for ${jobId} because queue is down`,
         error
       );
@@ -240,7 +240,7 @@ export async function addTestFromAPI(
       jobConfig
     );
   } catch (error) {
-    log.error(
+    logger.error(
       `Setting status to failed for ${jobId} because queue is down`,
       error
     );

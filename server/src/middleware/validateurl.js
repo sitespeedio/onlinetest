@@ -1,13 +1,13 @@
 // middleware/validateURL.js
 import validator from 'validator';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 import nconf from 'nconf';
 
 const { isURL } = validator;
 
 import { getText } from '../util/text.js';
 
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 export const validateURL = (request, response, next) => {
   const testDomain = nconf.get('validTestDomains');
@@ -53,7 +53,7 @@ export const validateURL = (request, response, next) => {
         return next();
       }
     } catch (error) {
-      log.error('Could not use the regular expression', error);
+      logger.error('Could not use the regular expression', error);
       request.inputValidationError = getText(
         'error.nonmatchingdomain',
         url,

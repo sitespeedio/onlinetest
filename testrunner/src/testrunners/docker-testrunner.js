@@ -3,7 +3,7 @@ import path from 'node:path';
 import os from 'node:os';
 
 import { execa } from 'execa';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 import nconf from 'nconf';
 import merge from 'lodash.merge';
 
@@ -19,8 +19,8 @@ const parseDockerExtraParameters = parameters => {
 };
 
 export default async function runJob(job) {
-  const logger = log.getLogger(`sitespeedio.dockertestrunner.${job.id}`);
-  const dockerLogger = log.getLogger(
+  const logger = getLogger(`sitespeedio.dockertestrunner.${job.id}`);
+  const dockerLogger = getLogger(
     `sitespeedio.dockertestrunner.process.${job.id}`
   );
   // The number of objects to keep in the queue before removal

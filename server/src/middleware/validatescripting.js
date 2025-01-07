@@ -1,9 +1,9 @@
 import validator from 'validator';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 import nconf from 'nconf';
 
 const { isURL } = validator;
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 import { getText } from '../util/text.js';
 
@@ -13,7 +13,7 @@ export const validateScripting = (request, response, next) => {
   try {
     validRegEx = new RegExp(testDomain);
   } catch (error) {
-    log.error('Could not use regular expression', error);
+    logger.error('Could not use regular expression', error);
     request.inputValidationError = getText(
       'error.nonmatchingdomain',
       '',

@@ -20,9 +20,8 @@ database:
   password: jhde7gFArda33Saa1!4dd2dagJ
   port: 5432
 
-# Configure the log. If you want to log to a file, set full path and name of the file.
+# Configure the log.
 log:
-  file: null
   verbose: false
 
 # Make sure only users with the correct key can add tests

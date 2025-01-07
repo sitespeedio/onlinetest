@@ -1,8 +1,8 @@
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import DatabaseHelper from './databasehelper.js';
 
-const logger = log.getLogger('sitespeedio.database');
+const logger = getLogger('sitespeedio.database');
 
 const LIMITED_COLUMS =
   'id, location, test_type, run_date, browser_name, url, result_url, status, scripting_name, label, slug';
@@ -61,7 +61,7 @@ export async function saveTest(
  * Update the status of the test
  */
 export async function updateStatus(id, status) {
-  log.info('Update %s with %s', id, status);
+  logger.info('Update %s with %s', id, status);
   const update = 'UPDATE sitespeed_io_test_runs SET status = $1 WHERE id = $2';
   const values = [status, id];
   try {
