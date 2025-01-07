@@ -13,7 +13,7 @@ export const validateScripting = (request, response, next) => {
   try {
     validRegEx = new RegExp(testDomain);
   } catch (error) {
-    log.error('Could not use regular expression', error);
+    logger.error('Could not use regular expression', error);
     request.inputValidationError = getText(
       'error.nonmatchingdomain',
       '',

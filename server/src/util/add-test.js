@@ -29,7 +29,7 @@ async function getDefaultSitespeedConfiguration() {
     const result = await readFile(
       path.resolve(nconf.get('defaultSitespeedioConfigFile'))
     );
-    log.info('Using configiguration from defaultSitespeedioConfigFile');
+    logger.info('Using configiguration from defaultSitespeedioConfigFile');
     return JSON.parse(result.toString());
   } else return nconf.get('sitespeed.io') || {};
 }
@@ -153,7 +153,7 @@ export async function addTest(request) {
         }
       );
     } catch (error) {
-      log.error(
+      logger.error(
         `Setting status to failed for ${jobId} because queue is down`,
         error
       );
@@ -240,7 +240,7 @@ export async function addTestFromAPI(
       jobConfig
     );
   } catch (error) {
-    log.error(
+    logger.error(
       `Setting status to failed for ${jobId} because queue is down`,
       error
     );

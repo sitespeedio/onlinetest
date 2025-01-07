@@ -61,7 +61,7 @@ export async function saveTest(
  * Update the status of the test
  */
 export async function updateStatus(id, status) {
-  log.info('Update %s with %s', id, status);
+  logger.info('Update %s with %s', id, status);
   const update = 'UPDATE sitespeed_io_test_runs SET status = $1 WHERE id = $2';
   const values = [status, id];
   try {
