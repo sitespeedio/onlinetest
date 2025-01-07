@@ -1,8 +1,8 @@
 import nconf from 'nconf';
 import { getText } from '../util/text.js';
 
-import log from 'intel';
-const logger = log.getLogger('sitespeedio.server');
+import { getLogger } from '@sitespeed.io/log';
+const logger = getLogger('sitespeedio.server');
 
 export const error404 = function (request, response) {
   response.status(400);

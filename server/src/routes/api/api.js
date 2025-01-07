@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import { createRequire } from 'node:module';
 
@@ -15,7 +15,7 @@ import { addTestFromAPI } from '../../util/add-test.js';
 import { getTestRunners } from '../../testrunners.js';
 import { getText } from '../../util/text.js';
 import { validateQueue } from '../../middleware/validatequeue.js';
-const logger = log.getLogger('sitespeedio.server.api');
+const logger = getLogger('sitespeedio.server.api');
 
 const require = createRequire(import.meta.url);
 const version = require('../../../package.json').version;

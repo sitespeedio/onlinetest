@@ -2,9 +2,9 @@ import postgrespackage from 'pg';
 const { Pool } = postgrespackage;
 
 import nconf from 'nconf';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
-const logger = log.getLogger('sitespeedio.database.query');
+const logger = getLogger('sitespeedio.database.query');
 
 class DatabaseHelper {
   constructor() {

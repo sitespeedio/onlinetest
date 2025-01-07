@@ -1,5 +1,5 @@
 import nconf from 'nconf';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import { Router } from 'express';
 import { getConfigByTestId } from '../../configs.js';
@@ -9,7 +9,7 @@ import { getText } from '../../util/text.js';
 import { getTest } from '../../database/index.js';
 
 export const result = Router();
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 result.get('/:id', async function (request, response) {
   const id = request.params.id;

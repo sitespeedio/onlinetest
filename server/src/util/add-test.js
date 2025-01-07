@@ -10,7 +10,7 @@ import {
   animals,
   names
 } from 'unique-names-generator';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import { saveTest } from '../database/index.js';
 import {
@@ -22,7 +22,7 @@ import { setConfigById } from '../configs.js';
 
 import { updateStatus } from '../database/index.js';
 
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 async function getDefaultSitespeedConfiguration() {
   if (nconf.get('defaultSitespeedioConfigFile')) {

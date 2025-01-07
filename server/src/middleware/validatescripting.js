@@ -1,9 +1,9 @@
 import validator from 'validator';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 import nconf from 'nconf';
 
 const { isURL } = validator;
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 import { getText } from '../util/text.js';
 

@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import compress from 'compression';
 import bodyParser from 'body-parser';
 import nconf from 'nconf';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 const { urlencoded } = bodyParser;
 import responseTime from 'response-time';
 import { minify as _minify } from 'express-beautify';
@@ -26,7 +26,7 @@ import { error404, error500 } from './middleware/errorhandler.js';
 import { setupStatic } from './static/index.js';
 import { getBaseFilePath } from './util/fileutil.js';
 
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 function setupExpressServer() {
   const app = express();

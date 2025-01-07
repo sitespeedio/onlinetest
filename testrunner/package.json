@@ -56,12 +56,12 @@
     "prettier": "3.4.2"
   },
   "dependencies": {
+    "@sitespeed.io/log": "0.2.2",
     "bull": "4.16.5",
     "nconf": "0.12.1",
     "execa": "9.5.2",
     "lodash.get": "4.4.2",
     "lodash.merge": "4.6.2",
-    "intel": "1.2.0",
     "joi": "17.13.3",
     "js-yaml": "4.1.0"
   }

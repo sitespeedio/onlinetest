@@ -1,6 +1,6 @@
 import nconf from 'nconf';
-import log from 'intel';
-const logger = log.getLogger('sitespeedio.server');
+import { getLogger } from '@sitespeed.io/log';
+const logger = getLogger('sitespeedio.server');
 import { getText } from '../util/text.js';
 
 export const validateKey = (request, response, next) => {

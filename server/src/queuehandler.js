@@ -1,8 +1,8 @@
 import NodeCache from 'node-cache';
 const idToQueue = new NodeCache({ stdTTL: 60 * 60, checkperiod: 120 });
 import Queue from 'bull';
-import log from 'intel';
-const logger = log.getLogger('sitespeedio.server');
+import { getLogger } from '@sitespeed.io/log';
+const logger = getLogger('sitespeedio.server');
 const queues = {};
 const deviceToQueue = {};
 import nconf from 'nconf';

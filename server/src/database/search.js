@@ -1,9 +1,9 @@
 import dayjs from 'dayjs';
-import log from 'intel';
+import { getLogger } from '@sitespeed.io/log';
 
 import DatabaseHelper from './databasehelper.js';
 
-const logger = log.getLogger('sitespeedio.database.search');
+const logger = getLogger('sitespeedio.database.search');
 
 const LIMITED_COLUMS =
   'id, location, test_type, run_date, browser_name, url, result_url, status, scripting_name, label, slug';

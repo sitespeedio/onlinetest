@@ -1,4 +1,4 @@
-import log from 'intel';
+import { getLogger, configureLog } from '@sitespeed.io/log';
 import nconf from 'nconf';
 import os from 'node:os';
 import { createRequire } from 'node:module';
@@ -10,18 +10,14 @@ import { queueHandler } from './queue/queuehandler.js';
 const require = createRequire(import.meta.url);
 const version = require('../package.json').version;
 
-const logger = log.getLogger('sitespeedio.testrunner');
+const logger = getLogger('sitespeedio.testrunner');
 
 const queues = [];
 
 export class SitespeedioTestRunner {
   constructor() {
     const logVerbose = nconf.get('log:verbose');
-
-    log.basicConfig({
-      format: '[%(date)s] %(levelname)s: [%(name)s] %(message)s',
-      level: logVerbose ? log.VERBOSE : log.INFO
-    });
+    configureLog({ level: logVerbose ? 'verbose' : 'info' });
   }
 
   async start() {
@@ -97,7 +93,7 @@ export class SitespeedioTestRunner {
           serverConfig: serverConfig
         });
       } else {
-        log.info('No connnection to Redis');
+        logger.info('No connnection to Redis');
       }
 
       for (let queue of queues) {

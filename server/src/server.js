@@ -1,4 +1,4 @@
-import log from 'intel';
+import { getLogger, configureLog } from '@sitespeed.io/log';
 import nconf from 'nconf';
 
 import { WebServer } from './webserver.js';
@@ -13,7 +13,7 @@ import { addTestRunner, removeTestRunner } from './testrunners.js';
 import { testConnection, updateStatus, updateTest } from './database/index.js';
 import DatabaseHelper from './database/databasehelper.js';
 
-const logger = log.getLogger('sitespeedio.server');
+const logger = getLogger('sitespeedio.server');
 
 async function setActiveStatus(jobid) {
   return updateStatus(jobid, 'active');
@@ -24,25 +24,8 @@ async function setFailedStatus(jobid) {
 }
 
 function setupLogging() {
-  const logToFile = nconf.get('log:file');
   const logVerbose = nconf.get('log:verbose');
-
-  if (logToFile) {
-    log.addHandler(
-      new log.handlers.File({
-        file: logToFile,
-        formatter: new log.Formatter({
-          format: '[%(date)s] %(levelname)s: [%(name)s] %(message)s',
-          level: logVerbose ? log.VERBOSE : log.INFO
-        })
-      })
-    );
-  } else {
-    log.basicConfig({
-      format: '[%(date)s] %(levelname)s: [%(name)s] %(message)s',
-      level: logVerbose ? log.VERBOSE : log.INFO
-    });
-  }
+  configureLog({ level: logVerbose ? 'verbose' : 'info' });
 }
 
 async function setupResultQueue() {
