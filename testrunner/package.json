@@ -56,7 +56,7 @@
     "prettier": "3.4.2"
   },
   "dependencies": {
-    "@sitespeed.io/log": "0.2.2",
+    "@sitespeed.io/log": "0.2.4",
     "bull": "4.16.5",
     "nconf": "0.12.1",
     "execa": "9.5.2",
