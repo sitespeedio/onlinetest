@@ -12,7 +12,7 @@ import {
 } from 'unique-names-generator';
 import { getLogger } from '@sitespeed.io/log';
 
-import { saveTest } from '../database/index.js';
+import { saveTest, getTest } from '../database/index.js';
 import {
   getExistingQueue,
   setIdAndQueue,
@@ -40,6 +40,73 @@ const uniqueNamesConfig = {
 
 function getQueueName(location, deviceId) {
   return getDeviceQueue(deviceId, location);
+}
+
+export async function reRunTest(request) {
+  let { id, label } = request.body;
+  const oldTest = await getTest(id);
+
+  const jobId = await saveTest(
+    oldTest.browser_name,
+    oldTest.url,
+    oldTest.location,
+    oldTest.test_type,
+    oldTest.scripting_name,
+    oldTest.scripting,
+    label || oldTest.label,
+    oldTest.slug,
+    oldTest.configuration.browsertime,
+    oldTest.cli_params
+  );
+
+  const queueName = getQueueName(oldTest.location, oldTest.deviceId);
+
+  logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
+
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 400;
+  const attempts = nconf.get('queue:attempts') || 1;
+  if (queueName) {
+    const testRunnerQueue = getExistingQueue(queueName);
+    try {
+      await testRunnerQueue.add(
+        {
+          url: oldTest.url,
+          config: oldTest.configuration,
+          extras: oldTest.cli_params,
+          scripting: oldTest.scripting,
+          scriptingName: oldTest.scripting_name,
+          label: label || oldTest.label
+        },
+        {
+          jobId,
+          removeOnComplete,
+          removeOnFail,
+          priority: 10,
+          attempts
+        }
+      );
+
+      setConfigById(
+        jobId,
+        oldTest.url,
+        oldTest.scripting_name,
+        oldTest.configuration,
+        queueName
+      );
+      setIdAndQueue(jobId, testRunnerQueue);
+      return jobId;
+    } catch (error) {
+      logger.error(
+        `Setting status to failed for ${jobId} because queue is down`,
+        error
+      );
+      await updateStatus(jobId, 'failed');
+      throw new Error('Could not connect to queue');
+    }
+  } else {
+    throw new Error('Non existing queue');
+  }
 }
 
 export async function addTest(request) {

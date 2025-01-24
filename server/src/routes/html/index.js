@@ -5,7 +5,7 @@ import nconf from 'nconf';
 import { getLogger } from '@sitespeed.io/log';
 
 import { getTestRunners } from '../../testrunners.js';
-import { addTest } from '../../util/add-test.js';
+import { addTest, reRunTest } from '../../util/add-test.js';
 import { getText } from '../../util/text.js';
 
 import { validateURL } from '../../middleware/validateurl.js';
@@ -54,6 +54,13 @@ index.get('/', async function (request, response) {
 
 index.post(
   '/',
+  (request, response, next) => {
+    if (request.body.id) {
+      return next('route');
+    }
+
+    return next();
+  },
   validateParameters,
   validateURL,
   validateScripting,
@@ -72,3 +79,11 @@ index.post(
     return response.redirect('/result/' + id);
   }
 );
+
+index.post('/', async (request, response) => {
+  // Add validation that we have an id
+  // const { id } = request.body;
+  const newId = await reRunTest(request);
+
+  return response.redirect(`/result/${newId}`);
+});
