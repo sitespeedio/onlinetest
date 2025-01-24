@@ -9,7 +9,7 @@
       "version": "1.0.3",
       "license": "AGPL-3.0-only",
       "dependencies": {
-        "@sitespeed.io/log": "0.2.2",
+        "@sitespeed.io/log": "0.2.4",
         "bull": "4.16.5",
         "execa": "9.5.2",
         "joi": "17.13.3",
@@ -388,9 +388,9 @@
       }
     },
     "node_modules/@sitespeed.io/log": {
-      "version": "0.2.2",
-      "resolved": "https://registry.npmjs.org/@sitespeed.io/log/-/log-0.2.2.tgz",
-      "integrity": "sha512-Acvu61hHtbGz07b4TXuUVtRvO5YnNNcoreUFdiGlQkK4jE9ADRjCgrsw3ogQWuC0140ymuCVE/CZAOSQ+alA6g==",
+      "version": "0.2.4",
+      "resolved": "https://registry.npmjs.org/@sitespeed.io/log/-/log-0.2.4.tgz",
+      "integrity": "sha512-rXQhH+RJiMxSZB3+JYhHEzfm8KruFkDOAxAuh4yDo03zeOyD4BvLOtvkpKXFP2V6egJKev0w+SSXa4RkNTuunw==",
       "license": "Apache-2.0",
       "engines": {
         "node": ">=20.0.0"
