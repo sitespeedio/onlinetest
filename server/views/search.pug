@@ -26,6 +26,22 @@ block content
         search.value = '';
       }
     }
+    function reRunTest(id) {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/';
+
+      // Create a hidden input for the test ID
+      const idInput = document.createElement('input');
+      idInput.type = 'hidden';
+      idInput.name = 'id';
+      idInput.value = id;
+      form.appendChild(idInput);
+      document.body.appendChild(form);
+
+      form.submit();
+    }
+
   section.section
     .container
       .level
@@ -109,7 +125,7 @@ block content
             button.button.is-link.is-medium(
               onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
           form#search-form-compare(action='/compare-redirect/' method='post')
-            table.table.is-striped.is-fullwidth
+            table.table.is-striped.is-fullwidth.is-narrow
               tr 
                 th #{getText('search.result.urlscriptname')}
                 th
@@ -122,51 +138,57 @@ block content
                 th #{getText('search.result.type')}
                 th #{getText('search.result.status')}
                 th #{getText('search.result.browser')}
-                th #{getText('search.result.compare')}
+                th(colspan='3') #{getText('search.result.actions')}
               each test in data.result
                 tr 
                   td
                     span.icon-text
                       span
                         if test.result_url
-                          a(href=test.result_url) #{test.url ? shortURL(test.url, true) : test.scripting_name}
+                          a(href=test.result_url title='Go to test result.') #{test.url ? shortURL(test.url, true) : test.scripting_name}
                         else
                           span #{test.url ? shortURL(test.url, true) : test.scripting_name}
-                        - let urlOnClick = test.url ? `addToSearch('url:${test.url}')` : `addToSearch('name:${ test.scripting_name}')`;
-                      a(role='button' onclick=urlOnClick)
-                        span.icon.is-small
-                          img(src='/img/icons/content-copy.svg' alt='Go to URL')
                     td 
                       - let labelOnClick = `addToSearch('label:${test.label}')`;
                       - let slugOnClick = `addToSearch('slug:${test.slug}')`;
                       if nconf.get('search:showLabel') === true
-                        a(role='button' onclick=labelOnClick) #{test.label}
+                        a(role='button' onclick=labelOnClick title='Add label to search') #{test.label}
                       if nconf.get('search:showSlug') === true
-                        a(role='button' onclick=slugOnClick) #{test.slug}
-                  td.run-date #{test.run_date ? dayjs(test.run_date).format(nconf.get('dateformat')): ''}
+                        a(role='button' onclick=slugOnClick title='Add slug to search') #{test.slug}
+                  td.run-date #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
                   td 
                     - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
-                    a(role='button' onclick=locationOnClick) #{test.location}
+                    a(role='button' onclick=locationOnClic title='Add location to search') #{test.location}
                   td.is-capitalized 
                     - let testOnClick = 'addToSearch(\'testType:' + test.test_type + '\')';
-                    a(role='button' onclick=testOnClick) #{test.test_type}
+                    a(role='button' onclick=testOnClick title='Add test type to search') #{test.test_type}
                   td #{test.status}
                   td
                     - let browserOnClick = 'addToSearch(\'browser:' + test.browser_name + '\')';
-                    a(role='button' onclick=browserOnClick) #{test.browser_name}
-                  td 
+                    a(role='button' onclick=browserOnClick title='Add browser to search') #{test.browser_name}
+                  td
                     label.checkbox
                       if test.status === 'completed' 
                         input(type='checkbox' value=test.id name='har')
                       else 
                         input(type='checkbox' value=test.id name='har' disabled)
+                  td
+                    - let urlOnClick = test.url ? `addToSearch('url:${test.url}')` : `addToSearch('name:${ test.scripting_name}')`;
+                    a(role='button' onclick=urlOnClick)
+                      span.icon.is-small
+                        img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
+                  td
+                    - let reRunOnClick = 'reRunTest(\'' + test.id + '\')';
+                    a(role='button' onclick=reRunOnClick)
+                      span.icon.is-small
+                        img(src='/img/icons/refresh.svg' alt='Rerun test' title='Rerun test')
           p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
             button.button.is-link.is-medium.mr-2(
               onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
             button.button.is-link.is-medium(
               onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
           p.has-background-white.has-text-black.p-3.has-text-centered.has-addons 
-            button.button.is-primary.is-medium(accesskey='c') #{getText('search.button.compare')}
+            button.button.is-primary.is-medium(accesskey='c' form='search-form-compare') #{getText('search.button.compare')}
         else 
           .message.is-fullwidth.is-large.has-background-white.has-text-centered
             .message-body

@@ -5,7 +5,7 @@ import DatabaseHelper from './databasehelper.js';
 const logger = getLogger('sitespeedio.database');
 
 const LIMITED_COLUMS =
-  'id, location, test_type, run_date, browser_name, url, result_url, status, scripting_name, label, slug';
+  'id, location, test_type, run_date, added_date, connectivity, browser_name, url, result_url, status, scripting_name, label, slug';
 
 function logError(message, error) {
   if (error instanceof AggregateError) {
