@@ -175,7 +175,9 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     await process;
   } catch (error) {
     // if sitespeed.io exits with 0 zero, execa will throw an error
-    logger.error('Could not run sitespeed.io', error);
+    logger.error(`Could not run sitespeed.io. Exit code: ${error.exitCode}`);
+    logger.error(`Stdout: ${error.stdout}`);
+    logger.error(`Stderr: ${error.stderr}`);
     throw error;
   }
   try {
