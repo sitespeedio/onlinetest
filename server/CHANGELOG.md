@@ -1,6 +1,15 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.1.0 - 2025-01-25
+### Added
+* You can now re-run a test using the re-run button in the search result. Also hover over the result buttons to see what you can do [#120](https://github.com/sitespeedio/onlinetest/pull/120)
+
+### Fixed
+* Use the latest version of the log package [#118](https://github.com/sitespeedio/onlinetest/pull/118).
+* Better error logging [#119](https://github.com/sitespeedio/onlinetest/pull/119).
+* Fix broken compare button [#120](https://github.com/sitespeedio/onlinetest/pull/120)
+
 ## 1.0.1 - 2024-12-06
 ### Fixed
 * Fixed the release flow so the Docker containers get the correct tag.
