@@ -9,6 +9,8 @@
 * Use the latest version of the log package [#118](https://github.com/sitespeedio/onlinetest/pull/118).
 * Better error logging [#119](https://github.com/sitespeedio/onlinetest/pull/119).
 * Fix broken compare button [#120](https://github.com/sitespeedio/onlinetest/pull/120)
+* Replace intel log with sitespeed.io log [#117](https://github.com/sitespeedio/onlinetest/pull/117)
+* Update following dependencies: compression 1.7.5, execa 9.5.2, Pg 8.13.1, bull  4.16.5 and  helmet 8.0.0.
 
 ## 1.0.1 - 2024-12-06
 ### Fixed
