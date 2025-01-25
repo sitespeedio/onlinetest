@@ -158,7 +158,7 @@ block content
                   td.run-date #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
                   td 
                     - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
-                    a(role='button' onclick=locationOnClic title='Add location to search') #{test.location}
+                    a(role='button' onclick=locationOnClick title='Add location to search') #{test.location}
                   td.is-capitalized 
                     - let testOnClick = 'addToSearch(\'testType:' + test.test_type + '\')';
                     a(role='button' onclick=testOnClick title='Add test type to search') #{test.test_type}
