@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 1.0.4 - 2025-01-25
+### Fixed
+* Replace Intel log with @sitespeed.io/log [#117](https://github.com/sitespeedio/onlinetest/pull/117).
+
 ## 1.0.3 - 2024-12-18
 ### Fixed
 * Fix killing WebPageReplay correctly and correct path to WebPageReplay files [#108](https://github.com/sitespeedio/onlinetest/pull/108).
