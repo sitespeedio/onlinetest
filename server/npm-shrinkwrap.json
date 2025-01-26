@@ -1,12 +1,12 @@
 {
   "name": "@sitespeed.io/server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "lockfileVersion": 3,
   "requires": true,
   "packages": {
     "": {
       "name": "@sitespeed.io/server",
-      "version": "1.1.0",
+      "version": "1.1.1",
       "license": "AGPL-3.0-only",
       "dependencies": {
         "@sitespeed.io/log": "0.2.4",
