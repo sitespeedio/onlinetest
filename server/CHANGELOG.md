@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.1.1 - 2025-01-26
+### Fixed
+* Fix click on location for search [#121](https://github.com/sitespeedio/onlinetest/pull/121).
+
 ## 1.1.0 - 2025-01-25
 ### Added
 * You can now re-run a test using the re-run button in the search result. Also hover over the result buttons to see what you can do [#120](https://github.com/sitespeedio/onlinetest/pull/120)
