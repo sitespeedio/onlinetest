@@ -59,7 +59,11 @@ export async function reRunTest(request) {
     oldTest.cli_params
   );
 
-  const queueName = getQueueName(oldTest.location, oldTest.deviceId);
+  const deviceId =
+    get(oldTest.configuration, 'browsertime.firefox.android.deviceSerial') ||
+    get(oldTest.configuration, 'browsertime.chrome.android.deviceSerial');
+
+  const queueName = getQueueName(oldTest.location, deviceId);
 
   logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
 

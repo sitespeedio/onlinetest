@@ -83,7 +83,14 @@ index.post(
 index.post('/', async (request, response) => {
   // Add validation that we have an id
   // const { id } = request.body;
-  const newId = await reRunTest(request);
-
-  return response.redirect(`/result/${newId}`);
+  try {
+    const newId = await reRunTest(request);
+    return response.redirect(`/result/${newId}`);
+  } catch (error) {
+    return response.render('error', {
+      message: error,
+      nconf,
+      getText
+    });
+  }
 });
