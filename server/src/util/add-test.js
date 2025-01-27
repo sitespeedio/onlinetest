@@ -44,35 +44,37 @@ function getQueueName(location, deviceId) {
 
 export async function reRunTest(request) {
   let { id, label } = request.body;
+
   const oldTest = await getTest(id);
 
-  const jobId = await saveTest(
-    oldTest.browser_name,
-    oldTest.url,
-    oldTest.location,
-    oldTest.test_type,
-    oldTest.scripting_name,
-    oldTest.scripting,
-    label || oldTest.label,
-    oldTest.slug,
-    oldTest.configuration.browsertime,
-    oldTest.cli_params
-  );
-
   const deviceId =
-    get(oldTest.configuration, 'browsertime.firefox.android.deviceSerial') ||
-    get(oldTest.configuration, 'browsertime.chrome.android.deviceSerial');
+    get(oldTest, 'configuration.browsertime.chrome.android.deviceSerial') ||
+    get(oldTest, 'configuration.browsertime.firefox.android.deviceSerial');
 
   const queueName = getQueueName(oldTest.location, deviceId);
-
-  logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
 
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
   const removeOnFail = nconf.get('queue:removeOnFail') || 400;
   const attempts = nconf.get('queue:attempts') || 1;
+
   if (queueName) {
     const testRunnerQueue = getExistingQueue(queueName);
     try {
+      const jobId = await saveTest(
+        oldTest.browser_name,
+        oldTest.url,
+        oldTest.location,
+        oldTest.test_type,
+        oldTest.scripting_name,
+        oldTest.scripting,
+        label || oldTest.label,
+        oldTest.slug,
+        oldTest.configuration.browsertime,
+        oldTest.cli_params
+      );
+
+      logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
+
       await testRunnerQueue.add(
         {
           url: oldTest.url,
@@ -100,16 +102,11 @@ export async function reRunTest(request) {
       );
       setIdAndQueue(jobId, testRunnerQueue);
       return jobId;
-    } catch (error) {
-      logger.error(
-        `Setting status to failed for ${jobId} because queue is down`,
-        error
-      );
-      await updateStatus(jobId, 'failed');
+    } catch {
       throw new Error('Could not connect to queue');
     }
   } else {
-    throw new Error('Non existing queue');
+    throw new Error('Non existing queue ' + queueName);
   }
 }
 
