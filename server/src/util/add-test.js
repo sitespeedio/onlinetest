@@ -70,6 +70,7 @@ export async function reRunTest(request) {
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
   const removeOnFail = nconf.get('queue:removeOnFail') || 400;
   const attempts = nconf.get('queue:attempts') || 1;
+
   if (queueName) {
     const testRunnerQueue = getExistingQueue(queueName);
     try {
@@ -109,6 +110,7 @@ export async function reRunTest(request) {
       throw new Error('Could not connect to queue');
     }
   } else {
+    await updateStatus(jobId, 'failed');
     throw new Error('Non existing queue');
   }
 }
