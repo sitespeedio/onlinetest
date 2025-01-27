@@ -66,7 +66,7 @@
 
   "search.result.urlscriptname": "URL/script name",
   "search.result.label": "Label",
-  "search.result.rundate": "Run date",
+  "search.result.rundate": "Run/added date",
   "search.result.location": "Location",
   "search.result.type": "Type",
   "search.result.status": "Status",
