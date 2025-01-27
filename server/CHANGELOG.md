@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.1.2 - 2025-01-27
+### Fixed
+* Fix: rerun for Android picked the wrong queue [#122](https://github.com/sitespeedio/onlinetest/pull/122).
+
 ## 1.1.1 - 2025-01-26
 ### Fixed
 * Fix click on location for search [#121](https://github.com/sitespeedio/onlinetest/pull/121).
