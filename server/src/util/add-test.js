@@ -48,8 +48,8 @@ export async function reRunTest(request) {
   const oldTest = await getTest(id);
 
   const deviceId =
-    get(oldTest.configuration, 'browsertime.firefox.android.deviceSerial') ||
-    get(oldTest.configuration, 'browsertime.chrome.android.deviceSerial');
+    get(oldTest, 'configuration.browsertime.chrome.android.deviceSerial') ||
+    get(oldTest, 'configuration.browsertime.firefox.android.deviceSerial');
 
   const queueName = getQueueName(oldTest.location, deviceId);
 
