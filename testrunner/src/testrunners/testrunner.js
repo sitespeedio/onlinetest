@@ -178,7 +178,7 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     logger.error(`Could not run sitespeed.io. Exit code: ${error.exitCode}`);
     logger.error(`Stdout: ${error.stdout}`);
     logger.error(`Stderr: ${error.stderr}`);
-    throw error;
+    exitCode = error.exitCode;
   }
   try {
     const result = await readFile(
