@@ -134,12 +134,6 @@ export default async function runJob(job) {
         removeOnFail
       }
     );
-
-    if (testResult.exitCode > 0) {
-      throw new Error(
-        `sitespeed.io exited with a failure exit code ${testResult.exitCode}`
-      );
-    }
     return {
       resultUrl: testResult.result.resultUrl,
       pageSummaryUrl:

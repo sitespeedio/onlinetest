@@ -63,20 +63,15 @@ export default async function runJob(job) {
         removeOnFail
       }
     );
-    if (testResult.exitCode > 0) {
-      throw new Error(
-        `sitespeed.io exited with a failure exit code ${testResult.exitCode}`
-      );
-    } else {
-      return {
-        resultUrl: testResult.result.resultUrl,
-        pageSummaryUrl:
-          testResult.exitCode === 0
-            ? testResult.result.pageSummaryUrl
-            : testResult.result.resultUrl,
-        status: testResult.exitCode === 0 ? 'completed' : 'failed'
-      };
-    }
+
+    return {
+      resultUrl: testResult.result.resultUrl,
+      pageSummaryUrl:
+        testResult.exitCode === 0
+          ? testResult.result.pageSummaryUrl
+          : testResult.result.resultUrl,
+      status: testResult.exitCode === 0 ? 'completed' : 'failed'
+    };
   } catch (error) {
     logger.error('Job execution failed: %s', error.message);
     job.log('Job failed:' + error.message);
