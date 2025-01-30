@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.3.0 - 2025-01-30
+### Added
+* Add link to active test in search [#129](https://github.com/sitespeedio/onlinetest/pull/129).
+
 ## 1.2.0 - 2025-01-30
 ### Added
 * You can now search by status. `status:completed`.  [#128](https://github.com/sitespeedio/onlinetest/pull/128).
