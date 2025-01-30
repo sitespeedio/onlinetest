@@ -143,6 +143,11 @@ function generateMatch(parameters) {
     parameters_.push(parameters.testType);
   }
 
+  if (parameters.status) {
+    where.push('status = $' + (parameters_.length + 1));
+    parameters_.push(parameters.status);
+  }
+
   if (parameters.before) {
     where.push('DATE(run_date) < $' + (parameters_.length + 1));
     parameters_.push(parameters.before);
@@ -169,6 +174,7 @@ function help(searchText) {
     label,
     slug,
     scriptingName,
+    status,
     limit;
 
   const dateMatch = searchText.match(
@@ -177,30 +183,34 @@ function help(searchText) {
   const beforeMatch = searchText.match(/before:\s*(\d{4}-\d{2}-\d{2})/);
   const afterMatch = searchText.match(/after:\s*(\d{4}-\d{2}-\d{2})/);
   const whenMatch = searchText.match(
-    /when:\s*(.*?)(?=(date:|before:|after:|testType:|browser:|name:|slug:|label:|http|$))/s
+    /when:\s*(.*?)(?=(date:|before:|after:|testType:|browser:|name:|slug:|status:|label:|http|$))/s
   );
   const locationMatch = searchText.match(
-    /location:\s*(.*?)(?=(date:|before:|after:|testType:|browser:|name:|label:|slug:|w:|when:|http|$))/s
+    /location:\s*(.*?)(?=(date:|before:|after:|testType:|browser:|name:|label:|slug:|status:|w:|when:|http|$))/s
   );
   const urlMatchPerfect = searchText.match(/(http\S*)/);
   const urlMatch = searchText.match(
-    /url:\s*(.*?)(?=(date:|before:|after:|location:|browser:|name:|label:|slug:|when:|$))/s
+    /url:\s*(.*?)(?=(date:|before:|after:|location:|browser:|name:|label:|slug:|status:|when:|$))/s
   );
   const testTypeMatch = searchText.match(
-    /testType:\s*(.*?)(?=(date:|before:|after:|location:|browser:|name:|label:|slug:|when:|http|$))/s
+    /testType:\s*(.*?)(?=(date:|before:|after:|location:|browser:|name:|label:|slug:|status:|when:|http|$))/s
   );
   const browserMatch = searchText.match(
-    /browser:\s*(.*?)(?=(date:|before:|after:|location:|testType:|name:|label:|slug:|when:|http|$))/s
+    /browser:\s*(.*?)(?=(date:|before:|after:|location:|testType:|name:|label:|slug:|status:|when:|http|$))/s
   );
   const labelMatch = searchText.match(
     /label:\s*(.*?)(?=(date:|before:|after:|location:|testType:|browser:|name:|when:|http|$))/s
   );
   const scriptingNameMatch = searchText.match(
-    /name:\s*(.*?)(?=(date:|before:|after:|location:|testType:|browser:|label:|slug:|when:|http|$))/s
+    /name:\s*(.*?)(?=(date:|before:|after:|location:|testType:|browser:|label:|slug:|status:|when:|http|$))/s
   );
 
   const slugMatch = searchText.match(
-    /slug:\s*(.*?)(?=(date:|before:|after:|location:|testType:|browser:|name:|when:|http|$))/s
+    /slug:\s*(.*?)(?=(date:|before:|after:|location:|testType:|browser:|name:|when:|status:|http|$))/s
+  );
+
+  const statusMatch = searchText.match(
+    /status:\s*(.*?)(?=(date:|before:|after:|location:|testType:|browser:|name:|slug:|when:|http|$))/s
   );
 
   const limitMatch = searchText.match(/limit:\s*(\d+)/);
@@ -249,6 +259,10 @@ function help(searchText) {
     slug = slugMatch[1].trim();
   }
 
+  if (statusMatch) {
+    status = statusMatch[1].trim();
+  }
+
   if (scriptingNameMatch) {
     scriptingName = scriptingNameMatch[1].trim();
   }
@@ -266,6 +280,7 @@ function help(searchText) {
     label,
     slug,
     scriptingName,
+    status,
     limit
   };
 }
