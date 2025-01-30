@@ -18,11 +18,23 @@ result.get('/:id', async function (request, response) {
     const job = await workQueue.getJob(id);
     if (job) {
       const status = await job.getState();
-      if (status === 'completed') {
+      if (status === 'completed' || status === 'failed') {
         if (job.returnvalue.pageSummaryUrl) {
           return response.redirect(job.returnvalue.pageSummaryUrl);
+        } else if (status === 'failed') {
+          const { logs } = await workQueue.getJobLogs(id);
+          return response.render('error', {
+            status: status,
+            id: id,
+            logs: logs,
+            nconf,
+            message: getText('error.testfailed'),
+            getText
+          });
         } else {
-          logger.error('Missing resultBaseURL setup for sitespeeed.io');
+          logger.error(
+            'Missing resultBaseURL setup for sitespeeed.io or no result file JSON created'
+          );
           return response.render('error', {
             id: id,
             nconf,
@@ -30,16 +42,6 @@ result.get('/:id', async function (request, response) {
             getText
           });
         }
-      } else if (status === 'failed') {
-        const { logs } = await workQueue.getJobLogs(id);
-        return response.render('error', {
-          status: status,
-          id: id,
-          logs: logs,
-          nconf,
-          message: getText('error.testfailed'),
-          getText
-        });
       } else {
         const testConfig = getConfigByTestId(id);
         const count = await workQueue.count();
@@ -86,11 +88,25 @@ result.get('/:id', async function (request, response) {
         message: getText('error.validation.nomatchingtestwithid', id),
         getText
       });
-    } else if (testResult.status === 'completed') {
+    } else if (
+      testResult.status === 'completed' ||
+      testResult.status === 'failed'
+    ) {
       if (testResult.result_url) {
         return response.redirect(testResult.result_url);
+      } else if (testResult.status === 'failed') {
+        return response.render('error', {
+          status: testResult,
+          id: id,
+          logs: [],
+          nconf,
+          message: getText('error.testfailed'),
+          getText
+        });
       } else {
-        logger.error('Missing resultBaseURL setup for sitespeeed.io');
+        logger.error(
+          'Missing resultBaseURL setup for sitespeeed.io or no result JSON created'
+        );
         return response.render('error', {
           id: id,
           nconf,
@@ -98,15 +114,6 @@ result.get('/:id', async function (request, response) {
           getText
         });
       }
-    } else if (testResult.status === 'failed') {
-      return response.render('error', {
-        status: testResult,
-        id: id,
-        logs: [],
-        nconf,
-        message: getText('error.testfailed'),
-        getText
-      });
     }
   }
 });
