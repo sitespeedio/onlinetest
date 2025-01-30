@@ -1,6 +1,14 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.2.0 - 2025-01-30
+### Added
+* You can now search by status. `status:completed`.  [#128](https://github.com/sitespeedio/onlinetest/pull/128).
+* Add colors to failure/completes in search results [#127](https://github.com/sitespeedio/onlinetest/pull/127).
+
+### Fixed
+* Make sure failing tests with a result is accessible [#126](https://github.com/sitespeedio/onlinetest/pull/126).
+
 ## 1.1.3 - 2025-01-27
 ### Fixed
 * Fix: failed rerun tests could get stuck in waiting state [#123](https://github.com/sitespeedio/onlinetest/pull/123).

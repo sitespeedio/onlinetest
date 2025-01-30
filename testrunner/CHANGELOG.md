@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 1.0.5 - 2025-01-30
+### Fixed
+* Make sure failing tests with a result is accessible [#126](https://github.com/sitespeedio/onlinetest/pull/126).
+
 ## 1.0.4 - 2025-01-25
 ### Fixed
 * Replace Intel log with @sitespeed.io/log [#117](https://github.com/sitespeedio/onlinetest/pull/117).
