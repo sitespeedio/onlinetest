@@ -170,6 +170,8 @@ block content
                       span.has-text-success #{test.status}
                     else if test.status === 'failed' 
                       span.has-text-danger #{test.status}
+                    else if test.status === 'active'
+                      a(href=('/result/' + test.id) title='Go to running test') #{test.status}
                     else
                       span #{test.status}
                   td
