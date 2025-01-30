@@ -165,7 +165,13 @@ block content
                   td.is-capitalized 
                     - let testOnClick = 'addToSearch(\'testType:' + test.test_type + '\')';
                     a(role='button' onclick=testOnClick title='Add test type to search') #{test.test_type}
-                  td #{test.status}
+                  td 
+                    if test.status === 'completed'
+                      span.has-text-success #{test.status}
+                    else if test.status === 'failed' 
+                      span.has-text-danger #{test.status}
+                    else
+                      span #{test.status}
                   td
                     - let browserOnClick = 'addToSearch(\'browser:' + test.browser_name + '\')';
                     a(role='button' onclick=browserOnClick title='Add browser to search') #{test.browser_name}
