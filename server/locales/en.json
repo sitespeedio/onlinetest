@@ -60,6 +60,7 @@
   "search.help.bybrowser": "Find tests by browser: chrome, firefox, edge, safari",
   "search.help.byscriptname": "Find tests by script name",
   "search.help.bylocation": "Find tests by location",
+  "search.help.bystatus": "Find tests by status",
   "search.help.bytesttype": "Find tests by test type: desktop, emulatedMobile or android.",
   "search.help.byurl": "Find tests by a URL. The URL must start with http and the search will do an equal match. If you want to search partial URLS use the url: command.",
   "search.help.byurlwithwildcard":"Find tests by a URL. The URL will wildcard search the beginning and end of the URL so you can use it to search for part of a URL. For example %s will match %s",
