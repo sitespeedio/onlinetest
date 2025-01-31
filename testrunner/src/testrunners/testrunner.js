@@ -10,7 +10,7 @@ import get from 'lodash.get';
 import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
-import { getBaseFilePath } from '../util.js';
+import { getBaseFilePath, removeFlags } from '../util.js';
 const { join } = path;
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -196,9 +196,13 @@ async function setupParameters(job, workingDirectory, configFileName) {
   ];
   const a = await handleScriptingAndUrl(job, workingDirectory);
   parameters.push(...a);
-  if (job.data.extras) {
-    parameters.push(...job.data.extras.split(' '));
+
+  if (job.data?.extras) {
+    const extrasArray = job.data.extras.split(' ');
+    const filteredExtras = removeFlags(extrasArray);
+    parameters.push(...filteredExtras);
   }
+
   return parameters;
 }
 

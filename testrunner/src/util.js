@@ -9,3 +9,13 @@ export function getBaseFilePath(theFile) {
   const currentDirectory = dirname(currentFilePath);
   return path.resolve(currentDirectory, '../', theFile);
 }
+
+export function removeFlags(arguments_) {
+  if (!arguments_) {
+    return [];
+  }
+
+  return arguments_.filter(
+    flag => !['--verbose', '-v', '-vv', '-vvv'].includes(flag)
+  );
+}
