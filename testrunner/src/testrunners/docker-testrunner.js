@@ -8,7 +8,7 @@ import nconf from 'nconf';
 import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
-
+import { removeFlags } from '../util.js';
 const { join } = path;
 
 const parseDockerExtraParameters = parameters => {
@@ -94,9 +94,10 @@ export default async function runJob(job) {
     }
 
     // Handle extra parameters from the GUI
-    if (job.data.extras) {
-      const extras = job.data.extras.split(' ');
-      parameters.push(...extras);
+    if (job.data?.extras) {
+      const extrasArray = job.data.extras.split(' ');
+      const filteredExtras = removeFlags(extrasArray);
+      parameters.push(...filteredExtras);
     }
 
     job.log('Starting test in Docker container ' + dockerContainer);
