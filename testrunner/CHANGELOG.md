@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 1.0.6 - 2025-01-31
+### Fixed
+* Disable verbose logging from GUI [#130](https://github.com/sitespeedio/onlinetest/pull/130).
+
 ## 1.0.5 - 2025-01-30
 ### Fixed
 * Make sure failing tests with a result is accessible [#126](https://github.com/sitespeedio/onlinetest/pull/126).
