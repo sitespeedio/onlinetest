@@ -167,7 +167,8 @@ block content
                     a(role='button' onclick=testOnClick title='Add test type to search') #{test.test_type}
                   td 
                     if test.status === 'completed'
-                      span.has-text-success #{test.status}
+                      span
+                        a(href=('/result/' + test.id) title='Go to test result').has-text-success #{test.status}
                     else if test.status === 'failed' 
                       span.has-text-danger #{test.status}
                     else if test.status === 'active'
