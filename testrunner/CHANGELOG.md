@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 1.0.7 - 2025-02-04
+### Fixed
+* Fix to make sure WPR always is killed whatever happens [#131](https://github.com/sitespeedio/onlinetest/pull/131).
+
 ## 1.0.6 - 2025-01-31
 ### Fixed
 * Disable verbose logging from GUI [#130](https://github.com/sitespeedio/onlinetest/pull/130).
