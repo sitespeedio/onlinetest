@@ -25,7 +25,15 @@ WPR_REPLAY_LOG=/tmp/wpr-replay.log
 # If you want to run the tests on a Android phone, add 
 RUN_ON_ANDROID=${ANDROID:-false}
 
-# Special setup when yoy run on an Android devic
+# Inspired by docker-selenium way of shutting down
+function shutdown {
+    kill -2 $replay_pid
+    wait $replay_pid
+    kill -s SIGTERM ${PID}
+    wait $PID
+}
+
+# Special setup when yoy run on an Android device
 if [ "$RUN_ON_ANDROID" = true ] 
 then 
     FIRST_DEVICE=$(adb devices | grep -v "List" | awk 'NR==1{print $1}')
@@ -66,19 +74,17 @@ if [ $RESULT -eq 0 ]
 then
     echo 'Start WebPageReplay replay'
     "$WPR_BINARY" replay $WPR_PARAMS  > "$WPR_REPLAY_LOG" 2>&1 &
-    REPLAY_PID=$!
+    replay_pid=$!
     if [ $? -eq 0 ]
     then
         echo 'Run the test against WebPageReplay'
         "$SITESPEEDIO" "$@" --browsertime.firefox.preference security.OCSP.enabled:0 --browsertime.firefox.preference network.dns.forceResolve:127.0.0.1 --browsertime.chrome.webPageReplayHostResolver --browsertime.chrome.webPageReplayHTTPPort $WPR_HTTP_PORT --browsertime.chrome.webPageReplayHTTPSPort $WPR_HTTPS_PORT --replay &
         SITESPEEDIO_PID=$!
+        trap shutdown SIGTERM SIGINT
         wait $SITESPEEDIO_PID
-        if kill -0 "$REPLAY_PID" 2>/dev/null; then
-            kill -s SIGTERM "$REPLAY_PID"
-            echo 'Stopped WebPageReplay replay'
-        else
-            echo "Replay PID $REPLAY_PID is not running."
-        fi
+        EXIT_STATUS=$?
+        kill -s SIGTERM $replay_pid
+        exit $EXIT_STATUS
     else
         echo "Replay server didn't start correctly, check the logs $WPR_REPLAY_LOG" >&2
     fi
