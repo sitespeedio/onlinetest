@@ -1,6 +1,11 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.4.0 - 2025-02-04
+### Added
+* Make sure completed tests are linked to the result [#132](https://github.com/sitespeedio/onlinetest/pull/132).
+* When hover the result link, show when the test was added, when it run and the connectivity [#133](https://github.com/sitespeedio/onlinetest/pull/133).
+
 ## 1.3.0 - 2025-01-30
 ### Added
 * Add link to active test in search [#129](https://github.com/sitespeedio/onlinetest/pull/129).
