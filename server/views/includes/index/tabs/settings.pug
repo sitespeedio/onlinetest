@@ -1,11 +1,11 @@
 mixin dropdown(label, name)
   .mb-2.mb-tablet-0(style='width:100%;max-width:325px;padding:0 15px')
     .subtitle.has-text-weight-semibold(style='margin-left:2px;margin-bottom:0.6rem;font-size:1rem')
-      label.label.is-large #{label}
+      label.label.is-normal #{label}
     .control
       .field
         .control
-          .select.is-size-4.is-size-5-mobile.is-fullwidth
+          .select.is-normal.is-fullwidth
             select(id=name style='border-bottom-left-radius:0;border-bottom-right-radius:0' name=name)
               block
 

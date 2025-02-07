@@ -6,7 +6,7 @@ script(type='text/javascript').
 
 .field.is-grouped
     p.control.is-expanded
-        input.input.is-large(type='text' placeholder=getText('index.tab.scripting.scriptname') name='scriptingName' pattern='^[-a-zA-Z0-9\._-]*')
+        input.input.is-normal(type='text' placeholder=getText('index.tab.scripting.scriptname') name='scriptingName' pattern='^[-a-zA-Z0-9\._-]*')
     p.control
     button.button.is-primary.is-large(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
 
@@ -18,7 +18,7 @@ script(src='/js/ace-1.33.1/ext-language_tools.js')
 script(src='/js/ace-1.33.1/mode-javascript.js')
 
 p.control.is-expanded
-    label.label.is-large.is-white
+    label.label.is-normal.is-white
         | #{getText('index.tab.scripting.recommendation')} (
         a(href='https://www.sitespeed.io/documentation/sitespeed.io/scripting/') #{getText('index.tab.scripting.documentation')}
         | )
