@@ -1,5 +1,4 @@
 mixin radio(label, name)
-  .mb-2.mb-tablet-0(style='width:100%;max-width:450px;padding:0 15px')
     .control
       .field
         .control
@@ -9,13 +8,14 @@ mixin radio(label, name)
 
 .field.is-grouped
     p.control.is-expanded
-        input.input.is-large(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label')
+        input.input.is-medium(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label')
     p.control
-        button.button.is-primary.is-large(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
+        button.button.is-primary.is-medium(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
 
 .level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
-    +radio(getText('index.tab.extras.sustainable'),'sustainable')
-    +radio(getText('index.tab.extras.axe'),'axe')
-    +radio(getText('index.tab.extras.crux'),'crux')
-    if (nconf.get('html:useLighthouse') === true)
-      +radio(getText('index.tab.extras.lighthouse'),'lighthouse')
+    .mb-2.mb-tablet-0(style='width:100%;max-width:450px;padding:0 15px')
+      +radio(getText('index.tab.extras.sustainable'),'sustainable')
+      +radio(getText('index.tab.extras.axe'),'axe')
+      +radio(getText('index.tab.extras.crux'),'crux')
+      if (nconf.get('html:useLighthouse') === true)
+        +radio(getText('index.tab.extras.lighthouse'),'lighthouse')

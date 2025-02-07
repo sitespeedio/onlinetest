@@ -23,20 +23,20 @@ block content
               evt.currentTarget.className += " is-active";
             }
 
-        .tabs.is-centered.is-boxed.is-large
+        .tabs.is-centered.is-boxed.is-medium
           ul
             li.tab.is-active(onclick='openTab(event,"settings")')
               a
-                span.is-large #{getText('index.tab.settings')}
+                span.is-medium #{getText('index.tab.settings')}
             li.tab(onclick='openTab(event,"commandline")')
               a
-                span.is-large #{getText('index.tab.cli')} 
+                span.is-medium #{getText('index.tab.cli')} 
             li.tab(onclick='openTab(event,"extras")')
               a
-                span.is-large #{getText('index.tab.extras')}
+                span.is-medium #{getText('index.tab.extras')}
             li.tab(onclick='openTab(event,"scripting")')
               a
-                span.is-large #{getText('index.tab.scripting')} 
+                span.is-medium #{getText('index.tab.scripting')} 
 
         form#analyze-form(method='post' action='/')
           .content-tab#settings
@@ -52,7 +52,7 @@ block content
         .level
           .level-item.has-text-centered
             p.control.is-expanded
-              label.label.is-large
+              label.label.is-medium
                 | #{getText('index.waitingtestrunners')}
         .level
           .level-item.has-text-centered
