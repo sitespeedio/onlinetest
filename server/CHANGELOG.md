@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.5.0 - 2025-02-07
+### Added
+* Changed default text size to medium from large [#135](https://github.com/sitespeedio/onlinetest/pull/135) and [#136](https://github.com/sitespeedio/onlinetest/pull/136).
+
 ## 1.4.0 - 2025-02-04
 ### Added
 * Make sure completed tests are linked to the result [#132](https://github.com/sitespeedio/onlinetest/pull/132).
