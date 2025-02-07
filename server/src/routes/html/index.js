@@ -33,7 +33,7 @@ index.get('/', async function (request, response) {
     response.render('index', {
       bodyId: 'index',
       title: getText('index.pagetitle'),
-      description: getText('index.pagedescripton'),
+      description: getText('index.pagedescription'),
       serverConfig: testRunners,
       testDomains: testDomain,
       nconf,
