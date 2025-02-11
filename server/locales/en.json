@@ -1,7 +1,7 @@
 {
   "index.pagetitle": "Analyze your page against web performance best practice rules and using metrics",
   "index.pagedescription": "How fast is your site? How good does it follow web performance best practice rules? Find out by using sitespeed.io.",
-
+  
   "index.button.analyze": "Analyze",
   "index.button.backtostart": "Back to start",
   "index.tab.settings": "Settings",
@@ -95,5 +95,13 @@
   "error.nonexistingqueue": "Non existing queue",
 
   "navigationbar.search": "Search",
-  "navigationbar.home": "Home"
+  "navigationbar.home": "Home",
+
+  "edit.title": "Edit or rerun test",
+  "edit.description": "You can rerun your test, change the URL or change/add an alias for the test. If you change the URL and rerun the test, the test will use the exact same configuration.",
+  "edit.urlscript": "URL/script name:",
+  "edit.label": "Label:",
+  "edit.button.save": "Save change",
+  "edit.button.rerun": "Rerun test",
+  "edit.button.cancel": "Cancel"
 }

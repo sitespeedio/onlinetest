@@ -26,21 +26,71 @@ block content
         search.value = '';
       }
     }
-    function reRunTest(id) {
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/';
+    function reRunTest(id, url, label) {
+      const modal = document.getElementById("rerunModal");
+      const testIdInput = document.getElementById("rerunTestId");
+      const rerunTestUrl = document.getElementById("rerunTestUrl");
+      const rerunTestLabel = document.getElementById("rerunTestLabel");
+      testIdInput.value = id;
+      rerunTestUrl.value = url;
+      if (!url.startsWith('http')) {
+       rerunTestUrl.disabled = true; 
+      }
+      rerunTestLabel.value = label;
+      modal.classList.add("is-active");
 
-      // Create a hidden input for the test ID
-      const idInput = document.createElement('input');
-      idInput.type = 'hidden';
-      idInput.name = 'id';
-      idInput.value = id;
-      form.appendChild(idInput);
-      document.body.appendChild(form);
+      document
+      .getElementById("cancelRerun")
+      .addEventListener("click", closeRerunModal);
+    document
+      .getElementById("modalClose")
+      .addEventListener("click", closeRerunModal);
+    
+    document
+      .getElementById("confirmRerun")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        document.getElementById("rerunForm").submit();
+    });
 
-      form.submit();
+    document
+      .getElementById("updateLabel")
+      .addEventListener("click", (event) => {
+        event.preventDefault();
+        document.getElementById("rerunForm").action = '/update'
+        document.getElementById("rerunForm").submit();
+    });
     }
+    
+    function closeRerunModal() {
+      const modal = document.getElementById("rerunModal");
+      modal.classList.remove("is-active");
+    }
+
+  div.modal#rerunModal
+    div.modal-background
+    div.modal-card
+      header.modal-card-head
+        p.modal-card-title #{getText('edit.title')}
+        button.delete(aria-label="close", id="modalClose")
+      section.modal-card-body
+        p.is-small #{getText('edit.description')}
+        form#rerunForm(method="POST", action="/")
+          input(type="hidden", name="id", id="rerunTestId")
+          div.field
+            label
+              b #{getText('edit.urlscript')}
+          div.control
+            input.input(type="text", name="url", id="rerunTestUrl", maxlength="3000" placeholder="Change scripting is disabled")
+          div.field
+            label 
+              b #{getText('edit.label')}
+            div.control
+              input.input(type="text", name="label", id="rerunTestLabel", maxlength="100" placeholder="Enter label")
+      footer.modal-card-foot
+        button.button.is-success#updateLabel #{getText('edit.button.save')}
+        button.button.is-success#confirmRerun #{getText('edit.button.rerun')}
+        button.button#cancelRerun #{getText('edit.button.cancel')}
 
   section.section
     .container
@@ -191,10 +241,10 @@ block content
                       span.icon.is-small
                         img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
                   td
-                    - let reRunOnClick = 'reRunTest(\'' + test.id + '\')';
+                    - let reRunOnClick = 'reRunTest(\'' + test.id + '\', \'' + (test.url || test.scripting_name) + '\',  \'' + test.label + '\')';
                     a(role='button' onclick=reRunOnClick)
                       span.icon.is-small
-                        img(src='/img/icons/refresh.svg' alt='Rerun test' title='Rerun test')
+                        img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
           p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
             button.button.is-link.is-medium.mr-2(
               onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}

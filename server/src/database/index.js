@@ -92,6 +92,21 @@ export async function getLatestTests(limit, page) {
 }
 
 /**
+ * Update the label of a test.
+ */
+export async function updateLabel(id, label) {
+  const update = 'UPDATE sitespeed_io_test_runs SET label = $1 WHERE id = $2';
+
+  const values = [label, id];
+  try {
+    const result = await DatabaseHelper.getInstance().query(update, values);
+    return result.rows[0];
+  } catch (error) {
+    logError('Could not update label for id', error);
+  }
+}
+
+/**
  * Update a test.
  */
 export async function updateTest(
