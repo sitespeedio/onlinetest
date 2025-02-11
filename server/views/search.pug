@@ -67,26 +67,26 @@ block content
       modal.classList.remove("is-active");
     }
 
-  div.modal#rerunModal
-    div.modal-background
-    div.modal-card
+  .modal#rerunModal
+    .modal-background
+    .modal-card
       header.modal-card-head
         p.modal-card-title #{getText('edit.title')}
-        button.delete(aria-label="close", id="modalClose")
+        button.delete(aria-label='close' id='modalClose')
       section.modal-card-body
         p.is-small #{getText('edit.description')}
-        form#rerunForm(method="POST", action="/")
-          input(type="hidden", name="id", id="rerunTestId")
-          div.field
+        form#rerunForm(method='POST' action='/')
+          input(type='hidden' name='id' id='rerunTestId')
+          .field
             label
               b #{getText('edit.urlscript')}
-          div.control
-            input.input(type="text", name="url", id="rerunTestUrl", maxlength="3000" placeholder="Change scripting is disabled")
-          div.field
+          .control
+            input(type='text' name='url' id='rerunTestUrl' maxlength='3000' placeholder='Change scripting is disabled')
+          .field
             label 
               b #{getText('edit.label')}
-            div.control
-              input.input(type="text", name="label", id="rerunTestLabel", maxlength="100" placeholder="Enter label")
+            .control
+              input(type='text' name='label' id='rerunTestLabel' maxlength='100' placeholder='Enter label')
       footer.modal-card-foot
         button.button.is-success#updateLabel #{getText('edit.button.save')}
         button.button.is-success#confirmRerun #{getText('edit.button.rerun')}
