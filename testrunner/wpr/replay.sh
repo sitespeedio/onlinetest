@@ -27,11 +27,24 @@ RUN_ON_ANDROID=${ANDROID:-false}
 
 # Inspired by docker-selenium way of shutting down
 function shutdown {
-    kill -2 $replay_pid
-    wait $replay_pid
-    kill -s SIGTERM ${PID}
-    wait $PID
+    if [[ -n "${RECORD_PID:-}" ]]; then
+        kill -s SIGTERM "$RECORD_PID" 2>/dev/null || true
+        wait "$RECORD_PID" 2>/dev/null || true
+    fi
+    if [[ -n "${REPLAY_PID:-}" ]]; then
+        kill -s SIGTERM "$REPLAY_PID" 2>/dev/null || true
+        wait "$REPLAY_PID" 2>/dev/null || true
+    fi
+    if [[ -n "${SITESPEEDIO_PID:-}" ]]; then
+        kill -s SIGTERM "$SITESPEEDIO_PID" 2>/dev/null || true
+        wait "$SITESPEEDIO_PID" 2>/dev/null || true
+    fi
+    if [ "$RUN_ON_ANDROID" = true ]; then 
+        adb -s "$DEVICE_SERIAL" reverse --remove-all
+    fi
 }
+
+trap shutdown SIGTERM SIGINT EXIT
 
 # Special setup when yoy run on an Android device
 if [ "$RUN_ON_ANDROID" = true ] 
@@ -74,25 +87,19 @@ if [ $RESULT -eq 0 ]
 then
     echo 'Start WebPageReplay replay'
     "$WPR_BINARY" replay $WPR_PARAMS  > "$WPR_REPLAY_LOG" 2>&1 &
-    replay_pid=$!
+    REPLAY_PID=$!
     if [ $? -eq 0 ]
     then
         echo 'Run the test against WebPageReplay'
         "$SITESPEEDIO" "$@" --browsertime.firefox.preference security.OCSP.enabled:0 --browsertime.firefox.preference network.dns.forceResolve:127.0.0.1 --browsertime.chrome.webPageReplayHostResolver --browsertime.chrome.webPageReplayHTTPPort $WPR_HTTP_PORT --browsertime.chrome.webPageReplayHTTPSPort $WPR_HTTPS_PORT --replay &
         SITESPEEDIO_PID=$!
-        trap shutdown SIGTERM SIGINT
         wait $SITESPEEDIO_PID
         EXIT_STATUS=$?
-        kill -s SIGTERM $replay_pid
+        kill -s SIGTERM $REPLAY_PID
         exit $EXIT_STATUS
     else
         echo "Replay server didn't start correctly, check the logs $WPR_REPLAY_LOG" >&2
     fi
 else
     echo "Recording or accessing the URL failed, will not replay" >&2
-fi
-
-if [ "$RUN_ON_ANDROID" = true ] 
-then 
-    adb -s "$DEVICE_SERIAL" reverse --remove-all
 fi
