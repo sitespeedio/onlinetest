@@ -6,6 +6,7 @@ import { getLogger } from '@sitespeed.io/log';
 
 import { getTestRunners } from '../../testrunners.js';
 import { addTest, reRunTest } from '../../util/add-test.js';
+import { updateLabel } from '../../database/index.js';
 import { getText } from '../../util/text.js';
 
 import { validateURL } from '../../middleware/validateurl.js';
@@ -54,7 +55,15 @@ index.get('/', async function (request, response) {
 
 index.post(
   '/',
+  validateURL,
   (request, response, next) => {
+    if (request.inputValidationError) {
+      return response.render('error', {
+        message: request.inputValidationError,
+        nconf,
+        getText
+      });
+    }
     if (request.body.id) {
       return next('route');
     }
@@ -62,7 +71,6 @@ index.post(
     return next();
   },
   validateParameters,
-  validateURL,
   validateScripting,
   validateQueue,
   async function (request, response) {
@@ -86,6 +94,21 @@ index.post('/', async (request, response) => {
   try {
     const newId = await reRunTest(request);
     return response.redirect(`/result/${newId}`);
+  } catch (error) {
+    return response.render('error', {
+      message: error,
+      nconf,
+      getText
+    });
+  }
+});
+
+index.post('/update', async (request, response) => {
+  const id = request.body.id;
+  const label = request.body.label;
+  try {
+    await updateLabel(id, label);
+    return response.redirect(`/search/`);
   } catch (error) {
     return response.render('error', {
       message: error,

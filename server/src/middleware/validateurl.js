@@ -19,7 +19,6 @@ export const validateURL = (request, response, next) => {
 
   // From the web or the API
   let url = request.body.url;
-
   if (!url && request.body._) {
     url = request.body._[0];
   }

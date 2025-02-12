@@ -8,7 +8,7 @@ mixin radio(label, name)
 
 .field.is-grouped
     p.control.is-expanded
-        input.input.is-medium(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label')
+        input.input.is-medium(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label' maxlength='100')
     p.control
         button.button.is-primary.is-medium(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
 

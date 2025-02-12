@@ -43,8 +43,13 @@ function getQueueName(location, deviceId) {
 }
 
 export async function reRunTest(request) {
-  let { id, label } = request.body;
+  let { id, label, url } = request.body;
 
+  /*
+  if (url) {
+    url = url.startsWith('http') ? url : undefined;
+  }
+    */
   const oldTest = await getTest(id);
 
   const deviceId =
@@ -62,22 +67,32 @@ export async function reRunTest(request) {
     try {
       const jobId = await saveTest(
         oldTest.browser_name,
-        oldTest.url,
+        url || oldTest.url,
         oldTest.location,
         oldTest.test_type,
         oldTest.scripting_name,
         oldTest.scripting,
         label || oldTest.label,
         oldTest.slug,
-        oldTest.configuration.browsertime,
+        // oldTest.configuration.browsertime,
+        oldTest.configuration,
         oldTest.cli_params
       );
 
       logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
 
+      console.log({
+        url: url || oldTest.url,
+        config: oldTest.configuration,
+        extras: oldTest.cli_params,
+        scripting: oldTest.scripting,
+        scriptingName: oldTest.scripting_name,
+        label: label || oldTest.label
+      });
+
       await testRunnerQueue.add(
         {
-          url: oldTest.url,
+          url: url || oldTest.url,
           config: oldTest.configuration,
           extras: oldTest.cli_params,
           scripting: oldTest.scripting,
@@ -95,15 +110,15 @@ export async function reRunTest(request) {
 
       setConfigById(
         jobId,
-        oldTest.url,
+        url || oldTest.url,
         oldTest.scripting_name,
         oldTest.configuration,
         queueName
       );
       setIdAndQueue(jobId, testRunnerQueue);
       return jobId;
-    } catch {
-      throw new Error('Could not connect to queue');
+    } catch (error) {
+      throw new Error('Could not connect to queue' + error);
     }
   } else {
     throw new Error('Non existing queue ' + queueName);
