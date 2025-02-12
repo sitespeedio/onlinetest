@@ -35,7 +35,10 @@ block content
       rerunTestUrl.value = url;
       if (!url.startsWith('http')) {
        rerunTestUrl.disabled = true; 
+      } else {
+         rerunTestUrl.disabled = false; 
       }
+
       rerunTestLabel.value = label;
       modal.classList.add("is-active");
 
