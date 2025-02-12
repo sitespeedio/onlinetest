@@ -57,6 +57,10 @@ html:
     width: 112
     height: 18
     alt: "sitespeed.io logo"
+  favicon-180:
+    path: /img/ico/sitespeed.io-180.png
+  favicon-32:
+    path: /img/ico/sitespeed.io-32.png
   ## Setup a folder that will be mapped to /extras - use this of you want to change 
   ## the current look and feel
   extras:
