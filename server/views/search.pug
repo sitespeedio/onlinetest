@@ -81,12 +81,12 @@ block content
             label
               b #{getText('edit.urlscript')}
           .control
-            input(type='text' name='url' id='rerunTestUrl' maxlength='3000' placeholder='Change scripting is disabled')
+            input.input(type='text' name='url' id='rerunTestUrl' maxlength='3000' placeholder='Change scripting is disabled')
           .field
             label 
               b #{getText('edit.label')}
             .control
-              input(type='text' name='label' id='rerunTestLabel' maxlength='100' placeholder='Enter label')
+              input.input(type='text' name='label' id='rerunTestLabel' maxlength='100' placeholder='Enter label')
       footer.modal-card-foot
         button.button.is-success#updateLabel #{getText('edit.button.save')}
         button.button.is-success#confirmRerun #{getText('edit.button.rerun')}
