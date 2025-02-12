@@ -9,7 +9,7 @@
       "version": "1.5.0",
       "license": "AGPL-3.0-only",
       "dependencies": {
-        "@sitespeed.io/log": "0.2.4",
+        "@sitespeed.io/log": "0.2.6",
         "body-parser": "1.20.3",
         "bull": "4.16.5",
         "compression": "1.7.5",
@@ -434,9 +434,9 @@
       }
     },
     "node_modules/@sitespeed.io/log": {
-      "version": "0.2.4",
-      "resolved": "https://registry.npmjs.org/@sitespeed.io/log/-/log-0.2.4.tgz",
-      "integrity": "sha512-rXQhH+RJiMxSZB3+JYhHEzfm8KruFkDOAxAuh4yDo03zeOyD4BvLOtvkpKXFP2V6egJKev0w+SSXa4RkNTuunw==",
+      "version": "0.2.6",
+      "resolved": "https://registry.npmjs.org/@sitespeed.io/log/-/log-0.2.6.tgz",
+      "integrity": "sha512-xjT/UXWgsKJ8hmXcoi8KcBxtMzeLZvNQ7+eCu2x6mcwKzNbKnnOzm77NZ0tk9Ajor3mkQ4yZ0j3xP8HJUCFvyA==",
       "license": "Apache-2.0",
       "engines": {
         "node": ">=20.0.0"
