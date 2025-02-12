@@ -241,7 +241,7 @@ block content
                       span.icon.is-small
                         img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
                   td
-                    - let reRunOnClick = 'reRunTest(\'' + test.id + '\', \'' + (test.url || test.scripting_name) + '\',  \'' + test.label || '' + '\')';
+                    - let reRunOnClick = 'reRunTest(\'' + test.id + '\', \'' + (test.url || test.scripting_name) + '\',  \'' + (test.label || '') + '\')';
                     a(role='button' onclick=reRunOnClick)
                       span.icon.is-small
                         img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
