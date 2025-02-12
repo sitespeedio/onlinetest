@@ -1,6 +1,15 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+
+## 1.6.0 - 2025-02-12
+### Added
+* Add functionality to: edit/add alias to a finished test, rerun a test with the exact same configuration and change the URL of a test and rerun with the same configuration [#137](https://github.com/sitespeedio/onlinetest/pull/137).
+* You can now configure which favicons that is used [#140](https://github.com/sitespeedio/onlinetest/pull/140).
+
+### Fixed
+* Update to latest sitespeed.io/log [#138](https://github.com/sitespeedio/onlinetest/pull/138).
+
 ## 1.5.0 - 2025-02-07
 ### Added
 * Changed default text size to medium from large [#135](https://github.com/sitespeedio/onlinetest/pull/135) and [#136](https://github.com/sitespeedio/onlinetest/pull/136).
