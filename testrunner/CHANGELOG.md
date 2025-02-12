@@ -1,8 +1,10 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
-## 1.1.0 -  2025-02-12
+## 1.1.0 - 2025-02-12
 ### Added
 * Updated to sitespeed.io 36 as default version [#134](https://github.com/sitespeedio/onlinetest/pull/134).
+
+### Fixed
 * Use latest version of sitespeed.io/logs [#138](https://github.com/sitespeedio/onlinetest/pull/138).
 * Safer trap for WPR processes when running NodeJS Testrunner [#139](https://github.com/sitespeedio/onlinetest/pull/139).
 
