@@ -1,6 +1,9 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.6.1 - 2025-02-12
+### Fixed
+* Guard against empty labels when changing labels [#141](https://github.com/sitespeedio/onlinetest/pull/141).
 
 ## 1.6.0 - 2025-02-12
 ### Added
