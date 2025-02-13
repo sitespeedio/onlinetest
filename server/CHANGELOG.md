@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.6.3 - 2025-02-13
+### Fixed
+* There was a bug that when you tried to change the URL after you edited a test with a script, you couldn't change the URL [#142](https://github.com/sitespeedio/onlinetest/pull/142).
+
 ## 1.6.2 - 2025-02-12
 ### Fixed
 * Another label fix.
