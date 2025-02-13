@@ -1,6 +1,6 @@
 {
   "name": "@sitespeed.io/server",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "The sitespeed.io server",
   "type": "module",
   "exports": "./app.js",
