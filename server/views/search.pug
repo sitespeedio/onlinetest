@@ -204,7 +204,7 @@ block content
                         if test.result_url
                           a(href=test.result_url title=extras) #{test.url ? shortURL(test.url, true) : test.scripting_name}
                         else
-                          span #{test.url ? shortURL(test.url, true) : test.scripting_name}
+                          span #{test.url ? shortURL(test.url, true) : fixScriptName(test.scripting_name)}
                     td 
                       - let labelOnClick = `addToSearch('label:${test.label}')`;
                       - let slugOnClick = `addToSearch('slug:${test.slug}')`;
