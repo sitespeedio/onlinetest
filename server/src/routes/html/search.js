@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { createRequire } from 'node:module';
+import path from 'node:path';
 
 import nconf from 'nconf';
 
@@ -28,6 +29,10 @@ function shortURL(url, longVersion) {
   return url;
 }
 
+function fixScriptName(name) {
+  return path.basename(name);
+}
+
 search.get('/', async function (request, response) {
   const limit = request.query.limit || nconf.get('search:resultPerPage') || 100;
   const currentPage = Number.parseInt(request.query.page, 10) || 1;
@@ -53,6 +58,7 @@ search.get('/', async function (request, response) {
     data: result,
     dayjs,
     shortURL,
+    fixScriptName,
     search: request.body.search,
     currentPage: currentPage,
     totalPages: totalPages,
