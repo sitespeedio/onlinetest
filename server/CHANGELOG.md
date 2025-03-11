@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.6.5 - 2025-03-11
+### Fixed
+* And another fix for script names [#146](https://github.com/sitespeedio/onlinetest/pull/146).
+
 ## 1.6.4 - 2025-03-10
 ### Fixed
 * Another fix for showing the script name [#145](https://github.com/sitespeedio/onlinetest/pull/145).
