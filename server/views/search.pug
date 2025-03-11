@@ -202,9 +202,9 @@ block content
                       span
                         - const extras = `Go to test result.\n${test.connectivity?'Connectivity:' + test.connectivity + '\n':''}Added date:${dayjs(test.added_date).format(nconf.get('dateformat'))} ${test.run_date?'\nRun date:' + dayjs(test.run_date).format(nconf.get('dateformat')):''}`
                         if test.result_url
-                          a(href=test.result_url title=extras) #{test.url ? shortURL(test.url, true) : fixScriptName(test.scripting_name)}
+                          a(href=test.result_url title=extras) #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
                         else
-                          span #{test.url ? shortURL(test.url, true) : fixScriptName(test.scripting_name)}
+                          span #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
                     td 
                       - let labelOnClick = `addToSearch('label:${test.label}')`;
                       - let slugOnClick = `addToSearch('slug:${test.slug}')`;
