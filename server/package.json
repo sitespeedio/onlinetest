@@ -75,14 +75,14 @@
     "lodash.get": "4.4.2",
     "lodash.merge": "4.6.2",
     "md5": "2.3.0",
-    "nconf": "0.12.1",
+    "nconf": "0.13.0",
     "node-cache": "5.1.2",
     "node-uuid": "1.4.8",
-    "pg": "8.13.1",
+    "pg": "8.15.5",
     "pug": "3.0.3",
     "response-time": "2.3.3",
     "unique-names-generator": "4.7.1",
-    "validator": "13.12.0",
+    "validator": "13.15.0",
     "y18n": "5.0.8"
   }
 }
