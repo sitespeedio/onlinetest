@@ -48,16 +48,16 @@
   ],
   "scripts": {
     "start": "node app.js",
-    "lint": "eslint . && npm run pug-lint",
+    "lint": "eslint --config eslint.config.mjs . && npm run pug-lint",
     "lint:fix": "eslint . --fix",
     "pug-lint": "pug-lint views/"
   },
   "devDependencies": {
-    "eslint": "9.17.0",
-    "eslint-config-prettier": "9.1.0",
-    "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-unicorn": "56.0.1",
-    "prettier": "3.4.2",
+    "eslint": "9.25.1",
+    "eslint-config-prettier": "10.1.2",
+    "eslint-plugin-prettier": "5.2.6",
+    "eslint-plugin-unicorn": "58.0.0",
+    "prettier": "3.5.3",
     "pug-lint": "2.7.0",
     "pug-lint-config-clock": "2.0.0"
   },
