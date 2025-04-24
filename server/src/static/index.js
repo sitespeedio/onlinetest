@@ -1,4 +1,3 @@
-// eslint-disable-next-line unicorn/import-style
 import { join } from 'node:path';
 
 import nconf from 'nconf';

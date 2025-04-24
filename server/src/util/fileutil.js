@@ -1,4 +1,3 @@
-// eslint-disable-next-line unicorn/import-style
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
