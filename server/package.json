@@ -78,7 +78,7 @@
     "nconf": "0.13.0",
     "node-cache": "5.1.2",
     "node-uuid": "1.4.8",
-    "pg": "8.15.5",
+    "pg": "8.15.6",
     "pug": "3.0.3",
     "response-time": "2.3.3",
     "unique-names-generator": "4.7.1",
