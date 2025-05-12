@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import path from 'node:path';
 
-// eslint-disable-next-line unicorn/import-style
 import { extname } from 'node:path';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
