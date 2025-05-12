@@ -8,10 +8,10 @@ export default [
     ignores: ['config/*', 'public/**/*']
   },
   js.configs.recommended,
+  unicorn.configs.recommended,
   {
     plugins: {
-      prettier,
-      unicorn
+      prettier
     },
 
     languageOptions: {
