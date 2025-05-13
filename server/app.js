@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 import path from 'node:path';
-
-import { extname } from 'node:path';
 import { createRequire } from 'node:module';
 import fs from 'node:fs';
 
@@ -37,7 +35,7 @@ if (nconf.get('version')) {
 const configFile = nconf.get('config')
   ? path.resolve(process.cwd(), nconf.get('config'))
   : defaultConfig;
-const fileExtension = extname(configFile).toLowerCase();
+const fileExtension = path.extname(configFile).toLowerCase();
 let configFromFile;
 
 nconf.env({ parseValues: true, separator: '_' });
