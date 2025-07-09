@@ -59,7 +59,7 @@
     "@sitespeed.io/log": "0.2.6",
     "bull": "4.16.5",
     "nconf": "0.13.0",
-    "execa": "9.5.3",
+    "execa": "9.6.0",
     "lodash.get": "4.4.2",
     "lodash.merge": "4.6.2",
     "joi": "17.13.3",
