@@ -10,7 +10,7 @@ import get from 'lodash.get';
 import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
-import { getBaseFilePath, removeFlags } from '../util.js';
+import { getBaseFilePath, removeFlags } from '../utility.js';
 const { join } = path;
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 

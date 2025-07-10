@@ -8,7 +8,7 @@ import nconf from 'nconf';
 import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
-import { removeFlags } from '../util.js';
+import { removeFlags } from '../utility.js';
 const { join } = path;
 
 const parseDockerExtraParameters = parameters => {
