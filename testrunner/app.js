@@ -15,7 +15,7 @@ const version = require('./package.json').version;
 
 import { SitespeedioTestRunner } from './src/sitespeedio-testrunner.js';
 import { validate } from './src/validateconfig.js';
-import { getBaseFilePath } from './src/util.js';
+import { getBaseFilePath } from './src/utility.js';
 
 const defaultConfig = getBaseFilePath('./config/default.yaml');
 
