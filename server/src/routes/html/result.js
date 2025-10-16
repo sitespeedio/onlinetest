@@ -35,6 +35,7 @@ result.get('/:id', async function (request, response) {
           logger.error(
             'Missing resultBaseURL setup for sitespeeed.io or no result file JSON created'
           );
+          logger.error('Job status:' + status);
           return response.render('error', {
             id: id,
             nconf,
