@@ -1,6 +1,10 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.7.1 - 2025-10-23
+### Fixed
+* Fix for the search qyuery parameter [#162](https://github.com/sitespeedio/onlinetest/pull/162).
+
 ## 1.7.0 - 2025-10-22
 ### Added
 * Updated dependencies (too many PRs).
