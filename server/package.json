@@ -62,7 +62,7 @@
     "pug-lint-config-clock": "2.0.0"
   },
   "dependencies": {
-    "@sitespeed.io/log": "0.2.6",
+    "@sitespeed.io/log": "1.0.0",
     "body-parser": "2.2.0",
     "bull": "4.16.5",
     "compression": "1.8.1",
