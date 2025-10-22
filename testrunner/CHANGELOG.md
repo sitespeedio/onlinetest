@@ -1,5 +1,12 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 1.2.0 - 2025-10-22
+### Added
+* Update to sitespeed.io 38 [#158](https://github.com/sitespeedio/onlinetest/pull/158)
+* Update to NodeJS 22 [#155](https://github.com/sitespeedio/onlinetest/pull/155)
+### Fixed
+* Updated dependencies (too many PRs).
+
 ## 1.1.0 - 2025-02-12
 ### Added
 * Updated to sitespeed.io 36 as default version [#134](https://github.com/sitespeedio/onlinetest/pull/134).
@@ -40,7 +47,7 @@
 Hello and welcome to 1.0.0! In this release we aim to make it easier to run the full setup in Docker!
 
 ### Breaking change
-With the release of 1.0.0 we makes it possible to configure sitespeed.io with the server/testrunner.yml file [#92](https://github.com/sitespeedio/onlinetest/pull/92). 
+With the release of 1.0.0 we makes it possible to configure sitespeed.io with the server/testrunner.yml file [#92](https://github.com/sitespeedio/onlinetest/pull/92).
 
 That makes things so much easier when doing a default setup. However with this change we also retire the *config/sitespeed.json* configuration on the server. If you used that, you need to move that configuration to the yaml file for the server.
 
@@ -72,7 +79,7 @@ When you run the dockerised version of the testrunner, the default setup use the
 * Correct version in package.json
 
 ## 0.5.0 - 2024-08-02
-### Added 
+### Added
 * When running compare plugin tests using Docker, set the baseline directory automatically [#70](https://github.com/sitespeedio/onlinetest/pull/70)
 * * Make it possible to choose container that runs the test, using the API [#69](https://github.com/sitespeedio/onlinetest/pull/69/)
 
@@ -92,7 +99,7 @@ When you run the dockerised version of the testrunner, the default setup use the
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).
 * Default to max 50 finished jobs in the queue [#58](https://github.com/sitespeedio/onlinetest/pull/58).
-* Upgrade dev dependencies: unicorn [#61](https://github.com/sitespeedio/onlinetest/pull/61), eslint [#60](https://github.com/sitespeedio/onlinetest/pull/60), 
+* Upgrade dev dependencies: unicorn [#61](https://github.com/sitespeedio/onlinetest/pull/61), eslint [#60](https://github.com/sitespeedio/onlinetest/pull/60),
 * Update joi and execa [#59](https://github.com/sitespeedio/onlinetest/pull/59).
 * Make sure all uncaught errors are caught [#64](https://github.com/sitespeedio/onlinetest/pull/64)
 ### Added

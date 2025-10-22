@@ -1,6 +1,11 @@
 
 # sitespeed.io server changelog (we do [semantic versioning](https://semver.org))
 
+## 1.7.0 - 2025-10-22
+### Added
+* Updated dependencies (too many PRs).
+* Update to NodeJS 22 [#155](https://github.com/sitespeedio/onlinetest/pull/155)
+
 ## 1.6.5 - 2025-03-11
 ### Fixed
 * And another fix for script names [#146](https://github.com/sitespeedio/onlinetest/pull/146).
@@ -85,7 +90,7 @@
 Hello and welcome to 1.0.0! In this release we aim to make it easier to run the full setup in Docker!
 
 ### Breaking change
-With the release of 1.0.0 we makes it possible to configure sitespeed.io with the server/testrunner.yml file [#92](https://github.com/sitespeedio/onlinetest/pull/92). 
+With the release of 1.0.0 we makes it possible to configure sitespeed.io with the server/testrunner.yml file [#92](https://github.com/sitespeedio/onlinetest/pull/92).
 
 That makes things so much easier when doing a default setup. However with this change we also retire the *config/sitespeed.json* configuration on the server. If you used that, you need to move that configuration to the yaml file for the server.
 
@@ -119,7 +124,7 @@ When you run the dockerised version of the testrunner, the default setup use the
 ### Added
 * Merged slug/label column in search result [#68](https://github.com/sitespeedio/onlinetest/pull/68)
 * Make it possible to choose container that runs the test, using the API [#69](https://github.com/sitespeedio/onlinetest/pull/69/)
- 
+
 ## 0.3.2 - 2024-07-15
 ### Fixed
 * Upgrade to Bull 4.15.1 [#57](https://github.com/sitespeedio/onlinetest/pull/57).
