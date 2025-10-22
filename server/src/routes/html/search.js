@@ -59,7 +59,7 @@ search.get('/', async function (request, response) {
     dayjs,
     shortURL,
     fixScriptName,
-    search: request.body.search,
+    search: request.query?.search || '',
     currentPage: currentPage,
     totalPages: totalPages,
     firstResultIndex,
