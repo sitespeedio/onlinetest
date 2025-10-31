@@ -1,0 +1,46 @@
+name: API test running everything in Docker using Linux
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24.x'
+    - uses: actions/checkout@v4
+    - name: Build server
+      run: docker build --load --tag sitespeedio/server:local-action -f ./server/Dockerfile server
+    - name: Build testrunner
+      run: docker build --load  --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
+    - name: Start dependencies
+      env:
+        SITESPEED_IO_SERVER_VERSION: "local-action"
+        SITESPEED_IO_TESTRUNNER_VERSION: "local-action"
+      run: docker compose -f docker-compose.yml -f docker-compose.app.yml up -d
+    - name: Show versions
+      run: |
+        docker --version
+        docker ps
+        docker network ls
+        docker network inspect skynet
+    - name: Get host IP
+      run: echo "HOST_IP=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
+    - name: Run a test
+      run: |
+        git clone https://github.com/sitespeedio/sitespeed.io.git
+        cd sitespeed.io
+        npm install
+        bin/sitespeed.js ./test/scripts/addscriptingtest.mjs --multi -n 1 --headless -b firefox
+    - name: Display Server log
+      if: failure() || success()
+      run: docker logs onlinetest-sitespeed.io-server-1
+    - name: Display testrunner log
+      if: failure() || success()
+      run: docker logs onlinetest-sitespeed.io-testrunner-1

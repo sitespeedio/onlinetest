@@ -1,4 +1,4 @@
-name: Test running tests using Docker
+name: Test running tests using Docker configured testrunner
 on:
   push:
     branches:

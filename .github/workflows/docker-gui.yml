@@ -1,4 +1,4 @@
-name: Test running everything in Docker using Linux
+name: Test the GUI using a URL for a Docker setup
 on:
   push:
     branches:
@@ -37,10 +37,10 @@ jobs:
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
         npm install
-        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1  --api.location default --headless --api.json --s3.endpoint "http://${{ env.HOST_IP }}:9000"
+        bin/sitespeed.js  ./test/scripts/addatest.mjs --multi -n 1 --headless
     - name: Display Server log
       if: failure() || success()
       run: docker logs onlinetest-sitespeed.io-server-1
     - name: Display testrunner log
       if: failure() || success()
-      run: docker logs onlinetest-sitespeed.io-testrunner-1
+      run: docker logs onlinetest-sitespeed.io
