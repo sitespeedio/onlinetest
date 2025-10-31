@@ -1,5 +1,9 @@
 # Testrunner changelog (we do [semantic versioning](https://semver.org))
 
+## 1.2.1 - 2025-10-31
+### Fixed
+* Tests running in the Docker container has the wrong path to the scripting file [#167](https://github.com/sitespeedio/onlinetest/pull/167).
+
 ## 1.2.0 - 2025-10-22
 ### Added
 * Update to sitespeed.io 38 [#158](https://github.com/sitespeedio/onlinetest/pull/158)
