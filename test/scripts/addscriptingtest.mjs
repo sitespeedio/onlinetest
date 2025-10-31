@@ -11,7 +11,7 @@ export default async function (context, commands) {
 
   const surface = await commands.element.getByCss('#editor .ace_content');
   await commands.wait.bySelector('#editor .ace_text-input', 10_000);
-  const code = "export default async function (context, commands) { return commands.measure.start('http://www.wikipedia.org/');}";
+  const code = "export default async function (context, commands) { return commands.measure.start('https://www.wikipedia.org/');}";
 
   const actions = commands.action.getActions();
   await actions
