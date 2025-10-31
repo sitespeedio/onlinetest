@@ -101,7 +101,6 @@ export default async function runJob(job) {
     }
 
     job.log('Starting test in Docker container ' + dockerContainer);
-
     const testResult = await runDocker(
       job,
       parameters,
@@ -161,10 +160,15 @@ async function handleScriptingFile(job, workingDirectory) {
     : '.mjs';
   const filename = join(
     workingDirectory,
-    job.data.scriptingName || job.id + scriptExtension
+    job.data.scriptingName + scriptExtension || job.id + scriptExtension
   );
+
   await writeFile(filename, job.data.scripting);
-  return job.data.scriptingName || job.id + scriptExtension;
+  return join(
+    '/sitespeed.io',
+    `${job.data.scriptingName}${scriptExtension}` ||
+      `${job.id}${scriptExtension}`
+  );
 }
 
 function setupDockerParameters(
