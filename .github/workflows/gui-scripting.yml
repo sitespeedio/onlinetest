@@ -1,0 +1,48 @@
+name: Test the GUI for scripting test
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24.x'
+    - uses: actions/checkout@v4
+    - name: Install Chrome
+      run: |
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+        sudo apt-get update
+        sudo apt-get --only-upgrade install google-chrome-stable
+        google-chrome --version
+    - name: Start dependencies
+      run: docker compose -f docker-compose.yml up -d
+    - name: Start the server
+      run: |
+        npm install --prefix server
+        node server/app.js > server.log 2>&1 &
+    - name: Start the testrunner
+      run: |
+        npm install --prefix testrunner
+        node testrunner/app.js --log.verbose true > testrunner.log 2>&1 &
+    - name: Install sitespeed.io globally
+      run: npm install sitespeed.io -g
+    - name: Show versions
+      run: |
+          docker --version
+          sitespeed.io --version
+    - name: Run a test
+      run: sitespeed.io ./test/scripts/addscriptingtest.mjs --multi -n 1 --headless -b firefox
+    - name: Display Server log
+      if: failure() || success()
+      run: cat server.log
+    - name: Display testrunner log
+      if: failure() || success()
+      run: cat testrunner.log
