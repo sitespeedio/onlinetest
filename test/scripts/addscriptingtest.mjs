@@ -6,6 +6,12 @@ export default async function (context, commands) {
   await commands.navigate('http://127.0.0.1:3000/');
   await commands.select.selectByIdAndValue('iterations', 1);
 
+  // Run the test as headless
+  await commands.mouse.singleClick.byXpath("//div[contains(@class,'tabs')]//span[normalize-space()='Command line args']/ancestor::a[1]");
+  await commands.wait.byIdAndVisible('commandlinearea', 5000);
+  await commands.addText.byId('--headless', 'commandlinearea');
+
+  // Add the script
   await commands.mouse.singleClick.byXpath("//div[contains(@class,'tabs')]//span[normalize-space()='Scripting']/ancestor::a[1]");
   await commands.wait.byTime(2000);
 
