@@ -43,4 +43,4 @@ jobs:
       run: docker logs onlinetest-sitespeed.io-server-1
     - name: Display testrunner log
       if: failure() || success()
-      run: docker logs onlinetest-sitespeed.io
+      run: docker logs onlinetest-sitespeed.io-testrunner-1
