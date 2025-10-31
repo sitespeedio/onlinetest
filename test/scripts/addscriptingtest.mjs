@@ -46,6 +46,6 @@ export default async function (context, commands) {
   await commands.measure.start('RunTest');
   await commands.click.byIdAndWait('submittest');
   // Wait for the test to finish ...
-  await commands.wait.byXpathAndVisible("//h1[normalize-space(.)='Page summary']",30000);
+  await commands.wait.byXpathAndVisible("//h2[starts-with(normalize-space(), '1 page analysed')]",30000);
   return commands.measure.stop();
 }
