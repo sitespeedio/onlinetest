@@ -11,7 +11,22 @@ export default async function (context, commands) {
 
   const surface = await commands.element.getByCss('#editor .ace_content');
   await commands.wait.bySelector('#editor .ace_text-input', 10_000);
-  const code = "export default async function (context, commands) { return commands.measure.start('https://www.wikipedia.org/');}";
+  // Hack eeeeeexport
+  const code = "eexport default async function (context, commands) { return commands.measure.start('https://www.wikipedia.org/');}";
+
+  // Clear the text area
+  await commands.js.run(`
+    (function () {
+      const el = document.getElementById('editor');
+      if (window.ace && el) {
+        const ed = window.ace.edit(el);
+        ed.setValue('', -1); // clear and move cursor to start
+        ed.clearSelection();
+        return true;
+      }
+      return false;
+    })();
+  `);
 
   const actions = commands.action.getActions();
   await actions
@@ -19,6 +34,8 @@ export default async function (context, commands) {
     .click()
     .sendKeys(code)
     .perform();
+
+  await commands.wait.byTime(2000);
 
   await commands.measure.start('RunTest');
   await commands.click.byIdAndWait('submittest');
