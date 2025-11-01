@@ -1,4 +1,4 @@
-name: Test the GUI for scripting test
+name: Test the GUI for scripting test for a NodeJS setup
 on:
   push:
     branches:
