@@ -3,13 +3,13 @@ server:
   port: 3000
   # Configure SSL. Add the path to the key and certificate file
   ssl:
-    key: 
+    key:
     cert:
 
 # Configure the Redis like message backend.
 redis:
-  port: 6379 
-  host: keydb
+  port: 6379
+  host: redis
   password: jgsay7f2fgfgda6acCa7g()jaba51!
 
 # Configure the postgresql database
@@ -58,7 +58,7 @@ html:
     width: 112
     height: 18
     alt: "sitespeed.io logo"
-  ## Setup a folder that will be mapped to /extras - use this of you want to change 
+  ## Setup a folder that will be mapped to /extras - use this of you want to change
   ## the current look and feel
   extras:
     path:
@@ -86,13 +86,13 @@ basicAuth:
 admin:
   basicAuth:
     login: appojke
-    password: monkeyboy 
-  
+    password: monkeyboy
+
 # The default sitspeed.io configuration file that will be merged to all tests.
-# defaultSitespeedioConfigFile: 
+# defaultSitespeedioConfigFile:
 
 # The number of jobs to keep in the queue
-# Depending on how many jobs you run and how much memory 
+# Depending on how many jobs you run and how much memory
 # you have on your Redis/KeyDb instance you can tune this
 queue:
   removeOnComplete: 50
