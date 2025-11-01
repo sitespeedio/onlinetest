@@ -1,4 +1,4 @@
-name: Test running everything in Docker using Linux
+name: API test running everything in Docker using Linux
 on:
   push:
     branches:
