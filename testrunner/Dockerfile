@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:24-slim
 WORKDIR /usr/src/app
 
 COPY package.json npm-shrinkwrap.json ./

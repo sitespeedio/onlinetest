@@ -20,7 +20,7 @@ jobs:
     - name: Build testrunner
       run: docker build --load  --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
     - name: Pull sitespeed.io
-      run: docker pull sitespeedio/sitespeed.io:38
+      run: docker pull sitespeedio/sitespeed.io:39
     - name: Start dependencies
       env:
         SITESPEED_IO_SERVER_VERSION: "local-action"
