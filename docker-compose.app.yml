@@ -11,6 +11,8 @@ services:
       database_password: ${POSTGRES_PASSWORD}
       database_port: 5432
       validTestDomains: ${VALID_TEST_DOMAINS}
+      localization_defaultLocale: ${LOCALIZATION_DEFAULTLOCALE}
+      sitespeed.io_html_homeurl: ${SITESPEED_IO_HTML_HOMEURL}
     ports:
       - "3000:3000"
     networks:
