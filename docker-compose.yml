@@ -47,7 +47,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD} &&
-      (/usr/bin/mc mb --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
+      (/usr/bin/mc mb --ignore-existing --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
       /usr/bin/mc ilm rule add --expire-days 30 sitespeedio/sitespeedio &&
       /usr/bin/mc anonymous set download sitespeedio/sitespeedio &&
       /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
