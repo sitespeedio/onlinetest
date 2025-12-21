@@ -44,6 +44,7 @@ services:
       - minio
     networks:
       - skynet
+    restart: on-failure
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD} &&
