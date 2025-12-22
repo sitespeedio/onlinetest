@@ -1,7 +1,7 @@
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 import y18n from 'y18n';
 import { getBaseFilePath } from './fileutil.js';
-const locale = nconf.get('localization:defaultLocale');
+const locale = nconf.get('localization:locale');
 const directory =
   nconf.get('localization:directory') || getBaseFilePath('./locales');
 

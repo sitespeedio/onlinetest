@@ -34,6 +34,7 @@ services:
     environment:
       - MINIO_ROOT_USER=${MINIO_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+      - MINIO_REGION=motown
     command: server /data --console-address ":9001"
     networks:
       - skynet
@@ -43,12 +44,13 @@ services:
       - minio
     networks:
       - skynet
+    restart: on-failure
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD} &&
-      (/usr/bin/mc mb --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
+      (/usr/bin/mc mb --ignore-existing --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
       /usr/bin/mc ilm rule add --expire-days 30 sitespeedio/sitespeedio &&
-      /usr/bin/mc anonymous set public sitespeedio/sitespeedio &&
+      /usr/bin/mc anonymous set download sitespeedio/sitespeedio &&
       /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
       echo 'MinIO and lifecycle policy setup complete.'"
 volumes:
