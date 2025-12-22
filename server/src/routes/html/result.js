@@ -1,4 +1,4 @@
-import nconf from 'nconf';
+import { nconf } from '../../config.js';
 import { getLogger } from '@sitespeed.io/log';
 
 import { Router } from 'express';

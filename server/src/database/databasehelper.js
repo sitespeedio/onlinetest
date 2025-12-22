@@ -1,7 +1,7 @@
 import postgrespackage from 'pg';
 const { Pool } = postgrespackage;
 
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 import { getLogger } from '@sitespeed.io/log';
 
 const logger = getLogger('sitespeedio.database.query');

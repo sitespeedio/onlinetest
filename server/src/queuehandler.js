@@ -5,7 +5,7 @@ import { getLogger } from '@sitespeed.io/log';
 const logger = getLogger('sitespeedio.server');
 const queues = {};
 const deviceToQueue = {};
-import nconf from 'nconf';
+import { nconf } from './config.js';
 import Redis from 'ioredis';
 
 function getRedis() {

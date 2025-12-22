@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 import express from 'express';
 
 import { getLogger } from '@sitespeed.io/log';
