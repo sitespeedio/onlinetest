@@ -72,7 +72,7 @@ dateformat: "YYYY-MM-DD HH:mm:ss"
 
 # You can localize the text
 localization:
-  defaultLocale: en
+  locale: en
   # You can also configure where the text is stored
   # directory: ./locales
 
