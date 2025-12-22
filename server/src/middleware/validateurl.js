@@ -1,7 +1,7 @@
 // middleware/validateURL.js
 import validator from 'validator';
 import { getLogger } from '@sitespeed.io/log';
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 
 const { isURL } = validator;
 

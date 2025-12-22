@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 
-import nconf from 'nconf';
+import { nconf } from '../../config.js';
 
 import { getText } from '../../util/text.js';
 import { getLatestTests } from '../../database/index.js';

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { createRequire } from 'node:module';
 
-import nconf from 'nconf';
+import { nconf } from '../../config.js';
 import { getLogger } from '@sitespeed.io/log';
 
 import { getTestRunners } from '../../testrunners.js';
