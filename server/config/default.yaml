@@ -75,7 +75,7 @@ dateformat: "YYYY-MM-DD HH:mm:ss"
 
 # You can localize the text
 localization:
-  defaultLocale: en
+  locale: en
   # You can also configure where the text is stored
   # directory: ./locales
 
@@ -105,3 +105,6 @@ queue:
 # If you don't setup a default sitespeed.io configuration, you can add 
 # your sitespeed.io configuration directly in this block
 sitespeed.io:
+  # Link target for the logo in generated HTML reports.
+  html:
+    homeurl: "http://127.0.0.1:4000/"
