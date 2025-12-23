@@ -7,7 +7,7 @@ import express from 'express';
 import helmet from 'helmet';
 import compress from 'compression';
 import bodyParser from 'body-parser';
-import nconf from 'nconf';
+import { nconf } from './config.js';
 import { getLogger } from '@sitespeed.io/log';
 const { urlencoded } = bodyParser;
 import responseTime from 'response-time';

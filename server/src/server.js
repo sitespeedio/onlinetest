@@ -1,5 +1,5 @@
 import { getLogger, configureLog } from '@sitespeed.io/log';
-import nconf from 'nconf';
+import { nconf } from './config.js';
 
 import { WebServer } from './webserver.js';
 import {

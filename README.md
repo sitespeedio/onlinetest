@@ -1,5 +1,6 @@
 [![Test the API](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml)
-[![Test the GUI](https://github.com/sitespeedio/onlinetest/actions/workflows/gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/gui.yml)
+[![Test the GUI (NodeJS)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml)
+[![Test the GUI (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml)
 [![Using Docker](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml)
 [![Lint](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml)
 

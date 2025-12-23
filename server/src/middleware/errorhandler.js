@@ -1,4 +1,4 @@
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 import { getText } from '../util/text.js';
 
 import { getLogger } from '@sitespeed.io/log';
