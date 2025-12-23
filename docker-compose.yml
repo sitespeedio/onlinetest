@@ -1,16 +1,16 @@
 services:
-  keydb:
-    image: eqalpha/keydb:${KEYDB_DOCKER_VERSION}
-    hostname: keydb
+  redis:
+    image: redis:${REDIS_DOCKER_VERSION}
+    hostname: redis
     ports:
       - "6379:6379"
-    command: ["keydb-server", "/etc/keydb/keydb.conf", "--server-threads" , "2"]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     restart: always
     networks:
       - skynet
     volumes:
-      - keydb_data:/data
-      - ./keydb.conf:/etc/keydb/keydb.conf 
+      - redis_data:/data
+      - ./redis-conf:/usr/local/etc/redis/
   postgresql:
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
     hostname: postgresql
@@ -56,7 +56,7 @@ services:
 volumes:
   postgres-data:
   minio-data:
-  keydb_data:
+  redis_data:
     driver: local
 networks:
   skynet:
