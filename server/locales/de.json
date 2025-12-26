@@ -20,7 +20,7 @@
 
   "index.tab.cli.addargs": "Kommandozeilenargumente hinzufügen",
   "index.tab.cli.clioptions": "Optionen",
-  "index.tab.cli.placeholder": "Parameter wie --cpu",
+  "index.tab.cli.placeholder": "CLI-Parameter wie --cpu",
 
   "index.tab.extras.sustainable": "Nachhaltigkeitstests",
   "index.tab.extras.axe": "Zugänglichkeitstests",
