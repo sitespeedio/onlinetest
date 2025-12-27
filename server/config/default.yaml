@@ -107,4 +107,4 @@ queue:
 sitespeed.io:
   # Link target for the logo in generated HTML reports.
   html:
-    homeurl: "http://127.0.0.1:4000/"
+    homeurl: "http://127.0.0.1:3000/"
