@@ -45,7 +45,7 @@
         "pug-lint-config-clock": "2.0.0"
       },
       "engines": {
-        "node": ">=20"
+        "node": ">=24"
       }
     },
     "node_modules/@aashutoshrathi/word-wrap": {
@@ -453,6 +453,7 @@
       "version": "7.4.1",
       "resolved": "https://registry.npmjs.org/acorn/-/acorn-7.4.1.tgz",
       "integrity": "sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==",
+      "peer": true,
       "bin": {
         "acorn": "bin/acorn"
       },
@@ -671,6 +672,7 @@
           "url": "https://github.com/sponsors/ai"
         }
       ],
+      "peer": true,
       "dependencies": {
         "baseline-browser-mapping": "^2.9.0",
         "caniuse-lite": "^1.0.30001759",
@@ -1433,6 +1435,7 @@
       "resolved": "https://registry.npmjs.org/eslint/-/eslint-9.39.2.tgz",
       "integrity": "sha512-LEyamqS7W5HB3ujJyvi0HQK/dtVINZvd5mAAp9eT5S/ujByGjiZLCzPcHVzuXbpJDJF/cxwHlfceVUDZ2lnSTw==",
       "dev": true,
+      "peer": true,
       "dependencies": {
         "@eslint-community/eslint-utils": "^4.8.0",
         "@eslint-community/regexpp": "^4.12.1",
@@ -1493,6 +1496,7 @@
       "integrity": "sha512-82GZUjRS0p/jganf6q1rEO25VSoHH0hKPCTrgillPjdI/3bgBhAE1QzHrHTizjpRvy6pGAvKjDJtk2pF9NDq8w==",
       "dev": true,
       "license": "MIT",
+      "peer": true,
       "bin": {
         "eslint-config-prettier": "bin/cli.js"
       },
@@ -3125,6 +3129,7 @@
       "resolved": "https://registry.npmjs.org/pg/-/pg-8.16.3.tgz",
       "integrity": "sha512-enxc1h0jA/aq5oSDMvqyW3q89ra6XIIDZgCX9vkMrnz5DFTw/Ny3Li2lFQ+pt3L6MCgm/5o2o8HW9hiJji+xvw==",
       "license": "MIT",
+      "peer": true,
       "dependencies": {
         "pg-connection-string": "^2.9.1",
         "pg-pool": "^3.10.1",
@@ -3270,6 +3275,7 @@
       "resolved": "https://registry.npmjs.org/prettier/-/prettier-3.7.4.tgz",
       "integrity": "sha512-v6UNi1+3hSlVvv8fSaoUbggEM5VErKmmpGA7Pl3HF8V6uKY7rvClBOJlH6yNwQtfTueNkGVpOv/mtWL9L4bgRA==",
       "dev": true,
+      "peer": true,
       "bin": {
         "prettier": "bin/prettier.cjs"
       },
