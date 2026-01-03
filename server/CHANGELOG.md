@@ -4,18 +4,20 @@
 ## 2.0.0 - UNRELEASED
 ### Changed
 * Rename defaulLocale configuration to locale [#178](https://github.com/sitespeedio/onlinetest/pull/178). If you used `localization:defaultLocale` that is now `localization:locale`.
-* Updated minio to latest release. There are some changes on startup so check the PR and update your docker compose accordinglay [#163](https://github.com/sitespeedio/onlinetest/pull/163)
+* Updated minio to latest release. There are some changes on startup so check the PR and update your docker compose accordingly [#163](https://github.com/sitespeedio/onlinetest/pull/163).
+* Switched to default use Redis instead of KeyDB since Redis is Open Source again [#169](https://github.com/sitespeedio/onlinetest/pull/169).
 
 ### Fixed
 * Make sure the configuratiomn (nconf) is never accessed befiore configuration files is read [#177](https://github.com/sitespeedio/onlinetest/pull/177).
 * Bump Postgres to latest version [#172](https://github.com/sitespeedio/onlinetest/pull/172)
 * Fix correct path to scripting file [#167](https://github.com/sitespeedio/onlinetest/pull/167).
 * Update to sitespeed.io 39 [#171](https://github.com/sitespeedio/onlinetest/pull/171).
+* Use Trixie as base image [#185](https://github.com/sitespeedio/onlinetest/pull/185).
 
 ### Added
-* Docker containers now use NodeJS 24 [#173](https://github.com/sitespeedio/onlinetest/pull/173).
+* Docker containers now uses NodeJS 24 [#173](https://github.com/sitespeedio/onlinetest/pull/173).
 * German translations, thank you [Tobi](https://github.com/WBT112) for PR [#174](https://github.com/sitespeedio/onlinetest/pull/174).
-
+* Translations: Arabic, Bengali, Spanish, French, Hindi, Portuguese, Russian, Urdu, Simplified Chinese thank you [Tobi](https://github.com/WBT112) for PR [#181](https://github.com/sitespeedio/onlinetest/pull/181).
 
 ## 1.7.1 - 2025-10-23
 ### Fixed
