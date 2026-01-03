@@ -29,7 +29,7 @@
         "prettier": "3.7.4"
       },
       "engines": {
-        "node": ">=20"
+        "node": ">=24"
       }
     },
     "node_modules/@aashutoshrathi/word-wrap": {
