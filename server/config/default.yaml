@@ -3,12 +3,12 @@ server:
   port: 3000
   # Configure SSL. Add the path to the key and certificate file
   ssl:
-    key: 
+    key:
     cert:
 
 # Configure the Redis like message backend.
 redis:
-  port: 6379 
+  port: 6379
   host: 127.0.0.1
   password: jgsay7f2fgfgda6acCa7g()jaba51!
 
@@ -61,7 +61,7 @@ html:
     path: /img/ico/sitespeed.io-180.png
   favicon-32:
     path: /img/ico/sitespeed.io-32.png
-  ## Setup a folder that will be mapped to /extras - use this of you want to change 
+  ## Setup a folder that will be mapped to /extras - use this of you want to change
   ## the current look and feel
   extras:
     path:
@@ -75,7 +75,7 @@ dateformat: "YYYY-MM-DD HH:mm:ss"
 
 # You can localize the text
 localization:
-  defaultLocale: en
+  locale: en
   # You can also configure where the text is stored
   # directory: ./locales
 
@@ -89,10 +89,10 @@ basicAuth:
 admin:
   basicAuth:
     login: appojke
-    password: monkeyboy 
+    password: monkeyboy
 
 # The number of jobs to keep in the queue
-# Depending on how many jobs you run and how much memory 
+# Depending on how many jobs you run and how much memory
 # you have on your Redis/KeyDb instance you can tune this
 queue:
   removeOnComplete: 50
@@ -100,8 +100,8 @@ queue:
 
 
 # The default sitspeed.io configuration file that will be merged to all tests.
-# defaultSitespeedioConfigFile: 
+# defaultSitespeedioConfigFile:
 
-# If you don't setup a default sitespeed.io configuration, you can add 
+# If you don't setup a default sitespeed.io configuration, you can add
 # your sitespeed.io configuration directly in this block
 sitespeed.io:
