@@ -63,6 +63,6 @@
     "lodash.get": "4.4.2",
     "lodash.merge": "4.6.2",
     "joi": "17.13.3",
-    "js-yaml": "4.1.0"
+    "js-yaml": "4.1.1"
   }
 }
