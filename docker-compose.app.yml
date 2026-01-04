@@ -3,13 +3,7 @@ services:
     image: sitespeedio/server:${SITESPEED_IO_SERVER_VERSION}
     environment:
       redis_host: redis
-      redis_port: 6379
-      redis_password: ${REDIS_PASSWORD}
-      database_user: ${POSTGRES_USER}
-      database_server: postgresql
-      database_name: sitespeedio
-      database_password: ${POSTGRES_PASSWORD}
-      database_port: 5432
+      postgresql_server: postgresql
       validTestDomains: ${VALID_TEST_DOMAINS}
     ports:
       - "3000:3000"
@@ -23,8 +17,6 @@ services:
     image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
     environment:
       redis_host: redis
-      redis_port: 6379
-      redis_password: ${REDIS_PASSWORD}
       location_name: ${LOCATION_NAME}
       docker_container: ${SITESPEED_IO_CONTAINER}
       docker_extraparameters: '--cap-add=NET_ADMIN --network=skynet'

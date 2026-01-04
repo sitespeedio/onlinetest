@@ -12,7 +12,7 @@ function getRedis() {
   const REDIS_PORT = nconf.get('redis:port');
   const REDIS_HOST = nconf.get('redis:host');
   const REDIS_PASSWORD = nconf.get('redis:password');
-  if (REDIS_PASSWORD === 'jgsay7f2fgfgda6acCa7g()jaba51!') {
+  if (REDIS_PASSWORD === 'CHANGE_ME_REDIS_PASSWORD') {
     logger.warning(
       'You use the default password for Redis/KeyDB, please change it!'
     );

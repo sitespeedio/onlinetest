@@ -13,7 +13,8 @@ nconf.argv();
 
 nconf.env({
   parseValues: true,
-  separator: '_'
+  separator: '_',
+  lowerCase: true
 });
 
 const configFile = nconf.get('config')

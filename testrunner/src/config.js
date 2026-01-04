@@ -50,7 +50,8 @@ function initConfig() {
   nconf.env({
     parseValues: true,
     separator: '_',
-    whitelist: ENV_LIST
+    whitelist: ENV_LIST,
+    lowerCase: true
   });
 
   const configFile = nconf.get('config') || DEFAULT_CONFIG;

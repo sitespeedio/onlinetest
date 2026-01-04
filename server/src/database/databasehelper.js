@@ -8,11 +8,11 @@ const logger = getLogger('sitespeedio.database.query');
 
 class DatabaseHelper {
   constructor() {
-    const DATABASE_USER = nconf.get('database:user');
-    const DATABASE_SERVER = nconf.get('database:server');
-    const DATABASE_NAME = nconf.get('database:name');
-    const DATABASE_PASSWORD = nconf.get('database:password');
-    const DATABASE_PORT = nconf.get('database:port');
+    const DATABASE_USER = nconf.get('postgresql:user');
+    const DATABASE_SERVER = nconf.get('postgresql:server') ?? '127.0.0.1';
+    const DATABASE_NAME = nconf.get('postgresql:db');
+    const DATABASE_PASSWORD = nconf.get('postgresql:password');
+    const DATABASE_PORT = nconf.get('postgresql:port');
 
     this.pool = new Pool({
       user: DATABASE_USER,
