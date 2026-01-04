@@ -24,6 +24,7 @@ const ENV_LIST = [
   'sitespeed.io_s3_secret',
   'sitespeed.io_s3_region',
   'sitespeed.io_s3_options_forcePathStyle',
+  'sitespeed.io_s3_removeLocalResult',
   'sitespeed.io_resultBaseURL'
 ];
 
@@ -51,7 +52,17 @@ function initConfig() {
     parseValues: true,
     separator: '_',
     whitelist: ENV_LIST,
-    lowerCase: true
+    lowerCase: true,
+    transform: function(obj) {
+      if (obj.key === 'sitespeed.io_s3_options_forcepathstyle') {
+        obj.key = 'sitespeed.io_s3_options_forcePathStyle';
+      } else if (obj.key === 'sitespeed.io_resultbaseurl') {
+        obj.key = 'sitespeed.io_resultBaseURL';
+      } else if (obj.key === 'sitespeed.io_s3_removelocalresult') {
+        obj.key = 'sitespeed.io_s3_removeLocalResult';
+      }
+      return obj;
+    }
   });
 
   const configFile = nconf.get('config') || DEFAULT_CONFIG;

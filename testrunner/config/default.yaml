@@ -76,7 +76,6 @@ sitespeed.io:
     endpoint: "http://127.0.0.1:9000"
     bucketname: "sitespeedio"
     key: "sitespeedio"
-    secret: "tracksofmytears"
     region: "motown"
 
   resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
