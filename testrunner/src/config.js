@@ -53,15 +53,26 @@ function initConfig() {
     separator: '_',
     whitelist: ENV_LIST,
     lowerCase: true,
-    transform: function(obj) {
-      if (obj.key === 'sitespeed.io_s3_options_forcepathstyle') {
-        obj.key = 'sitespeed.io_s3_options_forcePathStyle';
-      } else if (obj.key === 'sitespeed.io_resultbaseurl') {
-        obj.key = 'sitespeed.io_resultBaseURL';
-      } else if (obj.key === 'sitespeed.io_s3_removelocalresult') {
-        obj.key = 'sitespeed.io_s3_removeLocalResult';
+    transform: function (object) {
+      switch (object.key) {
+        case 'sitespeed.io_s3_options_forcepathstyle': {
+          object.key = 'sitespeed.io_s3_options_forcePathStyle';
+
+          break;
+        }
+        case 'sitespeed.io_resultbaseurl': {
+          object.key = 'sitespeed.io_resultBaseURL';
+
+          break;
+        }
+        case 'sitespeed.io_s3_removelocalresult': {
+          object.key = 'sitespeed.io_s3_removeLocalResult';
+
+          break;
+        }
+        // No default
       }
-      return obj;
+      return object;
     }
   });
 
