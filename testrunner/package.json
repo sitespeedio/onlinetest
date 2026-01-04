@@ -58,6 +58,7 @@
   "dependencies": {
     "@sitespeed.io/log": "1.0.0",
     "bull": "4.16.5",
+    "dotenv": "17.2.3",
     "nconf": "0.13.0",
     "execa": "9.6.1",
     "lodash.get": "4.4.2",

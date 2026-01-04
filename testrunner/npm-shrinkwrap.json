@@ -11,6 +11,7 @@
       "dependencies": {
         "@sitespeed.io/log": "1.0.0",
         "bull": "4.16.5",
+        "dotenv": "17.2.3",
         "execa": "9.6.1",
         "joi": "18.0.2",
         "js-yaml": "4.1.1",
@@ -799,6 +800,18 @@
       "optional": true,
       "engines": {
         "node": ">=8"
+      }
+    },
+    "node_modules/dotenv": {
+      "version": "17.2.3",
+      "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-17.2.3.tgz",
+      "integrity": "sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==",
+      "license": "BSD-2-Clause",
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://dotenvx.com"
       }
     },
     "node_modules/electron-to-chromium": {
