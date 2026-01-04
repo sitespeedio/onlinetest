@@ -4,7 +4,7 @@ import os from 'node:os';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
