@@ -1,7 +1,7 @@
 import Queue from 'bull';
 import Redis from 'ioredis';
-import nconf from 'nconf';
 
+import { nconf } from '../config.js';
 import { getLogger } from '@sitespeed.io/log';
 
 const logger = getLogger('sitespeedio.testrunner');
