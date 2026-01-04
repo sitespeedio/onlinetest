@@ -6,20 +6,6 @@ server:
     key:
     cert:
 
-# Configure the Redis like message backend.
-redis:
-  port: 6379
-  host: redis
-  password: jgsay7f2fgfgda6acCa7g()jaba51!
-
-# Configure the postgresql database
-database:
-  user: sitespeedio
-  server: postgresql
-  name: sitespeedio
-  password: jhde7gFArda33Saa1!4dd2dagJ
-  port: 5432
-
 # Configure the log. If you want to log to a file, set full path and name of the file.
 log:
   file: null

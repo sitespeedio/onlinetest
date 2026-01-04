@@ -81,15 +81,6 @@ export async function reRunTest(request) {
 
       logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
 
-      console.log({
-        url: url || oldTest.url,
-        config: oldTest.configuration,
-        extras: oldTest.cli_params,
-        scripting: oldTest.scripting,
-        scriptingName: oldTest.scripting_name,
-        label: label || oldTest.label
-      });
-
       await testRunnerQueue.add(
         {
           url: url || oldTest.url,
