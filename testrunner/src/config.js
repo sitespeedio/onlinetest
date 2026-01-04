@@ -10,7 +10,7 @@ const DEFAULT_CONFIG = getBaseFilePath('./config/default.yaml');
 
 const KEYS_TO_EXCLUDE = ['type', '_', '$0', 'config'];
 
-const ENV_WHITELIST = [
+const ENV_LIST = [
   'redis_host',
   'redis_port',
   'redis_password',
@@ -23,7 +23,7 @@ const ENV_WHITELIST = [
   'sitespeed.io_s3_secret',
   'sitespeed.io_s3_region',
   'sitespeed.io_s3_options_forcePathStyle',
-  'sitespeed.io_resultBaseURL',
+  'sitespeed.io_resultBaseURL'
 ];
 
 function readConfigFile(configFilePath) {
@@ -38,7 +38,9 @@ function readConfigFile(configFilePath) {
     return yaml.load(fileContent);
   }
 
-  throw new Error('Unsupported configuration file type. Only JSON and YAML are supported.');
+  throw new Error(
+    'Unsupported configuration file type. Only JSON and YAML are supported.'
+  );
 }
 
 function initConfig() {
@@ -47,7 +49,7 @@ function initConfig() {
   nconf.env({
     parseValues: true,
     separator: '_',
-    whitelist: ENV_WHITELIST,
+    whitelist: ENV_LIST
   });
 
   const configFile = nconf.get('config') || DEFAULT_CONFIG;
@@ -58,6 +60,7 @@ function initConfig() {
     nconf.defaults(configFromFile);
   } catch (error) {
     console.error('Error reading configuration file:', error);
+    // eslint-disable-next-line unicorn/no-process-exit
     process.exit(1);
   }
 }
@@ -76,4 +79,5 @@ function getFilteredConfig() {
 // Initialize immediately on import (same behavior as your current CLI file)
 initConfig();
 
-export { getFilteredConfig, nconf };
+export { getFilteredConfig };
+export { default as nconf } from 'nconf';

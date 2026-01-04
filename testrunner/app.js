@@ -12,7 +12,9 @@ const version = require('./package.json').version;
 if (nconf.get('help')) {
   console.log('sitespeed.io  test runner ' + version);
   console.log('--help         Get help.');
-  console.log('--config       Path to a JSON/yaml configuration file that will replace default config.');
+  console.log(
+    '--config       Path to a JSON/yaml configuration file that will replace default config.'
+  );
   console.log('--version      The version number.');
   process.exit();
 }
