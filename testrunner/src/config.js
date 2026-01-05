@@ -55,6 +55,7 @@ function initConfig() {
     whitelist: ENV_LIST,
     lowerCase: true,
     transform: function (object) {
+      // S3 have some special naming
       switch (object.key) {
         case 'sitespeed.io_s3_options_forcepathstyle': {
           object.key = 'sitespeed.io_s3_options_forcePathStyle';
@@ -68,6 +69,7 @@ function initConfig() {
           object.key = 'sitespeed.io_s3_removeLocalResult';
           break;
         }
+        // Make sure the Minio password is passed on to sitespeed.io
         case 'minio_password': {
           object.key = 'sitespeed.io_s3_secret';
           break;
