@@ -73,9 +73,9 @@ queue:
 
 sitespeed.io:
   s3:
-    #endpoint: "http://127.0.0.1:9000"
+    endpoint: "http://127.0.0.1:9000"
     bucketname: "sitespeedio"
     key: "sitespeedio"
     region: "motown"
 
-  #resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
+  resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
