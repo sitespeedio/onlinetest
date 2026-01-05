@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import nconf from 'nconf';
+import { nconf } from '../config.js';
 import get from 'lodash.get';
 import merge from 'lodash.merge';
 

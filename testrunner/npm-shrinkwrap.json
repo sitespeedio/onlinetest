@@ -11,8 +11,9 @@
       "dependencies": {
         "@sitespeed.io/log": "1.0.0",
         "bull": "4.16.5",
+        "dotenv": "17.2.3",
         "execa": "9.6.1",
-        "joi": "17.13.3",
+        "joi": "18.0.2",
         "js-yaml": "4.1.1",
         "lodash.get": "4.4.2",
         "lodash.merge": "4.6.2",
@@ -29,7 +30,7 @@
         "prettier": "3.7.4"
       },
       "engines": {
-        "node": ">=20"
+        "node": ">=24"
       }
     },
     "node_modules/@aashutoshrathi/word-wrap": {
@@ -174,17 +175,52 @@
         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
       }
     },
+    "node_modules/@hapi/address": {
+      "version": "5.1.1",
+      "resolved": "https://registry.npmjs.org/@hapi/address/-/address-5.1.1.tgz",
+      "integrity": "sha512-A+po2d/dVoY7cYajycYI43ZbYMXukuopIsqCjh5QzsBCipDtdofHntljDlpccMjIfTy6UOkg+5KPriwYch2bXA==",
+      "license": "BSD-3-Clause",
+      "dependencies": {
+        "@hapi/hoek": "^11.0.2"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      }
+    },
+    "node_modules/@hapi/formula": {
+      "version": "3.0.2",
+      "resolved": "https://registry.npmjs.org/@hapi/formula/-/formula-3.0.2.tgz",
+      "integrity": "sha512-hY5YPNXzw1He7s0iqkRQi+uMGh383CGdyyIGYtB+W5N3KHPXoqychklvHhKCC9M3Xtv0OCs/IHw+r4dcHtBYWw==",
+      "license": "BSD-3-Clause"
+    },
     "node_modules/@hapi/hoek": {
-      "version": "9.3.0",
-      "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-9.3.0.tgz",
-      "integrity": "sha512-/c6rf4UJlmHlC9b5BaNvzAcFv7HZ2QHaV0D4/HNlBdvFnvQq8RI4kYdhyPCl7Xj+oWvTWQ8ujhqS53LIgAe6KQ=="
+      "version": "11.0.7",
+      "resolved": "https://registry.npmjs.org/@hapi/hoek/-/hoek-11.0.7.tgz",
+      "integrity": "sha512-HV5undWkKzcB4RZUusqOpcgxOaq6VOAH7zhhIr2g3G8NF/MlFO75SjOr2NfuSx0Mh40+1FqCkagKLJRykUWoFQ==",
+      "license": "BSD-3-Clause"
+    },
+    "node_modules/@hapi/pinpoint": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/@hapi/pinpoint/-/pinpoint-2.0.1.tgz",
+      "integrity": "sha512-EKQmr16tM8s16vTT3cA5L0kZZcTMU5DUOZTuvpnY738m+jyP3JIUj+Mm1xc1rsLkGBQ/gVnfKYPwOmPg1tUR4Q==",
+      "license": "BSD-3-Clause"
+    },
+    "node_modules/@hapi/tlds": {
+      "version": "1.1.4",
+      "resolved": "https://registry.npmjs.org/@hapi/tlds/-/tlds-1.1.4.tgz",
+      "integrity": "sha512-Fq+20dxsxLaUn5jSSWrdtSRcIUba2JquuorF9UW1wIJS5cSUwxIsO2GIhaWynPRflvxSzFN+gxKte2HEW1OuoA==",
+      "license": "BSD-3-Clause",
+      "engines": {
+        "node": ">=14.0.0"
+      }
     },
     "node_modules/@hapi/topo": {
-      "version": "5.1.0",
-      "resolved": "https://registry.npmjs.org/@hapi/topo/-/topo-5.1.0.tgz",
-      "integrity": "sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==",
+      "version": "6.0.2",
+      "resolved": "https://registry.npmjs.org/@hapi/topo/-/topo-6.0.2.tgz",
+      "integrity": "sha512-KR3rD5inZbGMrHmgPxsJ9dbi6zEK+C3ZwUwTa+eMwWLz7oijWUTWD2pMSNNYJAU6Qq+65NkxXjqHr/7LM2Xkqg==",
+      "license": "BSD-3-Clause",
       "dependencies": {
-        "@hapi/hoek": "^9.0.0"
+        "@hapi/hoek": "^11.0.2"
       }
     },
     "node_modules/@humanfs/core": {
@@ -344,24 +380,6 @@
       "resolved": "https://registry.npmjs.org/@sec-ant/readable-stream/-/readable-stream-0.4.1.tgz",
       "integrity": "sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg=="
     },
-    "node_modules/@sideway/address": {
-      "version": "4.1.5",
-      "resolved": "https://registry.npmjs.org/@sideway/address/-/address-4.1.5.tgz",
-      "integrity": "sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q==",
-      "dependencies": {
-        "@hapi/hoek": "^9.0.0"
-      }
-    },
-    "node_modules/@sideway/formula": {
-      "version": "3.0.1",
-      "resolved": "https://registry.npmjs.org/@sideway/formula/-/formula-3.0.1.tgz",
-      "integrity": "sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg=="
-    },
-    "node_modules/@sideway/pinpoint": {
-      "version": "2.0.0",
-      "resolved": "https://registry.npmjs.org/@sideway/pinpoint/-/pinpoint-2.0.0.tgz",
-      "integrity": "sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ=="
-    },
     "node_modules/@sindresorhus/merge-streams": {
       "version": "4.0.0",
       "resolved": "https://registry.npmjs.org/@sindresorhus/merge-streams/-/merge-streams-4.0.0.tgz",
@@ -381,6 +399,12 @@
       "engines": {
         "node": ">=20.0.0"
       }
+    },
+    "node_modules/@standard-schema/spec": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/@standard-schema/spec/-/spec-1.1.0.tgz",
+      "integrity": "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==",
+      "license": "MIT"
     },
     "node_modules/@types/estree": {
       "version": "1.0.6",
@@ -776,6 +800,18 @@
       "optional": true,
       "engines": {
         "node": ">=8"
+      }
+    },
+    "node_modules/dotenv": {
+      "version": "17.2.3",
+      "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-17.2.3.tgz",
+      "integrity": "sha512-JVUnt+DUIzu87TABbhPmNfVdBDt18BLOWjMUFJMSi/Qqg7NTYtabbvSNJGOJ7afbRuv9D/lngizHtP7QyLQ+9w==",
+      "license": "BSD-2-Clause",
+      "engines": {
+        "node": ">=12"
+      },
+      "funding": {
+        "url": "https://dotenvx.com"
       }
     },
     "node_modules/electron-to-chromium": {
@@ -1491,15 +1527,21 @@
       "integrity": "sha1-6PvzdNxVb/iUehDcsFctYz8s+hA="
     },
     "node_modules/joi": {
-      "version": "17.13.3",
-      "resolved": "https://registry.npmjs.org/joi/-/joi-17.13.3.tgz",
-      "integrity": "sha512-otDA4ldcIx+ZXsKHWmp0YizCweVRZG96J10b0FevjfuncLO1oX59THoAmHkNubYJ+9gWsYsp5k8v4ib6oDv1fA==",
+      "version": "18.0.2",
+      "resolved": "https://registry.npmjs.org/joi/-/joi-18.0.2.tgz",
+      "integrity": "sha512-RuCOQMIt78LWnktPoeBL0GErkNaJPTBGcYuyaBvUOQSpcpcLfWrHPPihYdOGbV5pam9VTWbeoF7TsGiHugcjGA==",
+      "license": "BSD-3-Clause",
       "dependencies": {
-        "@hapi/hoek": "^9.3.0",
-        "@hapi/topo": "^5.1.0",
-        "@sideway/address": "^4.1.5",
-        "@sideway/formula": "^3.0.1",
-        "@sideway/pinpoint": "^2.0.0"
+        "@hapi/address": "^5.1.1",
+        "@hapi/formula": "^3.0.2",
+        "@hapi/hoek": "^11.0.7",
+        "@hapi/pinpoint": "^2.0.1",
+        "@hapi/tlds": "^1.1.1",
+        "@hapi/topo": "^6.0.2",
+        "@standard-schema/spec": "^1.0.0"
+      },
+      "engines": {
+        "node": ">= 20"
       }
     },
     "node_modules/js-yaml": {

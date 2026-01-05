@@ -1,11 +1,11 @@
 import { getLogger, configureLog } from '@sitespeed.io/log';
-import nconf from 'nconf';
 import os from 'node:os';
 import { createRequire } from 'node:module';
 
 import run from './testrunners/testrunner.js';
 import runDocker from './testrunners/docker-testrunner.js';
 import { queueHandler } from './queue/queuehandler.js';
+import { nconf } from './config.js';
 
 const require = createRequire(import.meta.url);
 const version = require('../package.json').version;
