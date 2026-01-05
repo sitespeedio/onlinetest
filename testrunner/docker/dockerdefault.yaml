@@ -60,8 +60,8 @@ executable: "sitespeed.io"
 # extraparameters will be passed on to Docker, between docker run and the container name
 # baselinedir is the directory that is mapped where baseline data is stored
 docker:
-  container: "sitespeedio/sitespeed.io:35"
-  extraparameters: "--cap-add=NET_ADMIN"
+  # container: "sitespeedio/sitespeed.io:39"
+  # extraparameters: "--cap-add=NET_ADMIN"
   #baselinedir: "$(pwd)"
 
 # The number of jobs to keep in the queue
