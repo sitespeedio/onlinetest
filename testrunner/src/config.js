@@ -15,6 +15,7 @@ const ENV_LIST = [
   'redis_host',
   'redis_port',
   'redis_password',
+  'minio_password',
   'docker_extraparameters',
   'docker_container',
   'location_name',
@@ -57,20 +58,20 @@ function initConfig() {
       switch (object.key) {
         case 'sitespeed.io_s3_options_forcepathstyle': {
           object.key = 'sitespeed.io_s3_options_forcePathStyle';
-
           break;
         }
         case 'sitespeed.io_resultbaseurl': {
           object.key = 'sitespeed.io_resultBaseURL';
-
           break;
         }
         case 'sitespeed.io_s3_removelocalresult': {
           object.key = 'sitespeed.io_s3_removeLocalResult';
-
           break;
         }
-        // No default
+        case 'minio_password': {
+          object.key = 'sitespeed.io_s3_secret';
+          break;
+        }
       }
       return object;
     }
