@@ -8,6 +8,8 @@
 
 # Onlinetest - deploy your own version of sitespeed.io online.
 
+WOHO! version 2 with breaking changes coming the 11:th of January. The main branch will be hot until 2.0.0 is relased. 
+
 Setup your own online version of sitespeed.io. You get:
 
 * **A server with GUI and API**:
