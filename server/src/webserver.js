@@ -57,13 +57,13 @@ function setupExpressServer() {
   );
 
   if (
-    nconf.get('basicAuth:login') != undefined &&
-    nconf.get('basicAuth:password') != undefined
+    nconf.get('basicauth:login') != undefined &&
+    nconf.get('basicauth:password') != undefined
   ) {
     logger.info('Setup basic auth');
     const genericAuth = new BasicAuth(
-      nconf.get('basicAuth:login'),
-      nconf.get('basicAuth:password'),
+      nconf.get('basicauth:login'),
+      nconf.get('basicauth:password'),
       'Access to the site',
       'Authentication required.',
       '/api/'
@@ -75,8 +75,8 @@ function setupExpressServer() {
   }
 
   const adminAuth = new BasicAuth(
-    nconf.get('admin:basicAuth:login'),
-    nconf.get('admin:basicAuth:password'),
+    nconf.get('admin:basicauth:login'),
+    nconf.get('admin:basicauth:password'),
     'Access to admin',
     'Authentication required.'
   );
