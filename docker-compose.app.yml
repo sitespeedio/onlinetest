@@ -6,7 +6,7 @@ services:
     environment:
       redis_host: redis
       postgresql_server: postgresql
-      validTestDomains: ${VALID_TEST_DOMAINS}
+      allowed_domains: $ALLOWED_DOMAINS}
     ports:
       - "3000:3000"
     networks:

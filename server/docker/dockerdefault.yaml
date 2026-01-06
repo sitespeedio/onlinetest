@@ -16,7 +16,8 @@ api:
   key:
 
 # Regular expression that needs to match the domain that you test. If there's a miss match, no tests will run.
-validTestDomains: "^(?:[\\w-]+\\.)*wikipedia\\.org$"
+allowed:
+  domains: "^(?:[\\w-]+\\.)*wikipedia\\.org$"
 
 # You can disable the GUI if you only want to add test through the API
 disableGUI: false
