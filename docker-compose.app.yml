@@ -1,15 +1,11 @@
 services:
   sitespeed.io-server:
     image: sitespeedio/server:${SITESPEED_IO_SERVER_VERSION}
+    env_file:
+      - .env
     environment:
       redis_host: redis
-      redis_port: 6379
-      redis_password: ${REDIS_PASSWORD}
-      database_user: ${POSTGRES_USER}
-      database_server: postgresql
-      database_name: sitespeedio
-      database_password: ${POSTGRES_PASSWORD}
-      database_port: 5432
+      postgresql_server: postgresql
       validTestDomains: ${VALID_TEST_DOMAINS}
     ports:
       - "3000:3000"
@@ -21,17 +17,17 @@ services:
       - minio
   sitespeed.io-testrunner:
     image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
+    env_file:
+      - .env
     environment:
       redis_host: redis
-      redis_port: 6379
-      redis_password: ${REDIS_PASSWORD}
       location_name: ${LOCATION_NAME}
       docker_container: ${SITESPEED_IO_CONTAINER}
-      docker_extraparameters: '--cap-add=NET_ADMIN --network=skynet'
+      docker_extraparameters: "--cap-add=NET_ADMIN --network=skynet"
       sitespeed.io_s3_endpoint: "http://minio:9000"
       sitespeed.io_s3_bucketname: 'sitespeedio'
       sitespeed.io_s3_key: ${MINIO_USER}
-      sitespeed.io_s3_secret:  ${MINIO_PASSWORD}
+      sitespeed.io_s3_secret: ${MINIO_PASSWORD}
       sitespeed.io_s3_region: "motown"
       sitespeed.io_s3_options_forcePathStyle: true
       sitespeed.io_s3_removeLocalResult: true

@@ -15,6 +15,7 @@ const ENV_LIST = [
   'redis_host',
   'redis_port',
   'redis_password',
+  'minio_password',
   'docker_extraparameters',
   'docker_container',
   'location_name',
@@ -24,6 +25,7 @@ const ENV_LIST = [
   'sitespeed.io_s3_secret',
   'sitespeed.io_s3_region',
   'sitespeed.io_s3_options_forcePathStyle',
+  'sitespeed.io_s3_removeLocalResult',
   'sitespeed.io_resultBaseURL'
 ];
 
@@ -50,7 +52,31 @@ function initConfig() {
   nconf.env({
     parseValues: true,
     separator: '_',
-    whitelist: ENV_LIST
+    whitelist: ENV_LIST,
+    lowerCase: true,
+    transform: function (object) {
+      // S3 have some special naming
+      switch (object.key) {
+        case 'sitespeed.io_s3_options_forcepathstyle': {
+          object.key = 'sitespeed.io_s3_options_forcePathStyle';
+          break;
+        }
+        case 'sitespeed.io_resultbaseurl': {
+          object.key = 'sitespeed.io_resultBaseURL';
+          break;
+        }
+        case 'sitespeed.io_s3_removelocalresult': {
+          object.key = 'sitespeed.io_s3_removeLocalResult';
+          break;
+        }
+        // Make sure the Minio password is passed on to sitespeed.io
+        case 'minio_password': {
+          object.key = 'sitespeed.io_s3_secret';
+          break;
+        }
+      }
+      return object;
+    }
   });
 
   const configFile = nconf.get('config') || DEFAULT_CONFIG;

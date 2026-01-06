@@ -19,9 +19,9 @@ services:
     networks:
       - skynet
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=sitespeedio
+      - POSTGRES_USER=${POSTGRESQL_USER}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRES_DB=${POSTGRESQL_DB}
     volumes:
       - ./server/database/setup/:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
