@@ -83,3 +83,10 @@ admin:
 queue:
   removeOnComplete: 50
   removeOnFail: 50
+
+# If you don't setup a default sitespeed.io configuration, you can add 
+# your sitespeed.io configuration directly in this block
+sitespeed.io:
+  # Link target for the logo in generated HTML reports.
+  html:
+    homeurl: "http://127.0.0.1:3000/"

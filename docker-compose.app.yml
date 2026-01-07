@@ -7,6 +7,8 @@ services:
       redis_host: redis
       postgresql_server: postgresql
       validTestDomains: ${VALID_TEST_DOMAINS}
+      localization_locale: ${LOCALIZATION_LOCALE}
+      sitespeed.io_html_homeurl: ${SITESPEED_IO_HTML_HOMEURL}
     ports:
       - "3000:3000"
     networks:
