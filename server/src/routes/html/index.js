@@ -23,7 +23,7 @@ const version = require('../../../package.json').version;
 
 index.get('/', async function (request, response) {
   try {
-    const testDomain = nconf.get('validTestDomains');
+    const testDomain = nconf.any('valid:test:domains', 'validTestDomains');
     const testRunners = getTestRunners();
     const queueNamesAndSize = {};
     for (const runner of testRunners) {

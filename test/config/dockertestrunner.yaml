@@ -10,18 +10,12 @@ location:
       connectivity: ["native", "3g", "4g", "cable"]
       useDocker: true
 
-# Where to connect to the message broker that is a Redis like thing
-redis:
-  port: null
-  host: null
-  password: jgsay7f2fgfgda6acCa7g()jaba51!
-
 # Verbose log level or not
 log:
   verbose: true
 
 # The default sitespeed.io configuration file used by the sitespeed.io instance
-# It will be merged by the server sitespeed.io config and what you add in the 
+# It will be merged by the server sitespeed.io config and what you add in the
 # cli or gui
 # sitespeedioConfigFile:
 
@@ -43,7 +37,6 @@ sitespeed.io:
     endpoint: "http://127.0.0.1:9000"
     bucketname: "sitespeedio"
     key: "sitespeedio"
-    secret: "tracksofmytears"
     region: "motown"
-    
+
   resultBaseURL: "http://127.0.0.1:9000/sitespeedio"

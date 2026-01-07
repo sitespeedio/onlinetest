@@ -8,13 +8,15 @@
 
 # Onlinetest - deploy your own version of sitespeed.io online.
 
+WOHO! version 2 with breaking changes coming the 11:th of January. The main branch will be hot until 2.0.0 is relased. 
+
 Setup your own online version of sitespeed.io. You get:
 
 * **A server with GUI and API**:
    - Add tests using a HTML frontend (you can style the frontend using your own CSS)
    ![Start screen](https://raw.githubusercontent.com/sitespeedio/onlinetest/refs/heads/main/img/startscreen.png)
    - Add tests using [the command line](https://www.sitespeed.io/documentation/onlinetest/#using-the-api) (using `sitespeed.io --api.hostname my.host.com --api.location default https://www.sitespeed.io`)
-   
+
 * **Test Runners**:
    - Run your tests on different platforms: desktop, emulated mobile and Android.
 
@@ -63,16 +65,16 @@ There's a regular expression that validates the domain of the URL that you want 
 
 ### Update sitespeed.io version
 By default latest major release of sitespeed.io is configured, it looks like this in the **.env** file:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:35"`
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:39"`
 
-When 36 is released you just switch to:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:36"`
+When 40 is released you just switch to:
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:40"`
 
 To get latest version of 35 you need to periodically pull down the version:
 ```docker pull sitespeedio/sitespeed.io:35```
 
 If you want to run a specific version, you can pin the version to a specific version:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:35.0.0"`
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:39.0.0"`
 
 #### Access the result
 Running on your own machine the result is served from localhost. If you deploy on a server you want to change that:
@@ -109,7 +111,7 @@ Then start the testrunner and the server:
 
 ```bash
 sitespeed.io-testrunner
-sitespeed.io-server s
+sitespeed.io-server
 ```
 
 In the real world you want to also supply your own configuration files. Default [server configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/default.yaml) and [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/default.yaml):

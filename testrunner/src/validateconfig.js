@@ -57,7 +57,9 @@ const dockerSchema = Joi.object({
   container: Joi.string().optional(),
   extraparameters: Joi.string().allow(null).optional(),
   baselinedir: Joi.string().allow(null).optional()
-});
+})
+  .optional()
+  .allow(null);
 
 // Complete config schema
 const configSchema = Joi.object({

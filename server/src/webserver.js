@@ -57,13 +57,13 @@ function setupExpressServer() {
   );
 
   if (
-    nconf.get('basicAuth:login') != undefined &&
-    nconf.get('basicAuth:password') != undefined
+    nconf.any('basicauth:login', 'basicAuth:login') != undefined &&
+    nconf.any('basicauth:password', 'basicAuth:password') != undefined
   ) {
     logger.info('Setup basic auth');
     const genericAuth = new BasicAuth(
-      nconf.get('basicAuth:login'),
-      nconf.get('basicAuth:password'),
+      nconf.any('basicauth:login', 'basicAuth:login'),
+      nconf.any('basicauth:password', 'basicAuth:password'),
       'Access to the site',
       'Authentication required.',
       '/api/'
@@ -75,8 +75,8 @@ function setupExpressServer() {
   }
 
   const adminAuth = new BasicAuth(
-    nconf.get('admin:basicAuth:login'),
-    nconf.get('admin:basicAuth:password'),
+    nconf.any('admin:basicauth:login', 'admin:basicAuth:login'),
+    nconf.any('admin:basicauth:password', 'admin:basicAuth:password'),
     'Access to admin',
     'Authentication required.'
   );
@@ -92,13 +92,13 @@ function setupExpressServer() {
     })
   );
 
-  if (nconf.get('disableGUI')) {
+  if (nconf.any('disablegui', 'disableGUI')) {
     logger.info('Disabling GUI');
   } else {
     app.use('/', index);
   }
 
-  if (nconf.get('disableSearchGUI')) {
+  if (nconf.any('disablesearchgui', 'disableSearchGUI')) {
     logger.info('Disabling search');
   } else {
     app.use('/search', search);

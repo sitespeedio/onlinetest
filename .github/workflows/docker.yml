@@ -31,7 +31,7 @@ jobs:
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
-        node testrunner/app.js --config test/config/dockertestrunner.yaml > testrunner.log 2>&1 &
+        node testrunner/app.js --config test/config/dockertestrunner.yaml --location.name docker > testrunner.log 2>&1 &
     - name: Show versions
       run: |
         docker --version

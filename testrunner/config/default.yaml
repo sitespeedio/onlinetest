@@ -6,22 +6,22 @@ location:
   setup:
     - name: "Desktop Browsers"
       type: "desktop"
-      # If you do not use Docker, you need to make sure you 
+      # If you do not use Docker, you need to make sure you
       # install the browsers yourself
       browsers: ["chrome", "firefox", "edge"]
       connectivity: ["native", "3g", "4g", "cable"]
-      # If you choose to run sitespeed.io docker containers make sure 
-      # to run: sudo modprobe ifb numifbs=1 
+      # If you choose to run sitespeed.io docker containers make sure
+      # to run: sudo modprobe ifb numifbs=1
       # on the host so that setting connectivity will work
       # Also remember that localhost inside the container isn't automatically
       # the same as localhost on the server:
       # https://www.sitespeed.io/documentation/sitespeed.io/docker/#access-localhost
-      # That means if you run everything locally and want to use sitespeed.io docker 
+      # That means if you run everything locally and want to use sitespeed.io docker
       # containers, you need to set --s3.endpoint to something else than 127.0.0.1.
       # On Mac you can use --s3.endpoint http://host.docker.internal:9000 and on Linux
       # you can use your actual IP.
       useDocker: false
-  
+
     - name: "Emulated Mobile"
       type: "emulatedMobile"
       browsers: ["chrome"]
@@ -37,20 +37,13 @@ location:
     #  useDocker: false
     #  connectivity: ["native"]
 
-# Where to connect to the message broker that is a Redis like thing
-redis:
-  port: null
-  host: null
-  password: jgsay7f2fgfgda6acCa7g()jaba51!
-  tls: null
-  
 # Verbose log level or not
 log:
   verbose: false
 
 # The default sitespeed.io configuration file used by the sitespeed.io instance
-# It will be merged by the server sitespeed.io config and what you add in the 
-# cli or gui. If you use a Docker container, make sure to map a volume and use 
+# It will be merged by the server sitespeed.io config and what you add in the
+# cli or gui. If you use a Docker container, make sure to map a volume and use
 # the full path to the configuration file
 # sitespeedioConfigFile:
 
@@ -67,12 +60,12 @@ executable: "sitespeed.io"
 # extraparameters will be passed on to Docker, between docker run and the container name
 # baselinedir is the directory that is mapped where baseline data is stored
 docker:
-  container: "sitespeedio/sitespeed.io:37"
-  extraparameters: "--cap-add=NET_ADMIN"
+  #container: "sitespeedio/sitespeed.io:37"
+  #extraparameters: "--cap-add=NET_ADMIN"
   #baselinedir: "$(pwd)"
 
 # The number of jobs to keep in the queue
-# Depending on how many jobs you run and how much memory 
+# Depending on how many jobs you run and how much memory
 # you have on your Redis/KeyDb instance you can tune this
 queue:
   removeOnComplete: 50
@@ -83,7 +76,6 @@ sitespeed.io:
     endpoint: "http://127.0.0.1:9000"
     bucketname: "sitespeedio"
     key: "sitespeedio"
-    secret: "tracksofmytears"
     region: "motown"
-    
+
   resultBaseURL: "http://127.0.0.1:9000/sitespeedio"
