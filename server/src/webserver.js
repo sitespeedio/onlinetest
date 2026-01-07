@@ -92,13 +92,13 @@ function setupExpressServer() {
     })
   );
 
-  if (nconf.get('disableGUI')) {
+  if (nconf.any('disablegui', 'disableGUI')) {
     logger.info('Disabling GUI');
   } else {
     app.use('/', index);
   }
 
-  if (nconf.get('disableSearchGUI')) {
+  if (nconf.any('disablesearchgui', 'disableSearchGUI')) {
     logger.info('Disabling search');
   } else {
     app.use('/search', search);

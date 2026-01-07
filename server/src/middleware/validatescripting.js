@@ -8,7 +8,7 @@ const logger = getLogger('sitespeedio.server');
 import { getText } from '../util/text.js';
 
 export const validateScripting = (request, response, next) => {
-  const testDomain = nconf.get('validTestDomains');
+  const testDomain = nconf.any('valid:test:domains', 'validTestDomains');
   let validRegEx;
   try {
     validRegEx = new RegExp(testDomain);

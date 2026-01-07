@@ -10,7 +10,7 @@ import { getText } from '../util/text.js';
 const logger = getLogger('sitespeedio.server');
 
 export const validateURL = (request, response, next) => {
-  const testDomain = nconf.get('validTestDomains');
+  const testDomain = nconf.any('valid:test:domains', 'validTestDomains');
 
   // If its an API call using script, do not validate the URL
   if (request.body.api && request.body.api.scripting) {
