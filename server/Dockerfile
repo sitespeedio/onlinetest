@@ -7,7 +7,7 @@ COPY package.json npm-shrinkwrap.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY . .
-COPY config/default.yaml /usr/src/app/config/default.yaml
+COPY config/server.yaml /usr/src/app/config/server.yaml
 
 RUN useradd --user-group --create-home --shell /bin/false sitespeed && \
     chown -R sitespeed:sitespeed /usr/src/app
