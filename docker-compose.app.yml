@@ -12,9 +12,19 @@ services:
     networks:
       - skynet
     depends_on:
-      - redis
-      - postgresql
-      - minio
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      mc:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/ > /dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
   sitespeed.io-testrunner:
     image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
     env_file:
@@ -38,8 +48,11 @@ services:
     cap_add:
       - NET_ADMIN
     depends_on:
-      - redis
-      - minio
-      - sitespeed.io-server
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      sitespeed.io-server:
+        condition: service_healthy
     networks:
       - skynet
