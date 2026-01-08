@@ -21,7 +21,10 @@ services:
       mc:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:3000/ > /dev/null"]
+      test: [
+              "CMD-SHELL",
+              "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+            ]
       interval: 5s
       timeout: 3s
       retries: 30
