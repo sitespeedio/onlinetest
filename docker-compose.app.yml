@@ -19,7 +19,7 @@ services:
       minio:
         condition: service_healthy
       mc:
-        condition: service_started
+        condition: service_completed_successfully
     healthcheck:
       test: [
               "CMD-SHELL",
