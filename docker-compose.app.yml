@@ -25,7 +25,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 30
-      start_period: 10s
+      start_period: 30s
   sitespeed.io-testrunner:
     image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
     env_file:
