@@ -12,9 +12,23 @@ services:
     networks:
       - skynet
     depends_on:
-      - redis
-      - postgresql
-      - minio
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      mc:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [
+              "CMD-SHELL",
+              "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+            ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
   sitespeed.io-testrunner:
     image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
     env_file:
@@ -38,8 +52,11 @@ services:
     cap_add:
       - NET_ADMIN
     depends_on:
-      - redis
-      - minio
-      - sitespeed.io-server
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      sitespeed.io-server:
+        condition: service_healthy
     networks:
       - skynet

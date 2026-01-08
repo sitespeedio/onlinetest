@@ -11,6 +11,11 @@ services:
     volumes:
       - redis_data:/data
       - ./redis-conf:/usr/local/etc/redis/
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
   postgresql:
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
     hostname: postgresql
@@ -25,6 +30,11 @@ services:
     volumes:
       - ./server/database/setup/:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
   minio:
     image: minio/minio:${MINIO_DOCKER_VERSION}
     volumes:
@@ -38,10 +48,16 @@ services:
     command: server /data --console-address ":9001"
     networks:
       - skynet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/ready > /dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
   mc:
     image: minio/mc:${MINIO_MC_DOCKER_VERSION}
     depends_on:
-      - minio
+      minio:
+        condition: service_healthy
     networks:
       - skynet
     restart: on-failure
