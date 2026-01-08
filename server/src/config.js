@@ -7,7 +7,7 @@ import yaml from 'js-yaml';
 
 import { getBaseFilePath } from './util/fileutil.js';
 
-const defaultConfig = getBaseFilePath('./config/default.yaml');
+const defaultConfig = getBaseFilePath('./config/server.yaml');
 
 nconf.argv();
 

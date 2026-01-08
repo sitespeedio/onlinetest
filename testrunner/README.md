@@ -27,12 +27,12 @@ You can also provide your own configuration file (recommended). The configuratio
 node ./app.js --config /path/to/config.yaml
 ```
 
-Take a copy of the [default configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/default.yaml) and adopt it to your own setup.
+Take a copy of the [default configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml) and adopt it to your own setup.
 
 
 ## How tests are run
 
-You can choose to either run the tests using the sitespeed.io container or install sitespeed.io/dependencies and browsers yourself. 
+You can choose to either run the tests using the sitespeed.io container or install sitespeed.io/dependencies and browsers yourself.
 
 If you choose to use Docker, set `useDocker` to true in the configuration. Then all you need to do is to make sure to have Docker installed on the server.
 
@@ -50,7 +50,7 @@ Desktop and emulated mobile tests will work on tests that comes in the queue nam
 
 For Android tests the default setting is one queue per device (device id). That means that you need to choose the exact device and run the test on that device. However there's also a configuration option where you can add the queue name in the configuration. The config is `queue`. That way you can setup multiple Android devices to work on the same queue.
 
-Setting the same queue like this will make both phones take on tests on the same queue. 
+Setting the same queue like this will make both phones take on tests on the same queue.
 ```yaml
 - name: "Android"
    type: "android"

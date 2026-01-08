@@ -8,7 +8,7 @@
 
 # Onlinetest - deploy your own version of sitespeed.io online.
 
-WOHO! version 2 with breaking changes coming the 11:th of January. The main branch will be hot until 2.0.0 is relased. 
+WOHO! version 2 with breaking changes coming the 11:th of January. The main branch will be hot until 2.0.0 is relased.
 
 Setup your own online version of sitespeed.io. You get:
 
@@ -51,7 +51,7 @@ Now you can open your web browser and navigate to [http://127.0.0.1:3000](http:/
 
 If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to set different connectivites inside of Docker. On Mac you can only run native connectivity when you run inside of Docker.
 
-You can also run the server and testrunner [directly]() using NodeJS if you don't want to run Docker.
+You can also run the server and testrunner directly using NodeJS if you don't want to use Docker.
 
 ### Configuration
 You can configure everything that you are used to configure with sitespeed.io + more. The server and the testrunner takes `--config /path/to/file`.
@@ -114,7 +114,7 @@ sitespeed.io-testrunner
 sitespeed.io-server
 ```
 
-In the real world you want to also supply your own configuration files. Default [server configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/default.yaml) and [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/default.yaml):
+In the real world you want to also supply your own configuration files. Default [server configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/server.yaml) and [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/server.yaml):
 
 ```bash
 sitespeed.io-testrunner --config path/to/testrunnerfile
