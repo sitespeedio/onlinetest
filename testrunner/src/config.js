@@ -7,7 +7,7 @@ import yaml from 'js-yaml';
 
 import { getBaseFilePath } from './utility.js';
 
-const DEFAULT_CONFIG = getBaseFilePath('./config/default.yaml');
+const DEFAULT_CONFIG = getBaseFilePath('./config/testrunner.yaml');
 
 const KEYS_TO_EXCLUDE = ['type', '_', '$0', 'config'];
 

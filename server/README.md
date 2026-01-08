@@ -32,4 +32,4 @@ You can also provide your own configuration file (recommended). The configuratio
 node ./app.js --config /path/to/config.yaml
 ```
 
-Take a copy of the [default configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/default.yaml) and adapt it to your setup.
+Take a copy of the [default configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/server.yaml) and adapt it to your setup.

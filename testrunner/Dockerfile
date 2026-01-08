@@ -19,7 +19,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY . .
-COPY docker/dockerdefault.yaml /usr/src/app/config/default.yaml
+COPY docker/testrunnerdocker.yaml /usr/src/app/config/testrunner.yaml
 
 ENTRYPOINT ["node", "app.js"]
 CMD []
