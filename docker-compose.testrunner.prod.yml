@@ -1,0 +1,3 @@
+services:
+  sitespeed.io-testrunner:
+    depends_on: []

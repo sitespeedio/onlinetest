@@ -10,9 +10,3 @@ services:
   minio:
     ports:
       - "9000:9000"
-
-  sitespeed.io-server:
-    ports:
-      - "3000:3000"
-  sitespeed.io-testrunner:
-    depends_on: []
