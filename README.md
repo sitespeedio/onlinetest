@@ -44,7 +44,7 @@ Follow these steps to quickly set up and run the online version of sitespeed.io 
 3. **Start the Docker containers (Redis/PostgreSQL/Minio/sitespeed.io server and testrunner):**
 
     ```bash
-    docker compose -f docker-compose.yml -f docker-compose.app.yml up
+    docker compose -f docker-compose.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up
     ```
 
 Now you can open your web browser and navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) to run your first test.

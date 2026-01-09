@@ -1,0 +1,32 @@
+services:
+  sitespeed.io-server:
+    image: sitespeedio/server:${SITESPEED_IO_SERVER_VERSION}
+    env_file:
+      - .env
+    environment:
+      redis_host: ${REDIS_HOST}
+      postgresql_server: ${POSTGRESQL_HOST}
+      validTestDomains: ${VALID_TEST_DOMAINS}
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - skynet
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      mc:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [
+              "CMD-SHELL",
+              "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+            ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
