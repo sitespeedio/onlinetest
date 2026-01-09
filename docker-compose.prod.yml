@@ -1,0 +1,18 @@
+services:
+  redis:
+    ports:
+      - "6379:6379"
+
+  postgresql:
+    ports:
+      - "5432:5432"
+
+  minio:
+    ports:
+      - "9000:9000"
+
+  sitespeed.io-server:
+    ports:
+      - "3000:3000"
+  sitespeed.io-testrunner:
+    depends_on: []
