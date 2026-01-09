@@ -31,7 +31,7 @@ jobs:
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
-        node testrunner/app.js --log.verbose true > testrunner.log 2>&1 &
+        node testrunner/app.js --redis.host 127.0.0.1 --log.verbose true > testrunner.log 2>&1 &
     - name: Install sitespeed.io globally
       run: npm install sitespeed.io -g
     - name: Show versions

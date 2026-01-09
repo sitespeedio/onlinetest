@@ -32,9 +32,6 @@ executable: "sitespeed.io"
 docker:
   container: "sitespeedio/sitespeed.io-autobuild:main"
 
-redis:
-  host: "127.0.0.1"
-
 sitespeed.io:
   s3:
     endpoint: "http://127.0.0.1:9000"
