@@ -23,7 +23,7 @@ jobs:
         sudo apt-get --only-upgrade install google-chrome-stable
         google-chrome --version
     - name: Start dependencies
-      run: docker compose -f docker-compose.yml up -d
+      run: ddocker compose -f docker-compose.yml up -d
     - name: Start the server
       run: |
         npm install --prefix server
