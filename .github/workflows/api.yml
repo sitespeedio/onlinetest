@@ -27,11 +27,11 @@ jobs:
     - name: Start the server
       run: |
         npm install --prefix server
-        node server/app.js > server.log 2>&1 &
+        node server/app.js --redis.host 127.0.0.1 --postgresql.host 127.0.0.1 > server.log 2>&1 &
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
-        node testrunner/app.js > testrunner.log 2>&1 &
+        node testrunner/app.js --redis.host 127.0.0.1 > testrunner.log 2>&1 &
     - name: Install sitespeed.io globally
       run: npm install sitespeed.io -g
     - name: Show versions
