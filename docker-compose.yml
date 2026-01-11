@@ -1,9 +1,6 @@
 services:
   redis:
     image: redis:${REDIS_DOCKER_VERSION}
-    hostname: redis
-    ports:
-      - "6379:6379"
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     restart: always
     networks:
@@ -18,9 +15,7 @@ services:
       retries: 30
   postgresql:
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
-    hostname: postgresql
-    ports:
-      - "5432:5432"
+    restart: always
     networks:
       - skynet
     environment:

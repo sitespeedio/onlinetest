@@ -23,15 +23,15 @@ jobs:
         sudo apt-get --only-upgrade install google-chrome-stable
         google-chrome --version
     - name: Start dependencies
-      run: docker compose -f docker-compose.yml up -d
+      run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
     - name: Start the server
       run: |
         npm install --prefix server
-        node server/app.js > server.log 2>&1 &
+        node server/app.js --redis.host 127.0.0.1 --postgresql.host 127.0.0.1 > server.log 2>&1 &
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
-        node testrunner/app.js --log.verbose true > testrunner.log 2>&1 &
+        node testrunner/app.js --redis.host 127.0.0.1 --log.verbose true > testrunner.log 2>&1 &
     - name: Install sitespeed.io globally
       run: npm install sitespeed.io -g
     - name: Show versions
