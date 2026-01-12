@@ -74,16 +74,30 @@ function setupExpressServer() {
     );
   }
 
-  const adminAuth = new BasicAuth(
-    nconf.any('admin:basicauth:login', 'admin:basicAuth:login'),
-    nconf.any('admin:basicauth:password', 'admin:basicAuth:password'),
-    'Access to admin',
-    'Authentication required.'
+  const adminLogin = nconf.any(
+    'admin:basicauth:login',
+    'admin:basicAuth:login'
   );
 
-  app.use('/admin', (request, response, next) =>
-    adminAuth.authenticate(request, response, next)
+  const adminPassword = nconf.any(
+    'admin:basicauth:password',
+    'admin:basicAuth:password'
   );
+
+  if (adminLogin != undefined && adminPassword != undefined) {
+    const adminAuth = new BasicAuth(
+      adminLogin,
+      adminPassword,
+      'Access to admin',
+      'Authentication required.'
+    );
+
+    app.use('/admin', (request, response, next) =>
+      adminAuth.authenticate(request, response, next)
+    );
+  } else {
+    logger.warn('Running /admin without basic auth');
+  }
 
   app.use(
     urlencoded({
