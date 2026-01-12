@@ -133,7 +133,7 @@ export class WebServer {
         cert: fs.readFileSync(nconf.get('server:ssl:cert'))
       };
       const server = createSecureServer(sslOptions, this.app);
-      server.listen(3000, () => {
+      server.listen(port, () => {
         logger.info('Web app listening on HTTPS :%s', port);
       });
     } else {
