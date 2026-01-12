@@ -2,7 +2,7 @@ name: Build Docker server container on new tag
 on:
   push:
     tags:
-      - 'server-v*.*.*'
+      - 'v*.*.*'
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -27,13 +27,13 @@ jobs:
         run: |
             VERSION_TAG=${GITHUB_REF#refs/tags/}
             echo "Git tag: $VERSION_TAG"
-  
-            VERSION=${VERSION_TAG#server-v}
-            echo "Full version without 'server-v': $VERSION"
-  
+
+            VERSION=${VERSION_TAG#v}
+            echo "Full version without 'v': $VERSION"
+
             MAJOR_VERSION=${VERSION%%.*}
             echo "Major version: $MAJOR_VERSION"
-  
+
             echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
             echo "MAJOR_VERSION=$MAJOR_VERSION" >> $GITHUB_OUTPUT
       -
