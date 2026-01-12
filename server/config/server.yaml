@@ -74,8 +74,8 @@ basicAuth:
 # Admin has its own basic auth
 admin:
   basicAuth:
-    login: appojke
-    password: monkeyboy
+    login:
+    password:
 
 # The number of jobs to keep in the queue
 # Depending on how many jobs you run and how much memory
