@@ -8,7 +8,7 @@ html
         if (confirm(`Are you sure you want to empty the queue: ${queue}?`)) {
           var form = document.createElement('form');
           form.method = 'POST';
-          form.action = '/admin/'; 
+          form.action = '/admin/';
 
           var input = document.createElement('input');
           input.type = 'hidden';
@@ -29,4 +29,4 @@ html
             .key #{index+1}: #{queue} has #{queueSizes[queue]} entries.
             button(onclick=`confirmAndSubmit('${queue}')`) Empty queue
     footer
-      p Copyright © 2025 sitespeed.io
+      p Copyright © 2026 sitespeed.io
