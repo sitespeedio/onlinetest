@@ -137,54 +137,7 @@ To get it up and running (the [docker-compose file](https://github.com/sitespeed
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 
 ## Setup for production
-This is a minimal production oriented flow that starts from a tagged release. It assumes you will run the server, dependencies and one or more testrunners in Docker (but you can also use the NodeJS services directly if you prefer!).
-
-We use a couple of standalone compose files that will override some settings in the default compose like open ports and changing some dependencies.
-
-1. **Clone the repository and checkout a tag:**
-
-    ```bash
-    git clone https://github.com/sitespeedio/onlinetest.git
-    cd onlinetest
-    git fetch --tags
-    git checkout <tag>
-    ```
-
-2. **Configure environment variables:**
-
-    Copy `.env.example` to `.env` and adjust values for your environment (database credentials, S3/MinIO, public URLs, and version pins). At minimum:
-    - Replace all `CHANGE_ME_*` passwords (`REDIS_PASSWORD`, `POSTGRESQL_PASSWORD`, `MINIO_PASSWORD`) with your own passwords.
-    - Change `RESULT_BASE_URL` `SITESPEED.IO_HTML_HOMEURL` and `SITESPEED_IO_S3_ENDPOINT`. They need to point to that domain (or IP) that you will use.
-    - Verify `SITESPEED_IO_SERVER_VERSION`, and `SITESPEED_IO_TESTRUNNER_VERSION`.
-
-3. **Deploy the core services (server + dependencies):**
-
-    On your primary host, start the dependencies and the server:
-
-    ```bash
-    docker compose -f docker-compose.dependencies.yml -f standalone/docker-compose.dependencies.standalone.yml  docker-compose.server.yml -f standalone/docker-compose.server.standalone.yml up -f  -d
-    ```
-
-4. **Deploy the testrunner(s):**
-
-    Run one or more testrunners on separate machines for isolation and scale. On each testrunner host you need to give Docker the right to change connectivity by running `sudo modprobe ifb numifbs=1` and then start the testrunner:
-
-    ```bash
-    docker compose -f docker-compose.testrunner.yml -f standalone/docker-compose.testrunner.standalone.yml up -d
-    ```
-
-    If you want to keep everything on a single server, you can also run all services together and then make sure
-
-    ```bash
-    docker compose -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up -d
-    ```
-
-5. **Setup a firewall**
-    If you deploy on multiple servers you need to setup a firewall so only the servers has access to Redis, Minio and Postgres Do that with *iptables* since UFW (Uncomplicated Firewall) do not work with Docker.
-
-6. **Verify connectivity:**
-
-    Confirm the server can reach the testrunner(s) and that results are written to your configured storage. Use the UI or API to submit a test and ensure it completes end to end.
+Production means work. You can read more about it at [deployments](https://www.sitespeed.io/documentation/onlinetest/#deployment).
 
 
 ## Support
