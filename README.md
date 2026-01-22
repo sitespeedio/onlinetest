@@ -25,7 +25,7 @@ Setup your own online version of sitespeed.io. You get:
 
 ## Quick setup on your local machine (using Docker)
 
-Follow these steps to quickly set up and run the online version of sitespeed.io on your local Linux or Mac OS machine. Make sure you have [Docker](https://www.docker.com) and [docker compose](https://docs.docker.com/compose/) installed. The default Docker compose setup use the same Docker network.
+Follow these steps to quickly set up and run the online version of sitespeed.io on your local Linux or Mac OS machine. Make sure you have [Docker](https://www.docker.com) and [docker compose](https://docs.docker.com/compose/) installed. The default Docker compose setup use the same Docker network and have only the ports open that is needed.
 
 1. **Clone the repository:**
 
@@ -53,12 +53,13 @@ Now you can open your web browser and navigate to [http://127.0.0.1:3000](http:/
 
 If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to set different connectivites inside of Docker. On Mac you can only run native connectivity when you run inside of Docker.
 
-To deploy on a server you should check production setup.
+To deploy on a server you should [check the production setup](https://github.com/sitespeedio/onlinetest?tab=readme-ov-file#setup-for-production).
 
 ### Configuration
-You can configure everything that you are used to configure with sitespeed.io + more. The server and the testrunner takes `--config /path/to/file`.
 
-You can also use the **[.env](https://github.com/sitespeedio/onlinetest/blob/main/.env)** file for some common configuration to setup the server/testrunner.
+The **[.env.example](https://github.com/sitespeedio/onlinetest/blob/main/.env.example)** has the configuration that you usually needs to change/configure between different environment. If you use the .env file, it will automatically be picked up.
+
+You can configure everything that you are used to configure with sitespeed.io + more. The server and the testrunner takes `--config /path/to/file`.
 
 ### Change which pages/URLs you can test
 There's a regular expression that validates the domain of the URL that you want to test. You can use this to make sure a public instance only can tests pages on your web sites.
@@ -106,7 +107,7 @@ You then need the depencencies (PostgreSQL/KeyDB etc) and the easiet way to get 
 ```bash
 git clone https://github.com/sitespeedio/onlinetest.git
 cd onlinetest
-docker compose up
+docker compose -f docker-compose.dependencies.yml -f standalone/docker-compose.dependencies.standalone.yml  -f  -d
 ```
 
 Then start the testrunner and the server:
@@ -138,7 +139,7 @@ Additionally, there's a server and one or multiple test runners that run the sit
 ## Setup for production
 This is a minimal production oriented flow that starts from a tagged release. It assumes you will run the server, dependencies and one or more testrunners in Docker (but you can also use the NodeJS services directly if you prefer!).
 
-We use a couple of standalone compose files that will override some settings in the default compose like open ports and chaninging some dependencies.
+We use a couple of standalone compose files that will override some settings in the default compose like open ports and changing some dependencies.
 
 1. **Clone the repository and checkout a tag:**
 
@@ -179,11 +180,11 @@ We use a couple of standalone compose files that will override some settings in 
     ```
 
 5. **Setup a firewall**
-    You need to setup a firwall so only the servers has access to Redis, Minio and Postgres Do that with *iptables* since UFW (Uncomplicated Firewall) do not work with Docker.
+    If you deploy on multiple servers you need to setup a firewall so only the servers has access to Redis, Minio and Postgres Do that with *iptables* since UFW (Uncomplicated Firewall) do not work with Docker.
 
 6. **Verify connectivity:**
 
-    Confirm the server can reach the testrunner(s) and that results are written to your configured storage. Use the UI or API to submit a test and ensure it completes end-to-end.
+    Confirm the server can reach the testrunner(s) and that results are written to your configured storage. Use the UI or API to submit a test and ensure it completes end to end.
 
 
 ## Support
