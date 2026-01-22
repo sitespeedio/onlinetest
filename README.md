@@ -102,7 +102,7 @@ npm install @sitespeed.io/server -g
 npm install @sitespeed.io/testrunner -g
 ```
 
-You then need the depencencies (PostgreSQL/KeyDB etc) and the easiet way to get them running is to use the docker compose file:
+You then need the depencencies (PostgreSQL/Redis etc) and the easiet way to get them running is to use the docker compose file:
 
 ```bash
 git clone https://github.com/sitespeedio/onlinetest.git
@@ -128,7 +128,7 @@ sitespeed.io-server --config path/to/file
 
 To get it up and running (the [docker-compose file](https://github.com/sitespeedio/onlinetest/blob/main/docker-compose.yml)), you need:
 
-* **A Message broker**: - A Redis-like data storage/message broker. The default setup uses [keydb](https://docs.keydb.dev) and has also been tested with [Valkey](https://github.com/valkey-io/valkey).
+* **A Message broker**: - A Redis-like data storage/message broker. The default setup uses [Redis](https://www.redis.io) and has also been tested with [Valkey](https://github.com/valkey-io/valkey).
 
 * **A Database**: - [PostgreSQL](https://www.postgresql.org) - the open source database.
 
