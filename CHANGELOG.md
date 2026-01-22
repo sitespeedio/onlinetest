@@ -6,6 +6,20 @@ This changelog combines the server and testrunner changes. The changelog do [sem
 
 With the 2.0.0 release we combine the changelog for the server/testrunner and simplifying the releases. They will now be released with the same release number. If you want to find the old CHANGELOG entries, scroll down in this file.
 
+The 2.0.0 release has some breaking changes. The goal with the release is to make the setup more solid. There's been no database changes or setup changes for the server however the docker compose files has been cleaned up and the way of starting the services has changed.
+
+The README.md file is updated new documention. There's a couple of new things:
+The docker compose file has been splitted into three:
+* The dependencies (Redis, Minio and PostGreSQL)
+* The server
+* The testrunner
+
+The split makes it easier if you want to run the setup on multiple servers.
+
+
+### Upgrading from 1.X release to 2.0
+TODO
+
 ### Changed
 * Rename defaulLocale configuration to locale [#178](https://github.com/sitespeedio/onlinetest/pull/178). If you used `localization:defaultLocale` that is now `localization:locale`.
 * Updated minio to latest release. There are some changes on startup so check the PR and update your docker compose accordingly [#163](https://github.com/sitespeedio/onlinetest/pull/163).
