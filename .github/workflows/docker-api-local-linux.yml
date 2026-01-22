@@ -19,6 +19,8 @@ jobs:
       run: docker build --load --tag sitespeedio/server:local-action -f ./server/Dockerfile server
     - name: Build testrunner
       run: docker build --load  --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
+    - name: Prepare env
+      run: cp .env.example .env
     - name: Start dependencies
       env:
         SITESPEED_IO_SERVER_VERSION: "local-action"

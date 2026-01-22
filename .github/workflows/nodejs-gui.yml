@@ -22,6 +22,8 @@ jobs:
         sudo apt-get update
         sudo apt-get --only-upgrade install google-chrome-stable
         google-chrome --version
+    - name: Prepare env
+      run: cp .env.example .env
     - name: Start dependencies
       run: docker compose -f docker-compose.dependencies.yml -f standalone/docker-compose.dependencies.standalone.yml up -d
     - name: Start the server
