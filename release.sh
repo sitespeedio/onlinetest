@@ -13,6 +13,8 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
+VERSION="$1"
+
 if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-.+)?$ ]]; then
   echo "Version must be semver (e.g. 1.2.3)"
   exit 1
@@ -30,8 +32,6 @@ if [ "$CURRENT_BRANCH" != "main" ]; then
 fi
 
 npm whoami >/dev/null
-
-VERSION="$1"
 
 echo "Releasing server version $VERSION"
 cd "${ROOT_DIR}/server"
