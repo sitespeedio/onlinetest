@@ -52,3 +52,5 @@ VERSION_TAG="v${VERSION}"
 
 git tag -a "$VERSION_TAG" -m "Release $VERSION_TAG"
 git push --follow-tags
+
+open "https://github.com/sitespeedio/onlinetest/releases/new?tag=${VERSION_TAG}&title=Release%20${VERSION_TAG}&draft=true"
