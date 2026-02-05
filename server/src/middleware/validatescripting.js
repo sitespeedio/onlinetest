@@ -24,13 +24,12 @@ export const validateScripting = (request, response, next) => {
 
   if (request.body.scripting) {
     try {
-      const matches = request.body.scripting.match(
-        /(commands\.measure\.start|commands\.navigate)\('https?:\/\/[^\s']+'\)/g
-      );
-      const urls = matches.map(match => {
-        const urlMatch = match.match(/'https?:\/\/[^\s']+'/);
-        return urlMatch[0].slice(1, -1);
-      });
+      const matches = [
+        ...request.body.scripting.matchAll(
+          /commands\.(?:measure\.start|navigate)\(\s*(['"])(https?:\/\/[^\s'"]+)\1/g
+        )
+      ];
+      const urls = matches.map(match => match[2]);
       for (let url of urls) {
         if (isURL(url)) {
           const urlObject = new URL(url);
