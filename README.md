@@ -107,6 +107,7 @@ You then need the depencencies (PostgreSQL/Redis etc) and the easiet way to get 
 ```bash
 git clone https://github.com/sitespeedio/onlinetest.git
 cd onlinetest
+cp .env.example .env
 docker compose -f docker-compose.dependencies.yml -f standalone/docker-compose.dependencies.standalone.yml  -f  -d
 ```
 
