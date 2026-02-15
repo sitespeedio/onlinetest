@@ -1,0 +1,29 @@
+services:
+  sitespeed.io-testrunner:
+    image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
+    env_file:
+      - ../.env
+    environment:
+      redis_host: ${REDIS_HOST}
+      location_name: ${LOCATION_NAME}
+      docker_container: ${SITESPEED_IO_CONTAINER}
+      docker_extraparameters: "--cap-add=NET_ADMIN"
+      sitespeed.io_s3_endpoint: ${SITESPEED_IO_S3_ENDPOINT}
+      sitespeed.io_s3_bucketname: 'sitespeedio'
+      sitespeed.io_s3_key: ${MINIO_USER}
+      sitespeed.io_s3_secret: ${MINIO_PASSWORD}
+      sitespeed.io_s3_region: "motown"
+      sitespeed.io_s3_options_forcePathStyle: true
+      sitespeed.io_s3_removeLocalResult: true
+      sitespeed.io_resultBaseURL: ${RESULT_BASE_URL}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+    cap_add:
+      - NET_ADMIN
+    restart: always
+    networks:
+      - skynet
+networks:
+  skynet:
+    name: skynet
