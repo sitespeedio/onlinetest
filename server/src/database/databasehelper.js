@@ -3,6 +3,12 @@ const { Pool } = postgrespackage;
 
 import { nconf } from '../config.js';
 import { getLogger } from '@sitespeed.io/log';
+import {
+  databaseQueryDuration,
+  databasePoolActiveConnections,
+  databasePoolIdleConnections,
+  databasePoolWaitingRequests
+} from '../metrics.js';
 
 const logger = getLogger('sitespeedio.database.query');
 
@@ -45,8 +51,19 @@ class DatabaseHelper {
         duration,
         result.rowCount
       );
+      const queryLabel = text.split(' ').slice(0, 3).join(' ');
+      databaseQueryDuration.observe({ query: queryLabel }, duration / 1000);
+      this.updatePoolMetrics();
       return result;
     });
+  }
+
+  updatePoolMetrics() {
+    databasePoolActiveConnections.set(
+      this.pool.totalCount - this.pool.idleCount
+    );
+    databasePoolIdleConnections.set(this.pool.idleCount);
+    databasePoolWaitingRequests.set(this.pool.waitingCount);
   }
 
   /**

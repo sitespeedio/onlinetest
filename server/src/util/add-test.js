@@ -21,6 +21,7 @@ import {
 import { setConfigById } from '../configs.js';
 
 import { updateStatus } from '../database/index.js';
+import { testsSubmittedTotal } from '../metrics.js';
 
 const logger = getLogger('sitespeedio.server');
 
@@ -107,6 +108,11 @@ export async function reRunTest(request) {
         queueName
       );
       setIdAndQueue(jobId, testRunnerQueue);
+      testsSubmittedTotal.inc({
+        test_type: oldTest.test_type,
+        browser: oldTest.browser_name,
+        location: oldTest.location
+      });
       return jobId;
     } catch (error) {
       throw new Error('Could not connect to queue' + error);
@@ -237,6 +243,11 @@ export async function addTest(request) {
 
     setConfigById(jobId, url, scriptingName, config, queueName);
     setIdAndQueue(jobId, testRunnerQueue);
+    testsSubmittedTotal.inc({
+      test_type: testType,
+      browser,
+      location
+    });
     return jobId;
   } else {
     throw new Error('Non existing queue');
@@ -324,5 +335,10 @@ export async function addTestFromAPI(
 
   setConfigById(jobId, url, scriptingName, config, queue);
   setIdAndQueue(jobId, testRunnerQueue);
+  testsSubmittedTotal.inc({
+    test_type: testType,
+    browser,
+    location
+  });
   return jobId;
 }

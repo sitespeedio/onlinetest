@@ -25,8 +25,33 @@ import { BasicAuth } from './middleware/basicauth.js';
 import { error404, error500 } from './middleware/errorhandler.js';
 import { setupStatic } from './static/index.js';
 import { getBaseFilePath } from './util/fileutil.js';
+import { register, httpRequestDuration, httpRequestsTotal } from './metrics.js';
 
 const logger = getLogger('sitespeedio.server');
+
+const KNOWN_PREFIXES = [
+  '/api',
+  '/result',
+  '/search',
+  '/admin',
+  '/compare-redirect'
+];
+
+function normalizeRoute(path) {
+  for (const prefix of KNOWN_PREFIXES) {
+    if (path.startsWith(prefix)) {
+      return prefix;
+    }
+  }
+  if (
+    path.startsWith('/img/') ||
+    path.startsWith('/css/') ||
+    path.startsWith('/js/')
+  ) {
+    return '/static';
+  }
+  return path === '/' ? '/' : '/other';
+}
 
 function setupExpressServer() {
   const app = express();
@@ -41,6 +66,30 @@ function setupExpressServer() {
 
   app.use(compress());
   app.use(responseTime());
+
+  app.use((request, response, next) => {
+    if (request.path === '/metrics') {
+      return next();
+    }
+    const end = httpRequestDuration.startTimer();
+    response.on('finish', () => {
+      const route = request.route?.path || normalizeRoute(request.path);
+      const labels = {
+        method: request.method,
+        route,
+        status_code: response.statusCode
+      };
+      end(labels);
+      httpRequestsTotal.inc(labels);
+    });
+    next();
+  });
+
+  app.get('/metrics', async (request, response) => {
+    response.set('Content-Type', register.contentType);
+    response.end(await register.metrics());
+  });
+
   app.use(minify);
   app.use(express.json());
 

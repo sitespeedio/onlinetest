@@ -7,6 +7,7 @@ const queues = {};
 const deviceToQueue = {};
 import { nconf } from './config.js';
 import Redis from 'ioredis';
+import { queueSize, queueJobsActive, redisConnectionUp } from './metrics.js';
 
 function getRedis() {
   const REDIS_PORT = nconf.get('redis:port');
@@ -181,3 +182,23 @@ export function setIdAndQueue(id, queue) {
 export function getExistingQueueNames() {
   return Object.keys(queues);
 }
+
+async function updateQueueMetrics() {
+  let redisHealthy = false;
+  for (const [name, queue] of Object.entries(queues)) {
+    try {
+      const counts = await queue.getJobCounts();
+      queueSize.set({ queue: name }, counts.waiting || 0);
+      queueJobsActive.set({ queue: name }, counts.active || 0);
+      if (queue.client && queue.client.status === 'ready') {
+        redisHealthy = true;
+      }
+    } catch {
+      // Ignore errors during metrics collection
+    }
+  }
+  redisConnectionUp.set(redisHealthy ? 1 : 0);
+}
+
+const QUEUE_METRICS_INTERVAL_MS = 10_000;
+setInterval(updateQueueMetrics, QUEUE_METRICS_INTERVAL_MS).unref();
