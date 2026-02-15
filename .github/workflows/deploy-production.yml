@@ -26,7 +26,7 @@ jobs:
         SITESPEED_IO_SERVER_VERSION: "local-action"
         SITESPEED_IO_TESTRUNNER_VERSION: "local-action"
         DOMAIN: ":80"
-      run: docker compose -f deploy/docker-compose.production.yml up -d
+      run: docker compose --env-file .env -f deploy/docker-compose.production.yml up -d
     - name: Show versions
       run: |
         docker --version
