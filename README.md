@@ -1,8 +1,12 @@
-[![Test the API](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml)
-[![Test the GUI (NodeJS)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml)
-[![Test the GUI (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml)
-[![Using Docker](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml)
 [![Lint](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml)
+[![API (Node.js)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml)
+[![GUI URL (Node.js)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml)
+[![GUI Scripting (Node.js)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui-scripting-.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui-scripting-.yml)
+[![API (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-api-local-linux.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-api-local-linux.yml)
+[![GUI URL (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml)
+[![GUI Scripting (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui-scripting.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui-scripting.yml)
+[![Docker Testrunner](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml)
+[![Production Deploy](https://github.com/sitespeedio/onlinetest/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/deploy-production.yml)
 
 [Website](https://www.sitespeed.io/) | [Documentation](https://www.sitespeed.io/documentation/onlinetest/) | [Changelog](https://github.com/sitespeedio/onlinetest/blob/main/CHANGELOG.md)
 
@@ -53,7 +57,7 @@ Now you can open your web browser and navigate to [http://127.0.0.1:3000](http:/
 
 If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to set different connectivities inside of Docker. On Mac you can only run native connectivity when you run inside of Docker.
 
-To deploy on a server you should check the [production setup](PRODUCTION.md).
+To deploy on a server you should check the [production setup](deploy/PRODUCTION.md).
 
 ## Using the API (CLI)
 
@@ -175,7 +179,7 @@ ADMIN_BASICAUTH_PASSWORD=CHANGE_ME_ADMIN_PASSWORD
 ```
 
 ### Multiple locations
-You can run test runners on different machines, each with a unique `location.name` in the [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml). The server automatically aggregates all connected runners and shows their locations in the GUI. This is useful for testing from different geographic locations or on different device types (desktop, mobile, Android). See [PRODUCTION.md](PRODUCTION.md) for multi-server setup details.
+You can run test runners on different machines, each with a unique `location.name` in the [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml). The server automatically aggregates all connected runners and shows their locations in the GUI. This is useful for testing from different geographic locations or on different device types (desktop, mobile, Android). See [PRODUCTION.md](deploy/PRODUCTION.md) for multi-server setup details.
 
 ## Using Node.js
 
@@ -225,7 +229,7 @@ The setup is split into three compose files ([docker-compose.dependencies.yml](h
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 
 ## Setup for production
-For production deployments (with HTTPS, multi-server setups, and more), see [PRODUCTION.md](PRODUCTION.md).
+For production deployments (with HTTPS, multi-server setups, and more), see [PRODUCTION.md](deploy/PRODUCTION.md).
 
 
 ## Support

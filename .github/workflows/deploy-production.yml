@@ -1,4 +1,4 @@
-name: GUI URL (Docker)
+name: Production Deploy
 on:
   push:
     branches:
@@ -18,16 +18,15 @@ jobs:
     - name: Build server
       run: docker build --load --tag sitespeedio/server:local-action -f ./server/Dockerfile server
     - name: Build testrunner
-      run: docker build --load  --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
-    - name: Pull sitespeed.io
-      run: docker pull sitespeedio/sitespeed.io:39
+      run: docker build --load --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
     - name: Prepare env
       run: cp .env.example .env
-    - name: Start dependencies
+    - name: Start production stack
       env:
         SITESPEED_IO_SERVER_VERSION: "local-action"
         SITESPEED_IO_TESTRUNNER_VERSION: "local-action"
-      run: docker compose -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up -d
+        DOMAIN: ":80"
+      run: docker compose --env-file .env -f deploy/docker-compose.production.yml up -d
     - name: Show versions
       run: |
         docker --version
@@ -41,10 +40,13 @@ jobs:
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
         npm install
-        bin/sitespeed.js  ../test/scripts/addatest.mjs --multi -n 1 --headless
+        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1 --api.port 80 --api.location default --headless --api.json
+    - name: Display Caddy log
+      if: failure() || success()
+      run: docker logs deploy-caddy-1
     - name: Display Server log
       if: failure() || success()
-      run: docker logs onlinetest-sitespeed.io-server-1
+      run: docker logs deploy-sitespeed.io-server-1
     - name: Display testrunner log
       if: failure() || success()
-      run: docker logs onlinetest-sitespeed.io-testrunner-1
+      run: docker logs deploy-sitespeed.io-testrunner-1

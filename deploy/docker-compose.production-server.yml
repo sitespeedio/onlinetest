@@ -1,0 +1,109 @@
+services:
+  redis:
+    image: redis:${REDIS_DOCKER_VERSION}
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - skynet
+    volumes:
+      - redis_data:/data
+      - ../redis-conf:/usr/local/etc/redis/
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "127.0.0.1", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  postgresql:
+    image: postgres:${POSTGRESQL_DOCKER_VERSION}
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - skynet
+    environment:
+      - POSTGRES_USER=${POSTGRESQL_USER}
+      - POSTGRES_PASSWORD=${POSTGRESQL_PASSWORD}
+      - POSTGRES_DB=${POSTGRESQL_DB}
+    volumes:
+      - ../server/database/setup/:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h 127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  minio:
+    image: minio/minio:${MINIO_DOCKER_VERSION}
+    volumes:
+      - minio-data:/data
+    ports:
+      - "9000:9000"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
+      - MINIO_REGION=motown
+    command: server /data --console-address ":9001"
+    networks:
+      - skynet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/ready > /dev/null"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  mc:
+    image: minio/mc:${MINIO_MC_DOCKER_VERSION}
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - skynet
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD} &&
+      (/usr/bin/mc mb --ignore-existing --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
+      /usr/bin/mc ilm rule add --expire-days 30 sitespeedio/sitespeedio &&
+      /usr/bin/mc anonymous set download sitespeedio/sitespeedio &&
+      /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
+      echo 'MinIO and lifecycle policy setup complete.'"
+  sitespeed.io-server:
+    image: sitespeedio/server:${SITESPEED_IO_SERVER_VERSION}
+    env_file:
+      - ../.env
+    environment:
+      redis_host: ${REDIS_HOST}
+      postgresql_server: ${POSTGRESQL_HOST}
+      validTestDomains: ${VALID_TEST_DOMAINS}
+    ports:
+      - "3000:3000"
+    restart: always
+    networks:
+      - skynet
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      mc:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [
+              "CMD-SHELL",
+              "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""
+            ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+volumes:
+  postgres-data:
+  minio-data:
+  redis_data:
+    driver: local
+networks:
+  skynet:
+    name: skynet
