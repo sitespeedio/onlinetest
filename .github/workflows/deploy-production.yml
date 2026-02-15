@@ -1,0 +1,52 @@
+name: Test production deploy setup
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24.x'
+    - uses: actions/checkout@v4
+    - name: Build server
+      run: docker build --load --tag sitespeedio/server:local-action -f ./server/Dockerfile server
+    - name: Build testrunner
+      run: docker build --load --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
+    - name: Prepare env
+      run: cp .env.example .env
+    - name: Start production stack
+      env:
+        SITESPEED_IO_SERVER_VERSION: "local-action"
+        SITESPEED_IO_TESTRUNNER_VERSION: "local-action"
+        DOMAIN: ":80"
+      run: docker compose -f deploy/docker-compose.production.yml up -d
+    - name: Show versions
+      run: |
+        docker --version
+        docker ps
+        docker network ls
+        docker network inspect skynet
+    - name: Get host IP
+      run: echo "HOST_IP=$(hostname -I | awk '{print $1}')" >> $GITHUB_ENV
+    - name: Run a test
+      run: |
+        git clone https://github.com/sitespeedio/sitespeed.io.git
+        cd sitespeed.io
+        npm install
+        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1 --api.port 80 --api.location default --headless --api.json
+    - name: Display Caddy log
+      if: failure() || success()
+      run: docker logs deploy-caddy-1
+    - name: Display Server log
+      if: failure() || success()
+      run: docker logs deploy-sitespeed.io-server-1
+    - name: Display testrunner log
+      if: failure() || success()
+      run: docker logs deploy-sitespeed.io-testrunner-1
