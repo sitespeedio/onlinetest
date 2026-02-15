@@ -53,7 +53,7 @@ Now you can open your web browser and navigate to [http://127.0.0.1:3000](http:/
 
 If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to set different connectivities inside of Docker. On Mac you can only run native connectivity when you run inside of Docker.
 
-To deploy on a server you should check the [production setup](PRODUCTION.md).
+To deploy on a server you should check the [production setup](deploy/PRODUCTION.md).
 
 ## Using the API (CLI)
 
@@ -175,7 +175,7 @@ ADMIN_BASICAUTH_PASSWORD=CHANGE_ME_ADMIN_PASSWORD
 ```
 
 ### Multiple locations
-You can run test runners on different machines, each with a unique `location.name` in the [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml). The server automatically aggregates all connected runners and shows their locations in the GUI. This is useful for testing from different geographic locations or on different device types (desktop, mobile, Android). See [PRODUCTION.md](PRODUCTION.md) for multi-server setup details.
+You can run test runners on different machines, each with a unique `location.name` in the [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml). The server automatically aggregates all connected runners and shows their locations in the GUI. This is useful for testing from different geographic locations or on different device types (desktop, mobile, Android). See [PRODUCTION.md](deploy/PRODUCTION.md) for multi-server setup details.
 
 ## Using Node.js
 
@@ -225,7 +225,7 @@ The setup is split into three compose files ([docker-compose.dependencies.yml](h
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 
 ## Setup for production
-For production deployments (with HTTPS, multi-server setups, and more), see [PRODUCTION.md](PRODUCTION.md).
+For production deployments (with HTTPS, multi-server setups, and more), see [PRODUCTION.md](deploy/PRODUCTION.md).
 
 
 ## Support

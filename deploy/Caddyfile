@@ -1,0 +1,8 @@
+{$DOMAIN} {
+    handle /sitespeedio/* {
+        reverse_proxy minio:9000
+    }
+    handle {
+        reverse_proxy sitespeed.io-server:3000
+    }
+}
