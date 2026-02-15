@@ -1,3 +1,5 @@
+import { testRunnersConnected } from './metrics.js';
+
 const testRunners = {};
 
 function mergeByHostname(target, source) {
@@ -15,12 +17,21 @@ function removeByHostname(hostnameToRemove) {
   delete testRunners[hostnameToRemove];
 }
 
+function updateTestRunnerMetrics() {
+  testRunnersConnected.reset();
+  for (const runner of Object.values(testRunners)) {
+    testRunnersConnected.set({ location: runner.name }, 1);
+  }
+}
+
 export function addTestRunner(config) {
   mergeByHostname(testRunners, config);
+  updateTestRunnerMetrics();
 }
 
 export function removeTestRunner(config) {
   removeByHostname(config.hostname);
+  updateTestRunnerMetrics();
 }
 
 export function getTestRunners() {

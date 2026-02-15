@@ -10,8 +10,14 @@ import {
   addDeviceToQueue
 } from './queuehandler.js';
 import { addTestRunner, removeTestRunner } from './testrunners.js';
-import { testConnection, updateStatus, updateTest } from './database/index.js';
+import {
+  testConnection,
+  updateStatus,
+  updateTest,
+  getTest
+} from './database/index.js';
 import DatabaseHelper from './database/databasehelper.js';
+import { testsCompletedTotal, testsFailedTotal } from './metrics.js';
 
 const logger = getLogger('sitespeedio.server');
 
@@ -30,7 +36,7 @@ function setupLogging() {
 
 async function setupResultQueue() {
   processJob('result', async job => {
-    return updateTest(
+    await updateTest(
       job.data.id,
       job.data.status,
       job.data.runTime,
@@ -38,6 +44,21 @@ async function setupResultQueue() {
       job.data.result.browsertime,
       job.data.result.har
     );
+
+    const test = await getTest(job.data.id);
+    if (test) {
+      const labels = {
+        test_type: test.test_type,
+        browser: test.browser_name,
+        location: test.location
+      };
+      if (job.data.status === 'completed') {
+        testsCompletedTotal.inc(labels);
+      } else {
+        testsFailedTotal.inc(labels);
+      }
+
+    }
   });
 }
 
