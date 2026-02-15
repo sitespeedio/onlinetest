@@ -1,4 +1,4 @@
-name: Test the GUI for scripting test for a Docker setup
+name: GUI Scripting (Docker)
 on:
   push:
     branches:

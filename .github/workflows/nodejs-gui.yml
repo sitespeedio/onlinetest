@@ -1,4 +1,4 @@
-name: Test the GUI for a URL using a NodeJS setup
+name: GUI URL (Node.js)
 on:
   push:
     branches:

@@ -1,8 +1,12 @@
-[![Test the API](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml)
-[![Test the GUI (NodeJS)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml)
-[![Test the GUI (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml)
-[![Using Docker](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml)
 [![Lint](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/lint.yml)
+[![API (Node.js)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/api.yml)
+[![GUI URL (Node.js)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui.yml)
+[![GUI Scripting (Node.js)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui-scripting-.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/nodejs-gui-scripting-.yml)
+[![API (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-api-local-linux.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-api-local-linux.yml)
+[![GUI URL (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui.yml)
+[![GUI Scripting (Docker)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui-scripting.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker-gui-scripting.yml)
+[![Docker Testrunner](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/docker.yml)
+[![Production Deploy](https://github.com/sitespeedio/onlinetest/actions/workflows/deploy-production.yml/badge.svg)](https://github.com/sitespeedio/onlinetest/actions/workflows/deploy-production.yml)
 
 [Website](https://www.sitespeed.io/) | [Documentation](https://www.sitespeed.io/documentation/onlinetest/) | [Changelog](https://github.com/sitespeedio/onlinetest/blob/main/CHANGELOG.md)
 

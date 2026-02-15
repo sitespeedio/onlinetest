@@ -1,4 +1,4 @@
-name: Test the GUI using a URL for a Docker setup
+name: GUI URL (Docker)
 on:
   push:
     branches:
