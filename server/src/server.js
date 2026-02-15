@@ -57,7 +57,6 @@ async function setupResultQueue() {
       } else {
         testsFailedTotal.inc(labels);
       }
-
     }
   });
 }

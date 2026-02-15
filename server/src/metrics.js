@@ -99,7 +99,6 @@ export const testRunnersConnected = new Gauge({
   registers: [register]
 });
 
-
 export const redisConnectionUp = new Gauge({
   name: 'redis_connection_up',
   help: 'Whether the Redis/KeyDB connection is healthy (1 = up, 0 = down)',
