@@ -2,6 +2,10 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 2.1.0 - UNRELEASED
+### Added
+* Collect metrics from the server and make it availible for Promethues [#213](https://github.com/sitespeedio/onlinetest/pull/213).
+
 ## 2.0.0 - 2026-01-22
 
 With the 2.0.0 release we combine the changelog for the server/testrunner and simplifying the releases. They will now be released with the same release number. If you want to find the old CHANGELOG entries, scroll down in this file.
