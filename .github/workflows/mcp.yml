@@ -1,0 +1,51 @@
+name: MCP Server
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24.x'
+    - uses: actions/checkout@v4
+    - name: Prepare env
+      run: cp .env.example .env
+    - name: Start dependencies
+      run: docker compose -f docker-compose.dependencies.yml -f standalone/docker-compose.dependencies.standalone.yml up -d
+    - name: Start the server
+      run: |
+        npm install --prefix server
+        node server/app.js --redis.host 127.0.0.1 --postgresql.server 127.0.0.1 > server.log 2>&1 &
+    - name: Start the testrunner
+      run: |
+        npm install --prefix testrunner
+        node testrunner/app.js --redis.host 127.0.0.1 > testrunner.log 2>&1 &
+    - name: Wait for services to be ready
+      run: |
+        for i in $(seq 1 40); do
+          SERVER_OK=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/ || echo "000")
+          RUNNERS=$(curl -s http://localhost:3000/api/testRunners | grep -c '"name"' || echo "0")
+          if [ "$SERVER_OK" = "200" ] && [ "$RUNNERS" -ge "1" ]; then
+            echo "All services ready (testrunner registered)"
+            exit 0
+          fi
+          echo "Waiting... attempt $i (server=$SERVER_OK, runners=$RUNNERS)"
+          sleep 2
+        done
+        echo "Services did not become ready in time"
+        exit 1
+    - name: Run MCP tests
+      run: node server/test/test-mcp.mjs
+    - name: Display server log
+      if: failure() || success()
+      run: cat server.log
+    - name: Display testrunner log
+      if: failure() || success()
+      run: cat testrunner.log
