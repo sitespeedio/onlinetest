@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 
 import { getConfigByTestId } from '../../configs.js';
 import { getQueueById } from '../../queuehandler.js';
-import { getTest, getTestHar } from '../../database/index.js';
+import { getTest, getTestHar, getTestResult } from '../../database/index.js';
 
 import { validateKey } from '../../middleware/validatekey.js';
 import { validateURL } from '../../middleware/validateurl.js';
@@ -155,6 +155,27 @@ api.get('/status/:testId', async function (request, response) {
     message: message,
     result: status === 'completed' ? resultUrl : ''
   });
+});
+
+/**
+ * Get the browsertime result JSON for a test.
+ */
+api.get('/result/:testId', async function (request, response) {
+  const id = request.params.testId;
+  const row = await getTestResult(id);
+  if (!row) {
+    return response.status(404).json({
+      id,
+      message: 'No test found with id ' + id
+    });
+  }
+  if (!row.browsertime_result) {
+    return response.status(404).json({
+      id,
+      message: 'No result available yet for test ' + id
+    });
+  }
+  return response.json(row.browsertime_result);
 });
 
 /**

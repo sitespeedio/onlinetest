@@ -85,6 +85,10 @@ queue:
   removeOnFail: 50
 
 
+# Enable the MCP (Model Context Protocol) server at /mcp
+mcp:
+  enabled: true
+
 # The default sitspeed.io configuration file that will be merged to all tests.
 # defaultSitespeedioConfigFile:
 

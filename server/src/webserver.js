@@ -26,11 +26,11 @@ import { error404, error500 } from './middleware/errorhandler.js';
 import { setupStatic } from './static/index.js';
 import { getBaseFilePath } from './util/fileutil.js';
 import { register, httpRequestDuration, httpRequestsTotal } from './metrics.js';
-
 const logger = getLogger('sitespeedio.server');
 
 const KNOWN_PREFIXES = [
   '/api',
+  '/mcp',
   '/result',
   '/search',
   '/admin',
@@ -53,7 +53,7 @@ function normalizeRoute(path) {
   return path === '/' ? '/' : '/other';
 }
 
-function setupExpressServer() {
+async function setupExpressServer() {
   const app = express();
 
   const minify = _minify({
@@ -92,6 +92,13 @@ function setupExpressServer() {
 
   app.use(minify);
   app.use(express.json());
+
+  if (nconf.get('mcp:enabled')) {
+    const { setupMcp } = await import('./mcp/server.js');
+    setupMcp(app);
+  } else {
+    logger.info('MCP server disabled');
+  }
 
   app.set('view engine', 'pug');
   app.set('views', path.resolve(getBaseFilePath('./views')));
@@ -184,7 +191,7 @@ export class WebServer {
   constructor() {}
 
   async start() {
-    this.app = setupExpressServer();
+    this.app = await setupExpressServer();
     const port = nconf.get('server:port');
 
     if (
