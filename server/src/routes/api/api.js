@@ -47,7 +47,7 @@ api.get('/har/:testId', async function (request, response) {
   const har = await getTestHar(id);
   return har
     ? response.json(har.har)
-    : response.status(400).json({
+    : response.status(404).json({
         id: id,
         message: 'There are no HAR for test id ' + id
       });
@@ -128,7 +128,7 @@ api.get('/status/:testId', async function (request, response) {
       logger.info('Job %s completed for %s', id, testConfig.url);
 
       message = 'Job completed.';
-      resultUrl = job.returnvalue.pageSummaryUrl;
+      resultUrl = job.returnvalue?.pageSummaryUrl;
       break;
     }
     case 'active': {
