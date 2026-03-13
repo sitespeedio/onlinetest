@@ -151,6 +151,21 @@ export async function getTest(id) {
 }
 
 /**
+ * Get the browsertime result for a test id.
+ */
+export async function getTestBrowsertime(id) {
+  const query =
+    'SELECT browsertime_result FROM sitespeed_io_test_runs WHERE id = $1';
+  const values = [id];
+  try {
+    const result = await DatabaseHelper.getInstance().query(query, values);
+    return result.rows[0];
+  } catch (error) {
+    logError('Could not get the browsertime result by id', error);
+  }
+}
+
+/**
  * Get a HAR file by a test id.
  */
 export async function getTestHar(id) {
