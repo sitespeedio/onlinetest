@@ -5,7 +5,11 @@ import { createRequire } from 'node:module';
 
 import { getConfigByTestId } from '../../configs.js';
 import { getQueueById } from '../../queuehandler.js';
-import { getTest, getTestHar, getTestBrowsertime } from '../../database/index.js';
+import {
+  getTest,
+  getTestHar,
+  getTestBrowsertime
+} from '../../database/index.js';
 
 import { validateKey } from '../../middleware/validatekey.js';
 import { validateURL } from '../../middleware/validateurl.js';
