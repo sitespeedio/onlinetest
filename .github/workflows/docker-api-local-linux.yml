@@ -13,7 +13,28 @@ jobs:
     - name: Harden Runner
       uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
       with:
-        egress-policy: audit
+        egress-policy: block
+        allowed-endpoints: >
+          accounts.google.com:443
+          android.clients.google.com:443
+          auth.docker.io:443
+          clients2.google.com:80
+          deb.debian.org:80
+          dl.min.io:443
+          download.docker.com:443
+          en.wikipedia.org:443
+          github.com:443
+          msedgedriver.microsoft.com:443
+          mtalk.google.com:5228
+          nodejs.org:443
+          production.cloudflare.docker.com:443
+          registry-1.docker.io:443
+          registry.npmjs.org:443
+          release-assets.githubusercontent.com:443
+          storage.googleapis.com:443
+          upload.wikimedia.org:443
+          www.google.com:443
+          www.wikipedia.org:443
     - name: Use Node.js
       uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6
       with:
