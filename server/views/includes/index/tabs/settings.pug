@@ -1,24 +1,21 @@
 mixin dropdown(label, name)
-  .mb-2.mb-tablet-0(style='width:100%;max-width:325px;padding:0 15px')
-    .subtitle.has-text-weight-semibold(style='margin-left:2px;margin-bottom:0.6rem;font-size:1rem')
-      label.label.is-normal #{label}
-    .control
-      .field
-        .control
-          .select.is-normal.is-fullwidth
-            select(id=name style='border-bottom-left-radius:0;border-bottom-right-radius:0' name=name)
-              block
+  .mb-2.mb-tablet-0
+    label.label.is-normal(for=name) #{label}
+    .select.is-normal.is-fullwidth
+      select(id=name name=name)
+        block
 
 block content
     .field.is-grouped
         p.control.is-expanded
-            - const domainText = getText('index.tab.settings.placeholder') + testDomains;
-            input.input.is-medium(type='text' placeholder=domainText name='url' id='url' autofocus)
+            label.sr-only(for='url') URL to test
+            input.input.is-medium(type='url' inputmode='url' placeholder=getText('index.tab.settings.placeholder') name='url' id='url' autofocus required aria-required='true' autocomplete='url' autocapitalize='off' spellcheck='false')
         p.control
-            button.button.is-primary.is-medium(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
+            button.button.is-primary.is-medium(accesskey='s' id='submittest' type='submit')
+              | #{getText('index.button.analyze')}
+              kbd ⌘↵
 
-    .level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
-        
+    .level
         +dropdown(getText('index.tab.settings.location') ,'location')
             each setup in serverConfig
                 option(value=setup.name) #{setup.name}
@@ -37,8 +34,7 @@ block content
             each browser in serverConfig[0].setup[0].browsers
                 option(value=browser) #{browser}
 
-    .level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
-
+    .level
         +dropdown(getText('index.tab.settings.connectivity'),'connectivity')
             each connectivity in  serverConfig[0].setup[0].connectivity
                 option(value=connectivity) #{connectivity}

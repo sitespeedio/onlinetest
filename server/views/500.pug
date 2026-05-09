@@ -3,11 +3,13 @@ extends ./layouts/default.pug
 block content
   section.section
     .container
+      h1.sr-only Server error
       .level
         .level-item.has-text-centered
           img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
-      .level
-        .level-item.has-text-centered
-          p.control.is-expanded
-            label.label.is-medium
-              | #{message}
+      article.message.is-danger(role='alert')
+        .message-header
+          p Server error
+        p.message-body #{message}
+      p.has-text-centered
+        a.button.is-primary.is-medium(href='/') #{getText('index.button.backtostart')}

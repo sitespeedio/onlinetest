@@ -1,7 +1,24 @@
 extends ./layouts/default.pug
-block content
 
+block content
   section.section
-      .container
-          p.has-text-centered.mb-2
-             img(src='/img/404.png' alt='File not found')
+    .container
+      h1.sr-only Page not found
+      .four-oh-four(aria-hidden='true')
+        span.digit 4
+        span.sep ·
+        span.digit 0
+        span.sep ·
+        span.digit 4
+      p.page-not-found Page not found
+      p.lost-msg
+        | Try the
+        |
+        a(href='/') start page
+        |
+        | or
+        |
+        a(href='/search/') search the archive
+        | .
+      p.has-text-centered
+        a.button.is-primary.is-medium(href='/') #{getText('index.button.backtostart')}

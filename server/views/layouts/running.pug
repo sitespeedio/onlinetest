@@ -3,6 +3,10 @@ html(lang='en')
   head
     include ../includes/runningHead.pug
   body
+    a.skip-link(href='#main') Skip to content
+    if (nconf.get('html:theme') === 'memphis')
+      include ../includes/decorations.pug
     include ../includes/header.pug
-    block content
+    main#main(role='main')
+      block content
     include ../includes/footer.pug

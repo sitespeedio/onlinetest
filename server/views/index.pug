@@ -3,6 +3,7 @@ extends ./layouts/default.pug
 block content
   section.section
     .container
+      h1.sr-only Run a web performance test
       .level
         .level-item.has-text-centered
           img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
@@ -14,38 +15,64 @@ block content
               x = document.getElementsByClassName("content-tab");
               for (i = 0; i < x.length; i++) {
                   x[i].style.display = "none";
+                  x[i].setAttribute('hidden', '');
               }
               tablinks = document.getElementsByClassName("tab");
-              for (i = 0; i < x.length; i++) {
+              for (i = 0; i < tablinks.length; i++) {
                   tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+                  tablinks[i].setAttribute('aria-selected', 'false');
+                  tablinks[i].setAttribute('tabindex', '-1');
               }
-              document.getElementById(tabName).style.display = "block";
-              evt.currentTarget.className += " is-active";
+              var panel = document.getElementById(tabName);
+              panel.style.display = "block";
+              panel.removeAttribute('hidden');
+              if (evt && evt.currentTarget) {
+                evt.currentTarget.className += " is-active";
+                evt.currentTarget.setAttribute('aria-selected', 'true');
+                evt.currentTarget.setAttribute('tabindex', '0');
+              }
+              if (tabName === 'scripting' && typeof window.__loadAceEditor === 'function') {
+                window.__loadAceEditor();
+              }
+              if (tabName === 'commandline' && typeof window.__loadCliHelp === 'function') {
+                window.__loadCliHelp();
+              }
             }
+            // Roving tabindex + arrow-key nav for the tablist
+            document.addEventListener('DOMContentLoaded', function () {
+              var list = document.querySelector('[role="tablist"]');
+              if (!list) return;
+              var tabs = Array.prototype.slice.call(list.querySelectorAll('[role="tab"]'));
+              tabs.forEach(function (tab, idx) {
+                tab.addEventListener('keydown', function (e) {
+                  var key = e.key, target = null;
+                  if (key === 'ArrowRight' || key === 'ArrowDown') target = tabs[(idx + 1) % tabs.length];
+                  else if (key === 'ArrowLeft' || key === 'ArrowUp') target = tabs[(idx - 1 + tabs.length) % tabs.length];
+                  else if (key === 'Home') target = tabs[0];
+                  else if (key === 'End') target = tabs[tabs.length - 1];
+                  if (target) {
+                    e.preventDefault();
+                    target.focus();
+                    target.click();
+                  }
+                });
+              });
+            });
 
-        .tabs.is-centered.is-boxed.is-medium
-          ul
-            li.tab.is-active(onclick='openTab(event,"settings")')
-              a
-                span.is-medium #{getText('index.tab.settings')}
-            li.tab(onclick='openTab(event,"commandline")')
-              a
-                span.is-medium #{getText('index.tab.cli')} 
-            li.tab(onclick='openTab(event,"extras")')
-              a
-                span.is-medium #{getText('index.tab.extras')}
-            li.tab(onclick='openTab(event,"scripting")')
-              a
-                span.is-medium #{getText('index.tab.scripting')} 
+        .tabs.is-centered.is-boxed.is-medium(role='tablist' aria-label='Test configuration')
+          button.tab.is-active(role='tab' type='button' id='tab-settings' aria-selected='true' aria-controls='settings' tabindex='0' onclick='openTab(event,"settings")') #{getText('index.tab.settings')}
+          button.tab(role='tab' type='button' id='tab-commandline' aria-selected='false' aria-controls='commandline' tabindex='-1' onclick='openTab(event,"commandline")') #{getText('index.tab.cli')}
+          button.tab(role='tab' type='button' id='tab-extras' aria-selected='false' aria-controls='extras' tabindex='-1' onclick='openTab(event,"extras")') #{getText('index.tab.extras')}
+          button.tab(role='tab' type='button' id='tab-scripting' aria-selected='false' aria-controls='scripting' tabindex='-1' onclick='openTab(event,"scripting")') #{getText('index.tab.scripting')}
 
         form#analyze-form(method='post' action='/')
-          .content-tab#settings
+          .content-tab#settings(role='tabpanel' aria-labelledby='tab-settings')
             include includes/index/tabs/settings.pug
-          .content-tab#extras(style='display: none;')
+          .content-tab#extras(role='tabpanel' aria-labelledby='tab-extras' hidden)
             include includes/index/tabs/extras.pug
-          .content-tab#commandline(style='display: none;')
+          .content-tab#commandline(role='tabpanel' aria-labelledby='tab-commandline' hidden)
             include includes/index/tabs/commandLine.pug
-          .content-tab#scripting(style='display: none;')
+          .content-tab#scripting(role='tabpanel' aria-labelledby='tab-scripting' hidden)
             include includes/index/tabs/scripting.pug
             
       else

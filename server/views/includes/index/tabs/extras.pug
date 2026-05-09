@@ -1,21 +1,24 @@
-mixin radio(label, name)
+mixin radio(label, name, hint)
     .control
-      .field
-        .control
-            .is-size-4.is-size-5-mobile.is-fullwidth
-                input.is-checkradio.is-size-4.is-size-5-mobile.is-fullwidth.has-background-color.is-white.is-normal(type='checkbox' name=name id=name)
-                label.checkbox.label.is-normal(for=name) #{label}
+      input(type='checkbox' name=name id=name aria-describedby=(hint ? name + '-hint' : null))
+      .checkbox-text
+        label.checkbox.label.is-normal(for=name) #{label}
+        if hint
+          small.field-hint(id=name + '-hint') #{hint}
 
 .field.is-grouped
     p.control.is-expanded
-        input.input.is-medium(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label' maxlength='100')
+        label.sr-only(for='label-input') Optional label for this test
+        input.input.is-medium#label-input(type='text' placeholder=getText('index.tab.extras.labelplaceholder') name='label' maxlength='100')
     p.control
-        button.button.is-primary.is-medium(accesskey='s' id='submittest') #{getText('index.button.analyze')} 
+        button.button.is-primary.is-medium(accesskey='s' id='submittest' type='submit')
+            | #{getText('index.button.analyze')}
+            kbd ⌘↵
 
-.level(style='align-items:flex-start;margin:0 auto;max-width:975px;text-align:left')
-    .mb-2.mb-tablet-0(style='width:100%;max-width:450px;padding:0 15px')
-      +radio(getText('index.tab.extras.sustainable'),'sustainable')
-      +radio(getText('index.tab.extras.axe'),'axe')
-      +radio(getText('index.tab.extras.crux'),'crux')
-      if (nconf.get('html:useLighthouse') === true)
-        +radio(getText('index.tab.extras.lighthouse'),'lighthouse')
+fieldset.field.extras-fieldset
+    legend.label Diagnostics to include
+    +radio(getText('index.tab.extras.sustainable'),'sustainable')
+    +radio(getText('index.tab.extras.axe'),'axe')
+    +radio(getText('index.tab.extras.crux'),'crux', getText('index.tab.extras.cruxhint'))
+    if (nconf.get('html:useLighthouse') === true)
+      +radio(getText('index.tab.extras.lighthouse'),'lighthouse')

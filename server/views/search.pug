@@ -26,6 +26,23 @@ block content
         search.value = '';
       }
     }
+    var __previousFocus = null;
+    var __modalKeyHandler = null;
+
+    function trapModalKeys(modal) {
+      var focusables = modal.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      __modalKeyHandler = function (e) {
+        if (e.key === 'Escape') { e.preventDefault(); closeRerunModal(); return; }
+        if (e.key !== 'Tab' || focusables.length === 0) return;
+        var first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      };
+      document.addEventListener('keydown', __modalKeyHandler);
+    }
+
     function reRunTest(id, url, label) {
       const modal = document.getElementById("rerunModal");
       const testIdInput = document.getElementById("rerunTestId");
@@ -33,81 +50,89 @@ block content
       const rerunTestLabel = document.getElementById("rerunTestLabel");
       testIdInput.value = id;
       rerunTestUrl.value = url;
-      if (!url.startsWith('http')) {
-       rerunTestUrl.disabled = true; 
-      } else {
-         rerunTestUrl.disabled = false; 
-      }
-
+      rerunTestUrl.disabled = !url.startsWith('http');
       rerunTestLabel.value = label;
+      __previousFocus = document.activeElement;
       modal.classList.add("is-active");
+      modal.removeAttribute('inert');
+      modal.setAttribute('aria-hidden', 'false');
 
-      document
-      .getElementById("cancelRerun")
-      .addEventListener("click", closeRerunModal);
-    document
-      .getElementById("modalClose")
-      .addEventListener("click", closeRerunModal);
-    
-    document
-      .getElementById("confirmRerun")
-      .addEventListener("click", (event) => {
-        event.preventDefault();
-        document.getElementById("rerunForm").submit();
-    });
+      // Move focus into the dialog
+      setTimeout(function () {
+        var firstField = rerunTestUrl.disabled ? rerunTestLabel : rerunTestUrl;
+        firstField.focus();
+      }, 0);
 
-    document
-      .getElementById("updateLabel")
-      .addEventListener("click", (event) => {
-        event.preventDefault();
-        document.getElementById("rerunForm").action = '/update'
+      trapModalKeys(modal);
+
+      document.getElementById("cancelRerun").onclick = closeRerunModal;
+      document.getElementById("modalClose").onclick = closeRerunModal;
+      document.getElementById("confirmRerun").onclick = function (e) {
+        e.preventDefault();
         document.getElementById("rerunForm").submit();
-    });
+      };
+      document.getElementById("updateLabel").onclick = function (e) {
+        e.preventDefault();
+        document.getElementById("rerunForm").action = '/update';
+        document.getElementById("rerunForm").submit();
+      };
     }
-    
+
     function closeRerunModal() {
       const modal = document.getElementById("rerunModal");
       modal.classList.remove("is-active");
+      modal.setAttribute('aria-hidden', 'true');
+      if (__modalKeyHandler) {
+        document.removeEventListener('keydown', __modalKeyHandler);
+        __modalKeyHandler = null;
+      }
+      if (__previousFocus && typeof __previousFocus.focus === 'function') {
+        __previousFocus.focus();
+      }
     }
 
-  .modal#rerunModal
-    .modal-background
+  .modal#rerunModal(role='dialog' aria-modal='true' aria-labelledby='rerunTitle' aria-hidden='true')
+    .modal-background(onclick='closeRerunModal()')
     .modal-card
       header.modal-card-head
-        p.modal-card-title #{getText('edit.title')}
-        button.delete(aria-label='close' id='modalClose')
+        p.modal-card-title#rerunTitle #{getText('edit.title')}
+        button.delete(type='button' aria-label='Close dialog' id='modalClose')
       section.modal-card-body
         p.is-small #{getText('edit.description')}
         form#rerunForm(method='POST' action='/')
           input(type='hidden' name='id' id='rerunTestId')
           .field
-            label
+            label(for='rerunTestUrl')
               b #{getText('edit.urlscript')}
-          .control
-            input.input(type='text' name='url' id='rerunTestUrl' maxlength='3000' placeholder='Change scripting is disabled')
+            .control
+              input.input(type='text' name='url' id='rerunTestUrl' maxlength='3000' placeholder='Change scripting is disabled')
           .field
-            label 
+            label(for='rerunTestLabel')
               b #{getText('edit.label')}
             .control
               input.input(type='text' name='label' id='rerunTestLabel' maxlength='100' placeholder='Enter label')
       footer.modal-card-foot
-        button.button.is-success#updateLabel #{getText('edit.button.save')}
-        button.button.is-success#confirmRerun #{getText('edit.button.rerun')}
-        button.button#cancelRerun #{getText('edit.button.cancel')}
+        button.button.is-success#updateLabel(type='button') #{getText('edit.button.save')}
+        button.button.is-success#confirmRerun(type='button') #{getText('edit.button.rerun')}
+        button.button#cancelRerun(type='button') #{getText('edit.button.cancel')}
 
   section.section
     .container
+      h1.sr-only Search test runs
       .level
         .level-item.has-text-centered
           img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
 
-      form#search-form(method='get' action='/search/')
-        input(type='hidden' name='page' value='1' id='page') 
+      form#search-form(method='get' action='/search/' role='search')
+        input(type='hidden' name='page' value='1' id='page')
         .field.is-grouped
             p.control.is-expanded
-                input.input.is-medium(type='text' placeholder=getText('search.input.placeholder', dayjs().format('YYYY-MM-DD')) name='search' id='search' autofocus value=searchQuery)  
+                label.sr-only(for='search') Search query
+                input.input.is-medium(type='search' placeholder=getText('search.input.placeholder', dayjs().format('YYYY-MM-DD')) name='search' id='search' autofocus value=searchQuery autocomplete='off' spellcheck='false')
             p.control
-                button.button.is-primary.is-medium(accesskey='s' name='searchbutton') #{getText('search.button.search')}
+                button.button.is-primary.is-medium(accesskey='s' name='searchbutton' type='submit')
+                  | #{getText('search.button.search')}
+                  kbd ⌘↵
       p.control
         .buttons.py-2
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:lasthour\')' role='button') #{getText('search.button.lasthour')}

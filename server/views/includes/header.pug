@@ -1,5 +1,12 @@
 script.
   document.addEventListener('DOMContentLoaded', () => {
+    // Mark the current nav link with aria-current="page"
+    const here = window.location.pathname.replace(/\/$/, '') || '/';
+    document.querySelectorAll('.navbar-menu .navbar-start a.navbar-item').forEach((a) => {
+      const href = a.getAttribute('href').replace(/\/$/, '') || '/';
+      if (href === here) a.setAttribute('aria-current', 'page');
+    });
+
     const navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
     navbarBurgers.forEach( el => {
       el.addEventListener('click', () => {
@@ -12,12 +19,28 @@ script.
 
       });
     });
+
+    // Keyboard shortcuts:
+    //  /         — focus primary input (URL or search)
+    //  ⌘/Ctrl+↵  — submit current form
+    document.addEventListener('keydown', (e) => {
+      const tag = (document.activeElement && document.activeElement.tagName) || '';
+      const inField = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey && !inField) {
+        const target = document.getElementById('url') || document.getElementById('search');
+        if (target) { e.preventDefault(); target.focus(); }
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        const form = document.getElementById('analyze-form') || document.getElementById('search-form');
+        if (form) { e.preventDefault(); form.submit(); }
+      }
+    });
   });
 
 nav.navbar(role='navigation' aria-label='main navigation')
     .navbar-brand
-      a.navbar-item(href='/')
-        img(src=nconf.get('html:logoHeader:path') width=nconf.get('html:logoHeader:width') height=nconf.get('html:logoHeade:height') alt=nconf.get('html:logoHeader:alt'))
+      a.navbar-item(href='/' aria-label='onlinetest — home')
+        img(src=nconf.get('html:logoHeader:path') width=nconf.get('html:logoHeader:width') height=nconf.get('html:logoHeader:height') alt='' aria-hidden='true')
       a.navbar-burger(role='button' aria-label='menu' data-target='navMenu' aria-expanded='false')
         span(aria-hidden='true')
         span(aria-hidden='true')
@@ -26,3 +49,10 @@ nav.navbar(role='navigation' aria-label='main navigation')
       .navbar-start
         a.navbar-item(href='/') #{getText('navigationbar.home')}
         a.navbar-item(href='/search/') #{getText('navigationbar.search')}
+    .status-strip(aria-hidden='true')
+      span.stat
+        span.dot
+        | ready
+      span.stat
+        kbd /
+        | &nbsp;to focus

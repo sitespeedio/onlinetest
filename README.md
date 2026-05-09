@@ -228,6 +228,20 @@ The setup is split into three compose files ([docker-compose.dependencies.yml](h
 
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 
+## Keeping the CLI picker in sync
+
+The "command line" tab on the start page has a searchable picker of every sitespeed.io flag, sourced from `server/public/sitespeed-help.json`. Regenerate it whenever sitespeed.io ships a new version:
+
+```bash
+# pipe --help from any sitespeed.io binary you have
+sitespeed.io --help | node release/update-cli-help.cjs -
+
+# or, with no install handy, the script will fetch it via npx
+node release/update-cli-help.cjs
+```
+
+If you cut sitespeed.io releases yourself and have onlinetest checked out as a sibling at `../onlinetest`, sitespeed.io's own `release.sh` will detect it after each release and run this script automatically — just remember to commit the resulting `server/public/sitespeed-help.json`.
+
 ## Setup for production
 For production deployments (with HTTPS, multi-server setups, and more), see [PRODUCTION.md](deploy/PRODUCTION.md).
 

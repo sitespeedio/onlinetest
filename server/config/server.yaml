@@ -32,6 +32,11 @@ search:
   showLabel: true
 ## Configure the GUI
 html:
+  ## Visual theme. Two designs ship in the box:
+  ##   "console" — engineering-grade light/dark dashboard (IBM Plex)
+  ##   "memphis" — playful pastel sticker-style (Familjen Grotesk + Archivo Black + Caveat)
+  ## Default: console.
+  theme: console
   css:
     override:
   logo:

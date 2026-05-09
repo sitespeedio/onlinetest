@@ -1,14 +1,12 @@
 {
   "index.pagetitle": "Анализ страницы по практикам веб-производительности",
   "index.pagedescription": "Насколько быстр ваш сайт? Узнайте с sitespeed.io.",
-  
   "index.button.analyze": "Анализ",
   "index.button.backtostart": "К началу",
   "index.tab.settings": "Настройки",
   "index.tab.extras": "Дополн.",
   "index.tab.cli": "Args CLI",
   "index.tab.scripting": "Скриптинг",
-  
   "index.tab.settings.location": "Локация",
   "index.tab.settings.testtype": "Тип теста",
   "index.tab.settings.browser": "Браузер",
@@ -16,28 +14,23 @@
   "index.tab.settings.connectivity": "Соединение",
   "index.tab.settings.device": "Устр.",
   "index.tab.settings.iterations": "Итерации",
-  "index.tab.settings.placeholder": "URL теста; хост должен совпасть",
-
+  "index.tab.settings.placeholder": "Введите URL, например https://www.sitespeed.io",
   "index.tab.cli.addargs": "Добавить args CLI",
   "index.tab.cli.clioptions": "Опции",
-  "index.tab.cli.placeholder": "CLI напр. --cpu",
-
+  "index.tab.cli.placeholder": "Дополнительные аргументы sitespeed.io",
   "index.tab.extras.sustainable": "Эко-тесты",
   "index.tab.extras.axe": "Axe",
   "index.tab.extras.crux": "Данные CrUX",
+  "index.tab.extras.cruxhint": "Требуется crux.key в конфигурации sitespeed.io",
   "index.tab.extras.lighthouse": "Lighthouse",
   "index.tab.extras.labelplaceholder": "Метка теста",
-
   "index.tab.scripting.scriptname": "Имя скрипта должно соответствовать regex [-a-zA-Z0-9\\._-]",
   "index.tab.scripting.recommendation": "Автодополнение лучше всего в VS Code",
   "index.tab.scripting.documentation": "Документация",
-
   "index.waitingtestrunners": "Ожидание тест-раннеров.",
   "index.refresh": "Обновить",
-
   "index.waitingtorunnext": "Ждем следующего",
   "index.inqueue": "В очереди %s задач, ваша позиция %s.",
-
   "search.button.lasthour": "1 ч",
   "search.button.today": "Сегодня",
   "search.button.yesterday": "Вчера",
@@ -49,13 +42,12 @@
   "search.button.previous": "Назад",
   "search.button.clear": "Очистить",
   "search.input.placeholder": "Введите URL, используйте date: %s",
-  
   "search.help.heading": "Поиск",
   "search.help.description": "Команды можно комбинировать для URL/даты/браузера.",
-  "search.help.bydate" : "Дата запуска теста.",
-  "search.help.beforedate" : "Тесты до этой даты.",
-  "search.help.afterdate" : "Тесты после этой даты.",
-  "search.help.bylabel" : "По метке",
+  "search.help.bydate": "Дата запуска теста.",
+  "search.help.beforedate": "Тесты до этой даты.",
+  "search.help.afterdate": "Тесты после этой даты.",
+  "search.help.bylabel": "По метке",
   "search.help.byday": "today|yesterday|lastweek|lastmonth",
   "search.help.bybrowser": "Браузер: chrome, firefox, edge, safari",
   "search.help.byscriptname": "По имени скрипта",
@@ -63,8 +55,7 @@
   "search.help.bystatus": "По статусу",
   "search.help.bytesttype": "Искать тесты по типу: desktop, emulatedMobile or android.",
   "search.help.byurl": "Поиск по URL; должен начинаться с http. Для частичного url:.",
-  "search.help.byurlwithwildcard":"Искать тесты по URL. Будет применён шаблон в начале и конце URL для поиска части URL. Например %s совпадёт с %s",
-
+  "search.help.byurlwithwildcard": "Искать тесты по URL. Будет применён шаблон в начале и конце URL для поиска части URL. Например %s совпадёт с %s",
   "search.result.urlscriptname": "URL/имя скрипта",
   "search.result.label": "Метка",
   "search.result.rundate": "Дата запуска",
@@ -79,12 +70,11 @@
   "search.result.of": "из",
   "search.pagetitle": "Поиск тестов",
   "search.pagedescription": "Поиск завершенных тестов.",
-
   "error.validation.missingurlorscripting": "Нужен URL или скриптинг.",
   "error.validation.missinglocation": "Нет локации",
   "error.validation.missingtesttype": "Нет типа теста",
   "error.validation.nomatchingtestwithid": "Нет тестов с id %s",
-  "error.missingresultbaseurl":"resultBaseURL не задан для sitespeed.io.",
+  "error.missingresultbaseurl": "resultBaseURL не задан для sitespeed.io.",
   "error.testfailed": "Сбой запуска",
   "error.parsingscript": "Скрипт не разобран",
   "error.urlnotvalid": "URL %s некорректен",
@@ -93,10 +83,8 @@
   "error.keynotvalid": "Ключ %s",
   "error.missinglocation": "Нет локации",
   "error.nonexistingqueue": "Очереди нет",
-
   "navigationbar.search": "Поиск",
   "navigationbar.home": "Главная",
-
   "edit.title": "Ред./перезапуск",
   "edit.description": "Перезапустить тест или изменить URL/алиас. Конфигурация сохранится.",
   "edit.urlscript": "URL/имя скрипта:",

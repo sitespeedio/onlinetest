@@ -1,10 +1,14 @@
+- var theme = nconf.get('html:theme') || 'console'
+- var fontPreload = theme === 'memphis' ? '/fonts/familjen-grotesk-var.woff2' : '/fonts/ibm-plex-sans-var.woff2'
 meta(charset='utf-8')
 meta(name='viewport' content='width=device-width, initial-scale=1')
+meta(name='color-scheme' content='light dark')
 title #{title}
-link(rel='stylesheet' href='/css/bulma.min.css')
-link(rel='stylesheet' href='/css/bulma-checkradio.min.css')
-link(rel='stylesheet' href='/css/extra.css')
-if (nconf.get('html:css:override')) 
+link(rel='preload' as='font' type='font/woff2' href=fontPreload crossorigin)
+if (theme === 'memphis')
+  link(rel='preload' as='font' type='font/woff2' href='/fonts/archivo-black-400.woff2' crossorigin)
+link(rel='stylesheet' href='/css/extra-' + theme + '.css')
+if (nconf.get('html:css:override'))
   link(rel='stylesheet' href=nconf.get('html:css:override'))
 noscript
   meta(http-equiv='refresh' content='30')

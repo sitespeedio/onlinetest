@@ -1,7 +1,10 @@
 doctype html
-html
+html(lang='en')
   head
-    title Queues Display
+    meta(charset='utf-8')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    title Queues — onlinetest
+    link(rel='preload' as='font' type='font/woff2' href='/fonts/ibm-plex-sans-var.woff2' crossorigin)
     link(rel='stylesheet' href='/css/admin.css')
     script.
       function confirmAndSubmit(queue) {
@@ -21,12 +24,27 @@ html
         }
       }
   body
-    header
+    a.skip-link(href='#main') Skip to content
+    header(role='banner')
       h1 Admin
-    main
-      .container
+    main#main(role='main')
+      .container(role='table' aria-label='Queue list')
+        .row.row-head(role='row')
+          span.cell.idx(role='columnheader') #
+          span.cell.name(role='columnheader') Queue
+          span.cell.count(role='columnheader') Pending
+          span.cell.action(role='columnheader' aria-label='Actions')
         each queue, index in queues
-            .key #{index+1}: #{queue} has #{queueSizes[queue]} entries.
-            button(onclick=`confirmAndSubmit('${queue}')`) Empty queue
-    footer
-      p Copyright © 2026 sitespeed.io
+          .row(role='row')
+            span.cell.idx(role='cell') #{index+1}
+            code.cell.name(role='cell') #{queue}
+            span.cell.count(role='cell' class=(queueSizes[queue] === 0 ? 'is-empty' : 'has-items'))
+              if queueSizes[queue] === 0
+                | empty
+              else
+                | #{queueSizes[queue]}
+            span.cell.action(role='cell')
+              button.empty-btn(onclick=`confirmAndSubmit('${queue}')` aria-label=`Empty queue ${queue}` disabled=(queueSizes[queue] === 0))
+                | Empty queue
+    footer(role='contentinfo')
+      p © 2026 sitespeed.io
