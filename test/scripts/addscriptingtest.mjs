@@ -13,10 +13,10 @@ export default async function (context, commands) {
 
   // Add the script
   await commands.mouse.singleClick.byId('tab-scripting');
-  await commands.wait.byTime(2000);
+  // Ace is lazy-loaded on the first Scripting tab click, so wait for it to finish initialising before querying its DOM.
+  await commands.wait.bySelector('#editor .ace_text-input', 10_000);
 
   const surface = await commands.element.getByCss('#editor .ace_content');
-  await commands.wait.bySelector('#editor .ace_text-input', 10_000);
   // Hack eeeeeexport
   const code = "eexport default async function (context, commands) { return commands.measure.start('https://www.wikipedia.org/');}";
 
