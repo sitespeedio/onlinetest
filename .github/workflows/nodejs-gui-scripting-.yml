@@ -45,7 +45,7 @@ jobs:
           docker --version
           sitespeed.io --version
     - name: Run a test
-      run: sitespeed.io ./test/scripts/addscriptingtest.mjs --multi -n 1 --headless -b firefox
+      run: sitespeed.io ./test/scripts/addscriptingtest.mjs --multi -n 1 --headless
     - name: Display Server log
       if: failure() || success()
       run: cat server.log

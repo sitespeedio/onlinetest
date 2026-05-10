@@ -29,7 +29,8 @@ export default async function (context, commands) {
 
   await commands.measure.start('RunTest');
   await commands.click.byIdAndWait('submittest');
-  // Wait for the test to finish ...
-  await commands.wait.byXpathAndVisible("//h2[starts-with(normalize-space(), '1 page analysed')]",30000);
+  // Wait for the inner sitespeed.io run to finish and the running page to redirect to the report.
+  // Cold chromedriver start + measure + upload can take >30 s on CI, so keep the budget generous.
+  await commands.wait.byXpathAndVisible("//h2[starts-with(normalize-space(), '1 page analysed')]", 60000);
   return commands.measure.stop();
 }

@@ -45,7 +45,7 @@ jobs:
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
         npm install
-        bin/sitespeed.js ../test/scripts/addscriptingtest.mjs --multi -n 1 --headless -b firefox
+        bin/sitespeed.js ../test/scripts/addscriptingtest.mjs --multi -n 1 --headless
     - name: Display Server log
       if: failure() || success()
       run: docker logs onlinetest-sitespeed.io-server-1
