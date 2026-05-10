@@ -37,6 +37,14 @@ block content
               if (tabName === 'commandline' && typeof window.__loadCliHelp === 'function') {
                 window.__loadCliHelp();
               }
+              // The URL field is required for the URL flow but irrelevant on the Scripting tab,
+              // where the script provides its own measure.start(url). Toggle `required` so the
+              // browser doesn't block submission when the user is testing a script.
+              var urlField = document.getElementById('url');
+              if (urlField) {
+                if (tabName === 'scripting') urlField.removeAttribute('required');
+                else urlField.setAttribute('required', '');
+              }
             }
             // Roving tabindex + arrow-key nav for the tablist
             document.addEventListener('DOMContentLoaded', function () {
