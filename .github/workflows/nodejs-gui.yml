@@ -9,6 +9,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        theme: [console, memphis]
     steps:
     - name: Harden Runner
       uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
@@ -33,7 +37,7 @@ jobs:
     - name: Start the server
       run: |
         npm install --prefix server
-        node server/app.js --redis.host 127.0.0.1 --postgresql.host 127.0.0.1  > server.log 2>&1 &
+        node server/app.js --redis.host 127.0.0.1 --postgresql.host 127.0.0.1 --html.theme ${{ matrix.theme }} > server.log 2>&1 &
     - name: Start the testrunner
       run: |
         npm install --prefix testrunner
