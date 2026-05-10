@@ -7,12 +7,12 @@ export default async function (context, commands) {
   await commands.select.selectByIdAndValue('iterations', 1);
 
   // Run the test as headless
-  await commands.mouse.singleClick.byXpath("//div[contains(@class,'tabs')]//span[normalize-space()='Command line args']/ancestor::a[1]");
+  await commands.mouse.singleClick.byId('tab-commandline');
   await commands.wait.byIdAndVisible('commandlinearea', 5000);
   await commands.addText.byId('--headless', 'commandlinearea');
 
   // Add the script
-  await commands.mouse.singleClick.byXpath("//div[contains(@class,'tabs')]//span[normalize-space()='Scripting']/ancestor::a[1]");
+  await commands.mouse.singleClick.byId('tab-scripting');
   await commands.wait.byTime(2000);
 
   const surface = await commands.element.getByCss('#editor .ace_content');
