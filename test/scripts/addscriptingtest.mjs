@@ -11,37 +11,21 @@ export default async function (context, commands) {
   await commands.wait.byIdAndVisible('commandlinearea', 5000);
   await commands.addText.byId('--headless', 'commandlinearea');
 
-  // Add the script
+  // Add the script. Ace is lazy-loaded on the first Scripting tab click,
+  // so wait for it to finish initialising, then set the value via Ace's API
+  // — typing through the surface element is timing-sensitive and was dropping
+  // the leading character before this rewrite.
   await commands.mouse.singleClick.byId('tab-scripting');
-  // Ace is lazy-loaded on the first Scripting tab click, so wait for it to finish initialising before querying its DOM.
-  await commands.wait.bySelector('#editor .ace_text-input', 10_000);
+  await commands.wait.byCondition('window.__aceInitialised === true', 10_000);
 
-  const surface = await commands.element.getByCss('#editor .ace_content');
-  // Hack eeeeeexport
-  const code = "eexport default async function (context, commands) { return commands.measure.start('https://www.wikipedia.org/');}";
-
-  // Clear the text area
+  const code = "export default async function (context, commands) { return commands.measure.start('https://www.wikipedia.org/');}";
   await commands.js.run(`
     (function () {
-      const el = document.getElementById('editor');
-      if (window.ace && el) {
-        const ed = window.ace.edit(el);
-        ed.setValue('', -1); // clear and move cursor to start
-        ed.clearSelection();
-        return true;
-      }
-      return false;
+      var ed = window.ace.edit('editor');
+      ed.setValue(${JSON.stringify(code)}, -1);
+      ed.clearSelection();
     })();
   `);
-
-  const actions = commands.action.getActions();
-  await actions
-    .move({ origin: surface })
-    .click()
-    .sendKeys(code)
-    .perform();
-
-  await commands.wait.byTime(2000);
 
   await commands.measure.start('RunTest');
   await commands.click.byIdAndWait('submittest');
