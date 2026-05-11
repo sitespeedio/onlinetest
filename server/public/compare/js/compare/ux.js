@@ -1,4 +1,4 @@
-/* exported showUpload, formatDate, formatURL, toggleRow, hideUpload, objectPropertiesToArray, formatTime, showLoading, errorMessage, formatBytes, changeOpacity*/
+/* exported showUpload, formatDate, formatURL, toggleRow, hideUpload, objectPropertiesToArray, formatTime, showLoading, errorMessage, formatBytes, blendWaterfalls */
 
 // Hide the upload functionality
 function hideUpload() {
@@ -110,20 +110,16 @@ function formatBytes(bytes) {
     return Number(bytes / MB).toFixed(1) + ' MB';
   }
 }
-function changeOpacity(val, id1, id2) {
-  const el1 = document.getElementById(id1);
-  const el2 = document.getElementById(id2);
-  el2.style.opacity = val;
-  el1.style.opacity = Math.abs(1 - val);
-
-  // make sure we can see the extra info
-  if (val > 0.5) {
-    el1.style['z-index'] = -1;
-    el2.style['z-index'] = 1;
-  } else {
-    el1.style['z-index'] = 1;
-    el2.style['z-index'] = -1;
-  }
+// Blend the HAR1/HAR2 waterfall canvases. 0 = show HAR1, 1 = show HAR2,
+// in-between values cross-fade them. Both canvases render on the same
+// time axis (via waterfall-tools' shared endTime option) so the bars
+// line up visually as the slider moves.
+function blendWaterfalls(value) {
+  const v = Math.min(1, Math.max(0, Number(value) || 0));
+  const har1 = document.getElementById('har1');
+  const har2 = document.getElementById('har2');
+  if (har1) har1.style.opacity = 1 - v;
+  if (har2) har2.style.opacity = v;
 }
 
 function toggleRow(element, className, toggler) {
