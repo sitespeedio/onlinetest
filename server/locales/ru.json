@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "Соединение",
   "index.tab.settings.device": "Устр.",
   "index.tab.settings.iterations": "Итерации",
-  "index.tab.settings.placeholder": "Введите URL, например https://www.sitespeed.io",
+  "index.tab.settings.placeholder": "Введите URL, имя хоста которого соответствует %s",
   "index.tab.cli.addargs": "Добавить args CLI",
   "index.tab.cli.clioptions": "Опции",
   "index.tab.cli.placeholder": "Дополнительные аргументы sitespeed.io",

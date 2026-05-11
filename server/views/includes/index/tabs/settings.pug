@@ -9,7 +9,7 @@ block content
     .field.is-grouped
         p.control.is-expanded
             label.sr-only(for='url') URL to test
-            input.input.is-medium(type='url' inputmode='url' placeholder=getText('index.tab.settings.placeholder') name='url' id='url' autofocus required aria-required='true' autocomplete='url' autocapitalize='off' spellcheck='false')
+            input.input.is-medium(type='url' inputmode='url' placeholder=getText('index.tab.settings.placeholder', testDomains) name='url' id='url' autofocus required aria-required='true' autocomplete='url' autocapitalize='off' spellcheck='false')
         p.control
             button.button.is-primary.is-medium(accesskey='s' id='submittest' type='submit')
               | #{getText('index.button.analyze')}

@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "নেটওয়ার্ক",
   "index.tab.settings.device": "ডিভাইস",
   "index.tab.settings.iterations": "ইটারেশন",
-  "index.tab.settings.placeholder": "একটি URL দিন, যেমন https://www.sitespeed.io",
+  "index.tab.settings.placeholder": "একটি URL দিন যার হোস্টনেম %s এর সাথে মেলে",
   "index.tab.cli.addargs": "CLI আর্গ যোগ",
   "index.tab.cli.clioptions": "অপশন",
   "index.tab.cli.placeholder": "অতিরিক্ত sitespeed.io আর্গুমেন্ট",

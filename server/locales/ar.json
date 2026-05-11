@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "الاتصال",
   "index.tab.settings.device": "جهاز",
   "index.tab.settings.iterations": "التكرارات",
-  "index.tab.settings.placeholder": "أدخل عنوان URL، مثل https://www.sitespeed.io",
+  "index.tab.settings.placeholder": "أدخل عنوان URL يطابق اسم مضيفه %s",
   "index.tab.cli.addargs": "إضافة وسائط",
   "index.tab.cli.clioptions": "خيارات",
   "index.tab.cli.placeholder": "وسيطات إضافية لـ sitespeed.io",

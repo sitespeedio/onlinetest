@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "Conectividade",
   "index.tab.settings.device": "Dispositivo",
   "index.tab.settings.iterations": "Iterações",
-  "index.tab.settings.placeholder": "Digite uma URL, por exemplo https://www.sitespeed.io",
+  "index.tab.settings.placeholder": "Digite uma URL cujo nome de host corresponda a %s",
   "index.tab.cli.addargs": "Adicionar args CLI",
   "index.tab.cli.clioptions": "Opções",
   "index.tab.cli.placeholder": "Argumentos adicionais do sitespeed.io",

@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "नेटवर्क",
   "index.tab.settings.device": "डिवाइस",
   "index.tab.settings.iterations": "दोहराव",
-  "index.tab.settings.placeholder": "एक URL दर्ज करें, जैसे https://www.sitespeed.io",
+  "index.tab.settings.placeholder": "एक URL दर्ज करें जिसका होस्टनेम %s से मेल खाता हो",
   "index.tab.cli.addargs": "आर्ग्स",
   "index.tab.cli.clioptions": "विकल्प",
   "index.tab.cli.placeholder": "अतिरिक्त sitespeed.io आर्ग्यूमेंट",
