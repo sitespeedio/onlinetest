@@ -115,6 +115,18 @@ result.get('/:id', async function (request, response) {
           getText
         });
       }
+    } else {
+      response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+      response.header('Pragma', 'no-cache');
+      response.header('Expires', 0);
+      return response.render('running', {
+        status: testResult.status,
+        message: '',
+        id: id,
+        url: testResult.url,
+        nconf,
+        getText
+      });
     }
   }
 });
