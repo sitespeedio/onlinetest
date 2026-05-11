@@ -44,6 +44,12 @@ export function setupStatic(app) {
     })
   );
 
+  app.get('/sitespeed-help.json', (request, response) => {
+    response.sendFile(
+      getBaseFilePath(path.join('public', 'sitespeed-help.json'))
+    );
+  });
+
   if (nconf.get('html:extras:path')) {
     logger.info(
       'Setting up extra folder /extras to ' + nconf.get('html:extras:path')
