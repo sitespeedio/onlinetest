@@ -1,4 +1,4 @@
-/* global getLastTiming, removeAndHide, perfCascade, createUpload, getAllDomains, hideUpload, changeOpacity, objectPropertiesToArray, registerTemplateHelpers, parseTemplate, getTotalDiff, generateVisualProgress, formatDate, getUniqueRequests, getFilmstrip */
+/* global getLastTiming, removeAndHide, createUpload, getAllDomains, hideUpload, objectPropertiesToArray, registerTemplateHelpers, parseTemplate, getTotalDiff, generateVisualProgress, formatDate, getUniqueRequests, getFilmstrip, compareWaterfall */
 /* exported showUpload, formatDate, generate, toggleRow, regenerate, formatTime, showLoading*/
 
 /**
@@ -26,33 +26,17 @@ function regenerate(switchHar) {
 }
 
 /**
- * Add perfcascade waterfall
- * @param {*} har
- * @param {*} selectedPage
- * @param {*} waterfallDivId
- * @param {*} legendHolderEl
- * @param {*} maxTime
+ * Render one waterfall into #<waterfallDivId> using waterfall-tools.
+ * Pass the same `maxTime` (ms) for both HARs in the pair so the
+ * stacked panels share a time axis.
  */
-function addWaterfall(
-  har,
-  selectedPage,
-  waterfallDivId,
-  legendHolderEl,
-  maxTime
-) {
-  const perfCascadeSvg = perfCascade.fromHar(har, {
-    rowHeight: 23,
-    showAlignmentHelpers: false,
-    showIndicatorIcons: false,
-    showMimeTypeIcon: true,
-    leftColumnWidth: 30,
-    selectedPage: selectedPage,
-    legendHolder: legendHolderEl,
-    fixedLengthMs: maxTime
-  });
-
+function addWaterfall(har, selectedPage, waterfallDivId, maxTime) {
   const outputHolder = document.getElementById(waterfallDivId);
-  outputHolder.appendChild(perfCascadeSvg);
+  if (!outputHolder) return Promise.resolve();
+  return compareWaterfall.render(har, outputHolder, {
+    endTimeMs: maxTime,
+    runIndex: selectedPage
+  });
 }
 
 function addVisualProgress(pageXray1, pageXray2, config) {
@@ -174,16 +158,18 @@ function generate(config) {
     );
   }
 
-  parseTemplate(
-    'waterfallTemplate',
-    {
-      config
-    },
-    'waterfallContent'
-  );
-  // Hack for settimng correct opacity
-  document.getElementById('range').value = 0;
-  changeOpacity(0, 'har1', 'har2');
+  // Slider labels for the blend control. Both waterfalls are rendered
+  // into the same area on the same time axis; the slider blends har2
+  // over har1.
+  const label1 = document.getElementById('har1Label');
+  const label2 = document.getElementById('har2Label');
+  if (label1) label1.textContent = config.har1.label;
+  if (label2) label2.textContent = config.har2.label;
+
+  // Reset the slider to 0 (show HAR1 fully) when (re)generating.
+  const slider = document.getElementById('harBlendSlider');
+  if (slider) slider.value = 0;
+  blendWaterfalls(0);
 
   parseTemplate(
     'pageXrayTemplate',
@@ -213,21 +199,8 @@ function generate(config) {
     'pageXrayContent'
   );
 
-  const legendHolderEl = document.getElementById('waterfallLegendHolder');
-  addWaterfall(
-    config.har1.har,
-    config.har1.run,
-    'har1',
-    legendHolderEl,
-    slowestHarTiming
-  );
-  addWaterfall(
-    config.har2.har,
-    config.har2.run,
-    'har2',
-    legendHolderEl,
-    slowestHarTiming
-  );
+  addWaterfall(config.har1.har, config.har1.run, 'har1', slowestHarTiming);
+  addWaterfall(config.har2.har, config.har2.run, 'har2', slowestHarTiming);
 
   addVisualProgress(pageXray1, pageXray2, config);
 
