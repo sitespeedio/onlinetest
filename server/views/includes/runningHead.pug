@@ -28,7 +28,7 @@ script(type='text/javascript').
   function worker() {
     const images = ['/img/ai/performance-engineers-healthy-relationship-to-google.jpg'];
     const texts = ['Performance Engineers healthy relationship to Google'];
-    const showRandomAIImage = !{JSON.stringify(nconf.get('html:showRandomAIImage'))};
+    const showRandomAIImage = !{JSON.stringify(nconf.get('html:showRandomAIImage') === true)};
     let xhr = new XMLHttpRequest();
     xhr.open("GET", "/api/status/#{id}", true);
     xhr.onload = function() {

@@ -31,6 +31,13 @@ export function setupStatic(app) {
   );
 
   app.use(
+    '/fonts',
+    express.static(getBaseFilePath(path.join('public', 'fonts')), {
+      maxAge: '366 days'
+    })
+  );
+
+  app.use(
     '/compare',
     express.static(getBaseFilePath(path.join('public', 'compare')), {
       maxAge: '10 minutes'
