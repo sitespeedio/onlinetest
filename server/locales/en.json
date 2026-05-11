@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "Connectivity",
   "index.tab.settings.device": "device",
   "index.tab.settings.iterations": "Iterations",
-  "index.tab.settings.placeholder": "Enter a URL whose hostname matches %s",
+  "index.tab.settings.placeholder": "URL (host must match %s)",
   "index.tab.cli.addargs": "Add command line args",
   "index.tab.cli.clioptions": "options",
   "index.tab.cli.placeholder": "extra sitespeed.io arguments",

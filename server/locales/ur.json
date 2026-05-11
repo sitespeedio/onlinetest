@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "کنیکٹیویٹی",
   "index.tab.settings.device": "ڈیوائس",
   "index.tab.settings.iterations": "تکرار",
-  "index.tab.settings.placeholder": "ایک URL درج کریں جس کا ہوسٹ نیم %s سے میل کھاتا ہو",
+  "index.tab.settings.placeholder": "URL (ہوسٹ %s سے میل کھانا چاہیے)",
   "index.tab.cli.addargs": "CLI آرگز شامل کریں",
   "index.tab.cli.clioptions": "آپشنز",
   "index.tab.cli.placeholder": "اضافی sitespeed.io آرگیومنٹس",

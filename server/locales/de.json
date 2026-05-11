@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "Verbindung",
   "index.tab.settings.device": "Gerät",
   "index.tab.settings.iterations": "Wiederholungen",
-  "index.tab.settings.placeholder": "Geben Sie eine URL ein, deren Hostname zu %s passt",
+  "index.tab.settings.placeholder": "URL (Host muss zu %s passen)",
   "index.tab.cli.addargs": "Kommandozeilenargumente hinzufügen",
   "index.tab.cli.clioptions": "Optionen",
   "index.tab.cli.placeholder": "Zusätzliche sitespeed.io-Argumente",

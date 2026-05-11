@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "网络",
   "index.tab.settings.device": "设备",
   "index.tab.settings.iterations": "迭代次数",
-  "index.tab.settings.placeholder": "输入主机名与 %s 匹配的 URL",
+  "index.tab.settings.placeholder": "URL（主机须匹配 %s）",
   "index.tab.cli.addargs": "添加命令行参数",
   "index.tab.cli.clioptions": "选项",
   "index.tab.cli.placeholder": "额外的 sitespeed.io 参数",

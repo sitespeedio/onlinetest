@@ -14,7 +14,7 @@
   "index.tab.settings.connectivity": "Connectivité",
   "index.tab.settings.device": "Appareil",
   "index.tab.settings.iterations": "Itérations",
-  "index.tab.settings.placeholder": "Saisissez une URL dont le nom d'hôte correspond à %s",
+  "index.tab.settings.placeholder": "URL (l'hôte doit correspondre à %s)",
   "index.tab.cli.addargs": "Ajouter args CLI",
   "index.tab.cli.clioptions": "Options",
   "index.tab.cli.placeholder": "Arguments sitespeed.io supplémentaires",
