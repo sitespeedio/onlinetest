@@ -645,6 +645,56 @@ td.run-date { white-space: nowrap; }
 
 .has-text-success { color: var(--green); font-weight: 700; }
 .has-text-danger { color: var(--red); font-weight: 700; }
+
+/* Status badges in the search results — match the pill treatment the
+   console theme uses, in Memphis flavour (sticker border + shadow,
+   pastel fill). Applied only inside table cells so the plain class
+   above stays available for inline labels elsewhere. */
+td a.has-text-success,
+td span.has-text-success {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--pastel-mint);
+  color: var(--green);
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: lowercase;
+  box-shadow: 2px 2px 0 var(--ink);
+  text-decoration: none;
+}
+td a.has-text-success::before,
+td span.has-text-success::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+}
+td span.has-text-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--pastel-pink);
+  color: var(--red);
+  font-family: var(--font-body);
+  font-weight: 700;
+  text-transform: lowercase;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+td span.has-text-danger::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--red);
+}
 .has-text-black { color: var(--ink); }
 .has-background-white { background: #fff; }
 .has-background-color { background: var(--paper); }
