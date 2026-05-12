@@ -2,6 +2,19 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## Unreleased
+
+### Changed
+* Refreshed the vendored compare bundle to pick up the upstream regression-spotting pass:
+  * Page-x-ray table gets a Δ column (red regressions, green improvements, grey "no change") and a per-section colour scheme. A new "Only differences" chip in the column header hides rows where nothing actually moved.
+  * CPU "time spent by category" and "events" disclosure rows are now proper sub-tables with their own Δ column.
+  * Filmstrip is a single rail of columns with HAR1 stacked over HAR2 at the same timestamp, padded onto a 100 ms grid. HAR1 cells get a blue stripe + "1" badge, HAR2 cells get orange + "2" so the eye lands on the right row without consulting the legend. Columns where the two HARs disagree on visual progress get an amber/red border.
+  * Final-screenshot captures grow to ~460 px wide; clicking any thumbnail (capture or filmstrip frame) opens it in an in-page lightbox instead of kicking the user to a new tab.
+  * Visual Progress chart gets vertical guide lines at FVC / FCP / LCP / Speed Index for each HAR, colour-coded per metric.
+  * Waterfall card gets a "Side by side" toggle that swaps the blend-overlay for a 2-column grid.
+  * Accessibility baseline: skip-to-content link, universal `:focus-visible` ring, `<main>` and `<nav>` landmarks, table caption, ARIA labels on every interactive control, alt text on capture images, `prefers-reduced-motion` honoured.
+  * Action chips ("Switch", "Only differences", "Side by side", per-column "Upload") now have proper breathing room and consistent alignment.
+
 ## 3.1.1 - 2026-05-12
 
 ### Fixed

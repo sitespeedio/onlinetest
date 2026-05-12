@@ -40,17 +40,19 @@
   <!-- Classic compare scripts. Live in public/ so Vite serves them
        verbatim. defer keeps them in document order, so the globals
        they share (parseTemplate, generate, etc.) resolve in sequence. -->
-  <script src="./js/dependencies/pagexray.min.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/upload.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/har.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/gzip.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/ux.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/load.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/filmstrip.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/generate.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/generateVisualProgress.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/templates.js?v=mp20agrf" defer></script>
-  <script src="./js/compare/compare.js?v=mp20agrf" defer></script>
+  <script src="./js/dependencies/pagexray.min.js?v=mp28np91" defer></script>
+  <script src="./js/compare/upload.js?v=mp28np91" defer></script>
+  <script src="./js/compare/har.js?v=mp28np91" defer></script>
+  <script src="./js/compare/gzip.js?v=mp28np91" defer></script>
+  <script src="./js/compare/ux.js?v=mp28np91" defer></script>
+  <script src="./js/compare/load.js?v=mp28np91" defer></script>
+  <script src="./js/compare/filmstrip.js?v=mp28np91" defer></script>
+  <script src="./js/compare/filmstripNav.js?v=mp28np91" defer></script>
+  <script src="./js/compare/lightbox.js?v=mp28np91" defer></script>
+  <script src="./js/compare/generate.js?v=mp28np91" defer></script>
+  <script src="./js/compare/generateVisualProgress.js?v=mp28np91" defer></script>
+  <script src="./js/compare/templates.js?v=mp28np91" defer></script>
+  <script src="./js/compare/compare.js?v=mp28np91" defer></script>
 
 
   <!--
@@ -160,14 +162,15 @@
   <link rel="apple-touch-icon-precomposed" sizes="114x114" href="img/ico/compare-114.png" />
   <link rel="apple-touch-icon-precomposed" sizes="72x72" href="img/ico/compare-72.png" />
   <link rel="shortcut icon" href="img/ico/compare.ico" />
-  <script type="module" crossorigin src="./assets/index-OESQ8iiN.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-BiqIZHWn.css">
+  <script type="module" crossorigin src="./assets/index-DSwzfa41.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-JgO_5hjn.css">
 </head>
 
 <body>
+  <a class="skip-link" href="#mainContent">Skip to content</a>
   <div id="choosehars">
-    <header class="header">
-      <div class="wip">BETA</div>
+    <header class="header" role="banner">
+      <div class="wip" aria-hidden="true">BETA</div>
       <div class="grid grid-pad">
         <div class="col-1-1">
           <div class="logo">
@@ -218,7 +221,7 @@
   </div>
 
   <div id="result" class="result">
-    <header class="header-result">
+    <header class="header-result" role="banner">
       <div class="grid grid-pad grid-result">
         <div class="col-1-1">
           <div class="logo">
@@ -226,19 +229,25 @@
               <img src="img/compare.png" width="34" class="img-logo" />
             </a>
           </div>
-          <div id="resultHeaderContent"></div>
+          <nav id="resultHeaderContent" aria-label="Page sections"></nav>
         </div>
       </div>
     </header>
-    <div class="grid grid-pad grid-result">
+    <main id="mainContent" class="grid grid-pad grid-result" tabindex="-1">
       <div class="col-1-1">
+        <h1 class="sr-only">HAR comparison</h1>
         <div id="comment-intro" class="comment"></div>
         <div id="pageXrayContent" class="card"></div>
         <div id="filmstripContent" class="card"></div>
         <section class="card">
-          <h3 id="waterfallHeader" class="card-title">Waterfall</h3>
+          <h3 id="waterfallHeader" class="card-title">Waterfall
+            <button id="waterfallLayoutToggle" type="button"
+                    onclick="toggleWaterfallLayout(this);"
+                    class="chip-toggle"
+                    aria-pressed="false">Side by side</button>
+          </h3>
           <div id="comment-waterfall" class="comment"></div>
-          <div class="rangeWrapper">
+          <div class="rangeWrapper" id="harBlendWrapper">
             <span class="har-label" id="har1Label"></span>
             <input id="harBlendSlider" type="range" min="0" max="1" step="0.05" value="0"
                    oninput="blendWaterfalls(this.value)"
@@ -258,11 +267,11 @@
           Upload again
         </button>
       </div>
-    </div>
+    </main>
   </div>
   <div id="loading" class="loading result">
     <header class="header">
-      <div class="wip">BETA</div>
+      <div class="wip" aria-hidden="true">BETA</div>
       <div class="grid grid-pad">
         <div class="col-1-1">
           <div class="logo">
