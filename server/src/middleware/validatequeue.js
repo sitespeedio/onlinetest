@@ -10,7 +10,7 @@ function getQueueName(location, deviceId) {
 }
 
 export const validateQueue = (request, response, next) => {
-  const location = request.body.location || request.body.api.location;
+  const location = request.body.location || request.body.api?.location;
 
   if (location) {
     const deviceId =

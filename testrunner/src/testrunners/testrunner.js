@@ -7,10 +7,9 @@ import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
 import { nconf } from '../config.js';
 import get from 'lodash.get';
-import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
-import { getBaseFilePath, removeFlags } from '../utility.js';
+import { getBaseFilePath, removeFlags, safeMerge } from '../utility.js';
 const { join } = path;
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
@@ -117,7 +116,7 @@ function prepareSitespeedConfig(job) {
       : path.resolve(nconf.get('sitespeedioConfigFile'));
 
   const testrunnerConfig = nconf.get('sitespeed.io') || {};
-  const config = merge({}, testrunnerConfig, jobConfig);
+  const config = safeMerge({}, testrunnerConfig, jobConfig);
   return config;
 }
 

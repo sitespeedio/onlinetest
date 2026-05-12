@@ -5,10 +5,9 @@ import os from 'node:os';
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
 import { nconf } from '../config.js';
-import merge from 'lodash.merge';
 
 import { queueHandler } from '../queue/queuehandler.js';
-import { removeFlags } from '../utility.js';
+import { removeFlags, safeMerge } from '../utility.js';
 const { join } = path;
 
 const parseDockerExtraParameters = parameters => {
@@ -49,7 +48,7 @@ export default async function runJob(job) {
     }
 
     const testrunnerConfig = nconf.get('sitespeed.io') || {};
-    const config = merge({}, testrunnerConfig, job.data.config);
+    const config = safeMerge({}, testrunnerConfig, job.data.config);
 
     // If we use baseline setup the directory by default
     if (
@@ -158,17 +157,14 @@ async function handleScriptingFile(job, workingDirectory) {
   const scriptExtension = job.data.scripting.includes('module.exports')
     ? '.cjs'
     : '.mjs';
-  const filename = join(
-    workingDirectory,
-    job.data.scriptingName + scriptExtension || job.id + scriptExtension
-  );
+  // `scriptingName + ext` is always truthy (even "undefined.mjs") so the
+  // `|| job.id + ext` branch never fired — scripted runs without a name
+  // were written as `undefined.mjs`. Resolve the basename first.
+  const basename = (job.data.scriptingName || job.id) + scriptExtension;
+  const filename = join(workingDirectory, basename);
 
   await writeFile(filename, job.data.scripting);
-  return join(
-    '/sitespeed.io',
-    `${job.data.scriptingName}${scriptExtension}` ||
-      `${job.id}${scriptExtension}`
-  );
+  return join('/sitespeed.io', basename);
 }
 
 function setupDockerParameters(

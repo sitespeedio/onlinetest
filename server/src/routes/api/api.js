@@ -18,7 +18,10 @@ import {
   getTestBrowsertime
 } from '../../database/index.js';
 
-import { validateKey } from '../../middleware/validatekey.js';
+import {
+  validateKey,
+  validateKeyForReads
+} from '../../middleware/validatekey.js';
 import { validateURL } from '../../middleware/validateurl.js';
 import { validateParameters } from '../../middleware/validateparameters.js';
 
@@ -53,30 +56,38 @@ api.get('/testRunners', async function (request, response) {
 /**
  * Get the HAR file for a test.
  */
-api.get('/har/:testId', async function (request, response) {
-  const id = request.params.testId;
-  const har = await getTestHar(id);
-  return har
-    ? response.json(har.har)
-    : response.status(404).json({
-        id: id,
-        message: 'There are no HAR for test id ' + id
-      });
-});
+api.get(
+  '/har/:testId',
+  validateKeyForReads,
+  async function (request, response) {
+    const id = request.params.testId;
+    const har = await getTestHar(id);
+    return har
+      ? response.json(har.har)
+      : response.status(404).json({
+          id: id,
+          message: 'There are no HAR for test id ' + id
+        });
+  }
+);
 
 /**
  * Get the browsertime result JSON for a completed test.
  */
-api.get('/result/:testId', async function (request, response) {
-  const id = request.params.testId;
-  const row = await getTestBrowsertime(id);
-  return row
-    ? response.json(row.browsertime_result)
-    : response.status(404).json({
-        id: id,
-        message: 'There is no result for test id ' + id
-      });
-});
+api.get(
+  '/result/:testId',
+  validateKeyForReads,
+  async function (request, response) {
+    const id = request.params.testId;
+    const row = await getTestBrowsertime(id);
+    return row
+      ? response.json(row.browsertime_result)
+      : response.status(404).json({
+          id: id,
+          message: 'There is no result for test id ' + id
+        });
+  }
+);
 
 /**
  * Get the status of a test

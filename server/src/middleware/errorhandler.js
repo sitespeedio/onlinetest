@@ -14,7 +14,11 @@ export const error404 = function (request, response) {
   });
 };
 
-export const error500 = function (error, request, response) {
+// Express identifies error-handling middleware by arity — the function must
+// declare four parameters even though `next` is unused here, otherwise the
+// renderer is registered as a regular handler and never fires on thrown errors.
+// eslint-disable-next-line no-unused-vars
+export const error500 = function (error, request, response, next) {
   logger.error(error.stack);
   response.status(500);
   response.render('500', {

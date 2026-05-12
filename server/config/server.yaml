@@ -13,6 +13,12 @@ log:
 # Make sure only users with the correct key can add tests
 api:
   key:
+  # If true, the API key (configured above) is also required to read HAR and
+  # browsertime result data via /api/har/:id and /api/result/:id. Default is
+  # false to preserve the historical public-results behaviour. The key can be
+  # supplied via the X-API-Key header or the `api.key` query parameter.
+  # The status endpoint stays open because the GUI's running page polls it.
+  protectReads: false
 
 # Regular expression that needs to match the domain that you test. If there's a miss match, no tests will run.
 validTestDomains: "^(?:[\\w-]+\\.)*wikipedia\\.org$"

@@ -1,8 +1,9 @@
 import get from 'lodash.get';
 import path from 'node:path';
-import merge from 'lodash.merge';
 import nconf from 'nconf';
 import { readFile } from 'node:fs/promises';
+
+import { safeMerge } from './safemerge.js';
 
 import {
   uniqueNamesGenerator,
@@ -167,7 +168,7 @@ export async function addTest(request) {
   }
 
   let config = {};
-  merge(config, defaultConfig, userConfig);
+  safeMerge(config, defaultConfig, userConfig);
 
   if (deviceId) {
     if (browser === 'chrome') {
@@ -276,7 +277,7 @@ export async function addTestFromAPI(
 
   const defaultConfig = await getDefaultSitespeedConfiguration();
   let config = {};
-  merge(config, defaultConfig, userConfig);
+  safeMerge(config, defaultConfig, userConfig);
 
   const slug = get(config, 'slug', '');
   let queue = getQueueName(location, deviceId);
