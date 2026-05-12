@@ -1,11 +1,26 @@
-import 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
+import dotenv from 'dotenv';
 import nconf from 'nconf';
 import yaml from 'js-yaml';
 
 import { getBaseFilePath } from './utility.js';
+
+// Load .env first from cwd (so running `node app.js` from the
+// testrunner dir keeps working), then from the project root so the
+// per-package scripts (`npm start --prefix testrunner`) pick up the
+// single root .env that the .env.example.local docs describe. dotenv
+// calls are additive and never overwrite already-set vars, so this is
+// order-safe. In Docker the root path doesn't resolve to a real file
+// — env vars come from docker-compose's env_file directive — and the
+// call no-ops.
+dotenv.config({ quiet: true });
+dotenv.config({
+  quiet: true,
+  path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../.env')
+});
 
 const DEFAULT_CONFIG = getBaseFilePath('./config/testrunner.yaml');
 
