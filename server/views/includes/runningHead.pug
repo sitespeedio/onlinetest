@@ -1,5 +1,6 @@
 - var theme = nconf.get('html:theme') || 'console'
 - var fontPreload = theme === 'memphis' ? '/fonts/familjen-grotesk-var.woff2' : '/fonts/ibm-plex-sans-var.woff2'
+- var v = serverVersion ? '?v=' + serverVersion : ''
 meta(charset='utf-8')
 meta(name='viewport' content='width=device-width, initial-scale=1')
 meta(name='color-scheme' content='light dark')
@@ -7,9 +8,9 @@ title #{title}
 link(rel='preload' as='font' type='font/woff2' href=fontPreload crossorigin)
 if (theme === 'memphis')
   link(rel='preload' as='font' type='font/woff2' href='/fonts/archivo-black-400.woff2' crossorigin)
-link(rel='stylesheet' href='/css/extra-' + theme + '.css')
+link(rel='stylesheet' href='/css/extra-' + theme + '.css' + v)
 if (nconf.get('html:css:override'))
-  link(rel='stylesheet' href=nconf.get('html:css:override'))
+  link(rel='stylesheet' href=nconf.get('html:css:override') + v)
 noscript
   meta(http-equiv='refresh' content='30')
 link(rel='apple-touch-icon-precomposed' sizes='144x144' href='/img/ico/sitespeed.io-144.png')

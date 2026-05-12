@@ -5,7 +5,7 @@ html(lang='en')
     meta(name='viewport' content='width=device-width, initial-scale=1')
     title Queues — onlinetest
     link(rel='preload' as='font' type='font/woff2' href='/fonts/ibm-plex-sans-var.woff2' crossorigin)
-    link(rel='stylesheet' href='/css/admin.css')
+    link(rel='stylesheet' href='/css/admin.css' + (serverVersion ? '?v=' + serverVersion : ''))
     script.
       function confirmAndSubmit(queue) {
         if (confirm(`Are you sure you want to empty the queue: ${queue}?`)) {

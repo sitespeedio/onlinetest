@@ -2,6 +2,7 @@ import http from 'node:http';
 import { createSecureServer } from 'node:http2';
 
 import path from 'node:path';
+import { createRequire } from 'node:module';
 
 import express from 'express';
 import helmet from 'helmet';
@@ -95,6 +96,14 @@ function setupExpressServer() {
 
   app.set('view engine', 'pug');
   app.set('views', path.resolve(getBaseFilePath('./views')));
+
+  // Make the server version available to every pug render so the
+  // theme CSS / admin CSS link tags can stamp a `?v=…` cache-buster
+  // on their hrefs. The classic-script tags on the standalone-compare
+  // pages stamp themselves at build time; the templated pug pages
+  // need an in-process equivalent.
+  const require = createRequire(import.meta.url);
+  app.locals.serverVersion = require('../package.json').version;
 
   app.enable('view cache');
 
