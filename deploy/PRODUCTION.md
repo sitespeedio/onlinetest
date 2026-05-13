@@ -45,8 +45,9 @@ All services (Redis, PostgreSQL, MinIO, the sitespeed.io server, testrunner, and
 
 7. **Start everything:**
     ```bash
-    docker compose -f deploy/docker-compose.production.yml up -d
+    ./deploy/update.sh --mode all-in-one
     ```
+    Equivalent to `docker compose -f deploy/docker-compose.production.yml pull && docker compose -f deploy/docker-compose.production.yml up -d`. The script also tails container logs for 10 seconds so first-boot errors land in your terminal.
 
 Make sure your DNS points `yourdomain.com` to the server's IP. Caddy will automatically obtain a TLS certificate from Let's Encrypt on first request.
 
@@ -73,7 +74,7 @@ Run one testrunner per machine for stable results.
 
 2. **Start the server and dependencies:**
     ```bash
-    docker compose -f deploy/docker-compose.production-server.yml up -d
+    ./deploy/update.sh --mode server
     ```
 
 This exposes:
@@ -117,22 +118,26 @@ You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 
     git checkout <release-tag>
     ```
 
-2. **Create a `.env` file** with the connection details for the server machine:
+2. **Create a `.env` file** by copying `.env.example` and editing the values for the server machine you're pointing at:
+    ```bash
+    cp .env.example .env
+    ```
+    Then in `.env`, change at minimum:
     ```
     REDIS_HOST=<server-machine-ip>
     REDIS_PASSWORD=<same-password-as-server>
-    SITESPEED_IO_TESTRUNNER_VERSION=2
-    LOCATION_NAME=default
-    SITESPEED_IO_CONTAINER=sitespeedio/sitespeed.io:39
+    POSTGRESQL_HOST=<server-machine-ip>            # not used by testrunner today, kept for consistency
     SITESPEED_IO_S3_ENDPOINT=http://<server-machine-ip>:9000
     MINIO_USER=sitespeedio
     MINIO_PASSWORD=<same-minio-password-as-server>
+    LOCATION_NAME=<unique-per-testrunner>
     RESULT_BASE_URL=https://yourdomain.com/sitespeedio
     ```
+    Every variable in `.env.example` is documented in-file; only the ones above need changing on a fresh testrunner box.
 
 3. **Start the testrunner:**
     ```bash
-    docker compose -f deploy/docker-compose.production-testrunner.yml up -d
+    ./deploy/update.sh --mode testrunner
     ```
 
 4. **Enable network throttling (Linux only):**
@@ -306,21 +311,21 @@ services:
 
 ## Updating
 
-To update to a new version:
+Run the helper script with the mode that matches the host:
 
-1. Pull new images:
-    ```bash
-    docker compose -f <your-compose-file> pull
-    ```
-
-2. Restart:
-    ```bash
-    docker compose -f <your-compose-file> up -d
-    ```
-
-To update to a new major version of the server/testrunner, change the version tags in `.env`:
-
+```bash
+./deploy/update.sh --mode all-in-one   # single-server (Caddy host)
+./deploy/update.sh --mode server       # multi-server, server box
+./deploy/update.sh --mode testrunner   # multi-server, testrunner box
 ```
-SITESPEED_IO_SERVER_VERSION=2
-SITESPEED_IO_TESTRUNNER_VERSION=2
+
+It pulls the latest images, runs `docker compose up -d --remove-orphans`, prints container status, and tails logs for 10 seconds.
+
+To move to a new major release of the server/testrunner, pass `--version`:
+
+```bash
+./deploy/update.sh --mode server --version 3.4.0
+./deploy/update.sh --mode testrunner --version 3.4.0
 ```
+
+This rewrites `SITESPEED_IO_SERVER_VERSION` and `SITESPEED_IO_TESTRUNNER_VERSION` in `.env` to `3.4.0` before pulling.
