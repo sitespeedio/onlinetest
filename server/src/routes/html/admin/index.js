@@ -154,6 +154,9 @@ function renderAdmin(response, view) {
 }
 
 admin.get('/', async function (request, response) {
+  // The page auto-refreshes via client-side polling; make sure nothing
+  // along the path serves a cached copy that defeats it.
+  response.set('Cache-Control', 'no-store');
   renderAdmin(response, await buildAdminView());
 });
 
@@ -161,6 +164,7 @@ admin.post('/', async function (request, response) {
   const name = request.body.queueName;
   const queue = await getExistingQueue(name);
   await queue.empty();
+  response.set('Cache-Control', 'no-store');
   renderAdmin(response, await buildAdminView());
 });
 
