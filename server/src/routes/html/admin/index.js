@@ -5,17 +5,22 @@ import { getText } from '../../../util/text.js';
 import {
   getExistingQueue,
   getExistingQueueNames,
-  getQueueSize
+  getQueueCounts
 } from '../../../queuehandler.js';
 import { getTestRunners } from '../../../testrunners.js';
 
 export const admin = Router();
 
+// Internal queues created by the server itself for orchestration — they
+// don't have an external testrunner consuming them, so the "no worker"
+// badge would be misleading. Keep this list narrow.
+const INTERNAL_QUEUES = new Set(['testrunners', 'result']);
+
 async function buildAdminView() {
   const queues = getExistingQueueNames();
-  const queueSizes = {};
+  const queueCounts = {};
   for (const queueName of queues) {
-    queueSizes[queueName] = await getQueueSize(queueName);
+    queueCounts[queueName] = await getQueueCounts(queueName);
   }
   const now = Date.now();
   const testRunners = getTestRunners().map(runner => ({
@@ -27,11 +32,27 @@ async function buildAdminView() {
       ? Math.max(0, Math.round((now - runner.lastSeenAt) / 1000))
       : undefined
   }));
-  return { queues, queueSizes, testRunners };
+  // A queue is "served" if any currently-registered testrunner advertises
+  // it in its setup. Used to flag queues that have pending work but no
+  // worker — the most actionable thing an operator can see at a glance.
+  const servedQueues = new Set();
+  for (const runner of testRunners) {
+    for (const setup of runner.setup || []) {
+      if (setup.queue) servedQueues.add(setup.queue);
+    }
+  }
+  return {
+    queues,
+    queueCounts,
+    testRunners,
+    servedQueues,
+    internalQueues: INTERNAL_QUEUES
+  };
 }
 
 admin.get('/', async function (request, response) {
-  const { queues, queueSizes, testRunners } = await buildAdminView();
+  const { queues, queueCounts, testRunners, servedQueues, internalQueues } =
+    await buildAdminView();
   response.render('admin/index', {
     bodyId: 'index',
     title: getText('index.title'),
@@ -39,8 +60,10 @@ admin.get('/', async function (request, response) {
     nconf,
     getText,
     queues,
-    queueSizes,
-    testRunners
+    queueCounts,
+    testRunners,
+    servedQueues,
+    internalQueues
   });
 });
 
@@ -49,7 +72,8 @@ admin.post('/', async function (request, response) {
   const queue = await getExistingQueue(name);
   await queue.empty();
 
-  const { queues, queueSizes, testRunners } = await buildAdminView();
+  const { queues, queueCounts, testRunners, servedQueues, internalQueues } =
+    await buildAdminView();
   response.render('admin/index', {
     bodyId: 'index',
     title: getText('index.title'),
@@ -57,7 +81,9 @@ admin.post('/', async function (request, response) {
     nconf,
     getText,
     queues,
-    queueSizes,
-    testRunners
+    queueCounts,
+    testRunners,
+    servedQueues,
+    internalQueues
   });
 });

@@ -144,7 +144,7 @@ main {
 
 .row {
   display: grid;
-  grid-template-columns: 48px 1fr 100px auto;
+  grid-template-columns: 48px 1fr 90px 80px 80px auto;
   align-items: center;
   gap: 14px;
   padding: 10px 16px;
@@ -187,19 +187,46 @@ main {
   font-weight: 500;
 }
 .cell.count.is-empty { color: var(--text-faint); }
-.cell.count.has-items {
+.cell.count.has-items,
+.cell.count.has-active,
+.cell.count.has-failed {
   color: var(--text);
   display: inline-flex;
   align-items: center;
   gap: 6px;
   justify-self: end;
 }
-.cell.count.has-items::before {
+.cell.count.has-items::before,
+.cell.count.has-active::before,
+.cell.count.has-failed::before {
   content: "";
   width: 6px; height: 6px;
   border-radius: 50%;
-  background: var(--primary);
   display: inline-block;
+}
+.cell.count.has-items::before { background: var(--primary); }
+.cell.count.has-active::before { background: var(--success, #0a7d36); }
+.cell.count.has-failed::before { background: var(--danger, #c0392b); }
+.cell.count.has-failed { color: var(--danger, #c0392b); }
+
+/* Inline pill that flags queues with pending work but no connected
+   testrunner. Sits next to the queue name in the same cell. */
+.cell.name .tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  vertical-align: middle;
+}
+.cell.name .tag-warning {
+  color: var(--danger, #c0392b);
+  background: var(--danger-soft, rgba(192, 57, 43, 0.08));
 }
 
 .empty-btn {
@@ -248,19 +275,31 @@ footer {
 }
 footer p { margin: 0; }
 
-@media (max-width: 640px) {
-  .row {
-    grid-template-columns: 32px 1fr auto;
+@media (max-width: 700px) {
+  /* Narrow viewport: stack the queue row so the three counts share one
+     line below the queue name. Hide the header row entirely — the count
+     cells get inline labels via ::before instead. */
+  [aria-label='Queue list'] .row {
+    grid-template-columns: 32px 1fr;
     grid-template-areas:
-      "idx name count"
-      ".   action action";
-    row-gap: 8px;
+      "idx  name"
+      ".    counts"
+      ".    action";
+    row-gap: 6px;
   }
-  .cell.idx { grid-area: idx; }
-  .cell.name { grid-area: name; }
-  .cell.count { grid-area: count; }
-  .cell.action { grid-area: action; justify-self: end; }
-  .row-head .cell.action { display: none; }
+  [aria-label='Queue list'] .row-head { display: none; }
+  [aria-label='Queue list'] .cell.idx { grid-area: idx; }
+  [aria-label='Queue list'] .cell.name { grid-area: name; }
+  [aria-label='Queue list'] .cell.count {
+    grid-area: counts;
+    justify-self: start;
+  }
+  [aria-label='Queue list'] .cell.count + .cell.count { margin-left: 14px; }
+  /* Inline label so counts are still readable without the header. */
+  [aria-label='Queue list'] .cell.count.has-items::after { content: " pending"; opacity: 0.7; }
+  [aria-label='Queue list'] .cell.count.has-active::after { content: " active"; opacity: 0.7; }
+  [aria-label='Queue list'] .cell.count.has-failed::after { content: " failed"; opacity: 0.7; }
+  [aria-label='Queue list'] .cell.action { grid-area: action; justify-self: start; }
 }
 
 .section-heading {

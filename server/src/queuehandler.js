@@ -117,6 +117,25 @@ export async function getQueueSize(name) {
   return queue.count();
 }
 
+// Full job-counts view: waiting / active / failed / delayed / completed /
+// paused. The admin page uses waiting+active+failed; the other fields come
+// for free in the same Bull call so we expose them all.
+export async function getQueueCounts(name) {
+  const queue = getQueue(name);
+  try {
+    return await queue.getJobCounts();
+  } catch {
+    return {
+      waiting: 0,
+      active: 0,
+      failed: 0,
+      delayed: 0,
+      completed: 0,
+      paused: 0
+    };
+  }
+}
+
 export function getExistingQueue(name) {
   return queues[name];
 }

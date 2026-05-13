@@ -63,18 +63,42 @@ html(lang='en')
           span.cell.idx(role='columnheader') #
           span.cell.name(role='columnheader') Queue
           span.cell.count(role='columnheader') Pending
+          span.cell.count(role='columnheader') Active
+          span.cell.count(role='columnheader') Failed
           span.cell.action(role='columnheader' aria-label='Actions')
         each queue, index in queues
+          -
+            var counts = (queueCounts && queueCounts[queue]) || {};
+            var pending = counts.waiting || 0;
+            var active = counts.active || 0;
+            var failed = counts.failed || 0;
+            var isInternal = internalQueues && internalQueues.has(queue);
+            var hasWorker = isInternal || (servedQueues && servedQueues.has(queue));
+            var showNoWorker = !isInternal && !hasWorker && pending > 0;
           .row(role='row')
             span.cell.idx(role='cell') #{index+1}
-            code.cell.name(role='cell') #{queue}
-            span.cell.count(role='cell' class=(queueSizes[queue] === 0 ? 'is-empty' : 'has-items'))
-              if queueSizes[queue] === 0
+            code.cell.name(role='cell')
+              | #{queue}
+              if showNoWorker
+                |
+                span.tag.tag-warning(title='No connected testrunner is serving this queue') no worker
+            span.cell.count(role='cell' class=(pending === 0 ? 'is-empty' : 'has-items'))
+              if pending === 0
                 | empty
               else
-                | #{queueSizes[queue]}
+                | #{pending}
+            span.cell.count(role='cell' class=(active === 0 ? 'is-empty' : 'has-active'))
+              if active === 0
+                | —
+              else
+                | #{active}
+            span.cell.count(role='cell' class=(failed === 0 ? 'is-empty' : 'has-failed'))
+              if failed === 0
+                | —
+              else
+                | #{failed}
             span.cell.action(role='cell')
-              button.empty-btn(onclick=`confirmAndSubmit('${queue}')` aria-label=`Empty queue ${queue}` disabled=(queueSizes[queue] === 0))
+              button.empty-btn(onclick=`confirmAndSubmit('${queue}')` aria-label=`Empty queue ${queue}` disabled=(pending === 0))
                 | Empty queue
     footer(role='contentinfo')
       p © 2026 sitespeed.io
