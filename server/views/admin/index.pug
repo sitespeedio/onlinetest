@@ -23,6 +23,74 @@ html(lang='en')
           form.submit();
         }
       }
+
+      // Auto-refresh: poll the admin page and swap <main> innerHTML.
+      // Pauses when the tab isn't visible (Page Visibility API) so we
+      // don't keep hammering the server in background tabs. The "Updated
+      // …s ago" indicator ticks every second between fetches.
+      (function () {
+        var REFRESH_INTERVAL_MS = 15000;
+        var lastUpdatedAt = Date.now();
+        var refreshing = false;
+        var intervalId = null;
+
+        function setIndicator(text) {
+          var el = document.getElementById('refresh-indicator');
+          if (el) el.textContent = text;
+        }
+
+        function tickIndicator() {
+          var seconds = Math.max(0, Math.round((Date.now() - lastUpdatedAt) / 1000));
+          setIndicator(refreshing ? 'Updating…' : 'Updated ' + seconds + 's ago');
+        }
+
+        async function refresh() {
+          if (document.hidden || refreshing) return;
+          refreshing = true;
+          tickIndicator();
+          try {
+            var res = await fetch('/admin/', {
+              cache: 'no-store',
+              headers: { Accept: 'text/html' }
+            });
+            if (!res.ok) return;
+            var html = await res.text();
+            var doc = new DOMParser().parseFromString(html, 'text/html');
+            var fresh = doc.querySelector('main#main');
+            var current = document.querySelector('main#main');
+            if (fresh && current) {
+              // Preserve focus on the active element if it lives inside
+              // <main> and has a stable identifier (id), so retry/empty
+              // buttons don't "jump out" mid-tab.
+              var active = document.activeElement;
+              var activeId = active && active.id ? active.id : null;
+              current.innerHTML = fresh.innerHTML;
+              if (activeId) {
+                var restored = document.getElementById(activeId);
+                if (restored && typeof restored.focus === 'function') {
+                  restored.focus();
+                }
+              }
+            }
+            lastUpdatedAt = Date.now();
+          } catch (_e) {
+            // Network blip — leave the page as-is and try again next tick.
+          } finally {
+            refreshing = false;
+            tickIndicator();
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+          tickIndicator();
+          setInterval(tickIndicator, 1000);
+          intervalId = setInterval(refresh, REFRESH_INTERVAL_MS);
+        });
+
+        document.addEventListener('visibilitychange', function () {
+          if (!document.hidden) refresh();
+        });
+      })();
   body
     a.skip-link(href='#main') Skip to content
     header(role='banner')
@@ -43,6 +111,7 @@ html(lang='en')
           span.health-pill(class=(health.totalActive > 0 ? 'is-active' : 'is-neutral') title='Jobs running across all queues') #{health.totalActive} running
           span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Failed jobs across all queues') #{health.totalFailed} failed
           span.health-version v#{health.serverVersion}
+          span.refresh-indicator#refresh-indicator(aria-live='polite' title='Page auto-refreshes every 15 seconds; pauses when the tab is hidden')
       if testRunners && testRunners.length > 0
         h2.section-heading Connected testrunners
         .container(role='table' aria-label='Connected testrunners')
