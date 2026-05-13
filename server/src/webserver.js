@@ -223,18 +223,48 @@ export class WebServer {
         key: fs.readFileSync(nconf.get('server:ssl:key')),
         cert: fs.readFileSync(nconf.get('server:ssl:cert'))
       };
-      const server = createSecureServer(sslOptions, this.app);
-      server.listen(port, () => {
+      this.server = createSecureServer(sslOptions, this.app);
+      this.server.listen(port, () => {
         logger.info('Web app listening on HTTPS :%s', port);
       });
     } else {
-      http.createServer(this.app).listen(port, () => {
+      this.server = http.createServer(this.app);
+      this.server.listen(port, () => {
         logger.info('Web app listening on :%s', port);
       });
     }
   }
 
+  // Stop accepting new connections and wait for in-flight requests to
+  // finish. If they don't finish within `server.shutdown.timeoutMs`, force
+  // the remaining sockets closed so the process can actually exit on a
+  // rolling restart.
   async stop() {
-    await this.app.close();
+    if (!this.server) return;
+    const timeoutMs =
+      nconf.any('server:shutdown:timeoutMs', 'server:shutdown:timeoutms') ??
+      30_000;
+    logger.info('Closing HTTP server (drain timeout %d ms)', timeoutMs);
+    await new Promise(resolve => {
+      let timer = setTimeout(() => {
+        timer = undefined;
+        logger.warn(
+          'Drain timeout hit; force-closing remaining HTTP connections'
+        );
+        if (typeof this.server.closeAllConnections === 'function') {
+          this.server.closeAllConnections();
+        }
+      }, timeoutMs);
+      this.server.close(error => {
+        if (timer) clearTimeout(timer);
+        if (error) {
+          logger.error('Error while closing HTTP server', error);
+        } else {
+          logger.info('HTTP server closed');
+        }
+        resolve();
+      });
+    });
+    this.server = undefined;
   }
 }

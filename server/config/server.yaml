@@ -5,6 +5,11 @@ server:
   ssl:
     key:
     cert:
+  # On SIGTERM/SIGINT the HTTP server stops accepting new connections and
+  # waits this many milliseconds for in-flight requests to finish. After
+  # the timeout it force-closes remaining sockets so the process can exit.
+  shutdown:
+    timeoutMs: 30000
 
 # Configure the log.
 log:

@@ -131,8 +131,8 @@ export class SitespeedioServer {
       throw error;
     }
 
-    const webserver = new WebServer();
-    await webserver.start();
+    this.webserver = new WebServer();
+    await this.webserver.start();
     await setupTestRunnerQueue();
     await setupResultQueue();
     // Tell the world that we are starting
@@ -141,6 +141,17 @@ export class SitespeedioServer {
 
   async stop() {
     logger.info('Closing down server');
+
+    // Stop accepting new HTTP requests and drain the in-flight ones before
+    // we tear down the database pool — otherwise a request mid-query will
+    // hit a closed pool and 500 just before the process exits.
+    if (this.webserver) {
+      try {
+        await this.webserver.stop();
+      } catch (error) {
+        logger.error('Error during HTTP server shutdown', error);
+      }
+    }
 
     // Close the queues?
 

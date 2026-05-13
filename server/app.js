@@ -25,10 +25,24 @@ if (nconf.get('version')) {
 const server = new SitespeedioServer();
 server.start();
 
-const gracefulShutdown = async () => {
-  await server.stop();
-  process.exit(0);
+// First signal triggers graceful drain; a second signal during drain
+// short-circuits to immediate exit so an impatient operator (or a stuck
+// connection) can't keep the process alive forever.
+let shuttingDown = false;
+const gracefulShutdown = async signal => {
+  if (shuttingDown) {
+    console.error(`Received ${signal} again during shutdown — forcing exit`);
+    process.exit(1);
+  }
+  shuttingDown = true;
+  try {
+    await server.stop();
+    process.exit(0);
+  } catch (error) {
+    console.error('Error during shutdown', error);
+    process.exit(1);
+  }
 };
 
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
