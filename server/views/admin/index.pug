@@ -192,9 +192,9 @@ html(lang='en')
           span.health-pill(class=(health.totalActive > 0 ? 'is-active' : 'is-neutral') title='Jobs running across all queues')
             span(data-rollup='totalActive')= health.totalActive
             |  running
-          span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Failed jobs across all queues')
+          span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Tests that failed in the last 24 hours')
             span(data-rollup='totalFailed')= health.totalFailed
-            |  failed
+            |  failed · 24 h
           span.health-version v#{health.serverVersion}
           span.refresh-indicator#refresh-indicator(aria-live='polite' title='Page auto-refreshes every 15 seconds; pauses when the tab is hidden')
       if stats

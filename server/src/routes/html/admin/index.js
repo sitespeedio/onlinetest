@@ -116,17 +116,29 @@ async function buildAdminView() {
   // Show at most this many across all queues so the page stays scannable.
   const recentFailures = failedJobs.slice(0, 25);
 
+  // Pull DB-backed activity stats first — the health banner uses the
+  // 24 h failed count from here. The helper itself caches for 60s so
+  // the admin auto-refresh doesn't beat on Postgres every 15s.
+  const stats = await getStatistics();
+
   // Health banner aggregates everything an operator wants at a glance.
+  // Pending/active are right-now Bull counts (truly ephemeral); failed
+  // is the last-24 h count from the DB rather than Bull's retained-
+  // failures count. Bull's count keeps every failure that hasn't been
+  // retried or evicted by `removeOnFail`, so it accumulates over weeks
+  // and never decays — that's a backlog, not a health signal. The
+  // Recent failures table on the same page is the place to see the
+  // retry backlog; the health pill should answer "did stuff break
+  // today?" and drop back to 0 when it didn't.
   let totalPending = 0;
   let totalActive = 0;
-  let totalFailed = 0;
   for (const queueName of queues) {
     if (INTERNAL_QUEUES.has(queueName)) continue;
     const c = queueCounts[queueName] || {};
     totalPending += c.waiting || 0;
     totalActive += c.active || 0;
-    totalFailed += c.failed || 0;
   }
+  const totalFailed = (stats.last24h && stats.last24h.failed) || 0;
   const health = {
     serverVersion,
     redis: isRedisHealthy(),
@@ -136,10 +148,6 @@ async function buildAdminView() {
     totalActive,
     totalFailed
   };
-
-  // Pull DB-backed activity stats. The helper itself caches for 60s so
-  // the admin auto-refresh doesn't beat on Postgres every 15s.
-  const stats = await getStatistics();
 
   // Per-queue sparkline arrays (24 hourly totals). Only filled for
   // non-internal queues whose location we can resolve from a currently-
