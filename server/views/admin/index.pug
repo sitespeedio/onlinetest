@@ -28,6 +28,36 @@ html(lang='en')
     header(role='banner')
       h1 Admin
     main#main(role='main')
+      if testRunners && testRunners.length > 0
+        h2.section-heading Connected testrunners
+        .container(role='table' aria-label='Connected testrunners')
+          .row.row-head(role='row')
+            span.cell.idx(role='columnheader') #
+            span.cell.runner-host(role='columnheader') Hostname
+            span.cell.runner-loc(role='columnheader') Location
+            span.cell.runner-setup(role='columnheader') Setup
+            span.cell.runner-seen(role='columnheader') Last seen
+          each runner, runnerIndex in testRunners
+            -
+              var fresh = runner.secondsSinceSeen !== undefined && runner.secondsSinceSeen <= 60;
+              var stale = runner.secondsSinceSeen !== undefined && runner.secondsSinceSeen > 60;
+              var seenLabel = runner.secondsSinceSeen === undefined
+                ? 'unknown'
+                : runner.secondsSinceSeen < 60
+                  ? runner.secondsSinceSeen + 's ago'
+                  : Math.round(runner.secondsSinceSeen / 60) + 'm ago';
+            .row(role='row')
+              span.cell.idx(role='cell') #{runnerIndex+1}
+              code.cell.runner-host(role='cell') #{runner.hostname}
+              span.cell.runner-loc(role='cell') #{runner.location}
+              span.cell.runner-setup(role='cell')
+                each s, sIndex in (runner.setup || [])
+                  if sIndex > 0
+                    | ,
+                  |  #{s.type}/#{(s.browsers || []).join('+') || (s.deviceId || '?')}
+              span.cell.runner-seen(role='cell' class=(fresh ? 'is-fresh' : (stale ? 'is-stale' : '')))
+                | #{seenLabel}
+      h2.section-heading Queues
       .container(role='table' aria-label='Queue list')
         .row.row-head(role='row')
           span.cell.idx(role='columnheader') #

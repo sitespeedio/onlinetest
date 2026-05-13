@@ -14,6 +14,12 @@ const logger = getLogger('sitespeedio.testrunner');
 
 const queues = [];
 
+// Heartbeat cadence. The server prunes runners whose lastSeenAt is older
+// than 120 s (see server/src/testrunners.js), so 30 s gives us four chances
+// before we get marked dead.
+const HEARTBEAT_INTERVAL_MS = 30_000;
+let heartbeatTimer;
+
 export class SitespeedioTestRunner {
   constructor() {
     const logVerbose = nconf.get('log:verbose');
@@ -67,6 +73,18 @@ export class SitespeedioTestRunner {
 
     await queueHandler.start(serverConfig);
 
+    // Heartbeat. Reuses the existing `testrunners` queue used by start/stop;
+    // the server treats a missing heartbeat as a dead runner and prunes us.
+    const testRunnerQueue = await queueHandler.getQueue('testrunners');
+    heartbeatTimer = setInterval(() => {
+      testRunnerQueue
+        .add({ type: 'heartbeat', hostname: serverConfig.hostname })
+        .catch(error =>
+          logger.error('Failed to publish heartbeat: %s', error.message)
+        );
+    }, HEARTBEAT_INTERVAL_MS);
+    heartbeatTimer.unref();
+
     process.on('uncaughtException', error => {
       // ioredis configuration is tricky to get right
       // this can spam the log but at least we catch everything
@@ -75,6 +93,10 @@ export class SitespeedioTestRunner {
   }
 
   async stop() {
+    if (heartbeatTimer) {
+      clearInterval(heartbeatTimer);
+      heartbeatTimer = undefined;
+    }
     try {
       const serverConfig = nconf.get('location');
 

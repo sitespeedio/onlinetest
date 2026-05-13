@@ -7,18 +7,31 @@ import {
   getExistingQueueNames,
   getQueueSize
 } from '../../../queuehandler.js';
+import { getTestRunners } from '../../../testrunners.js';
 
 export const admin = Router();
 
-admin.get('/', async function (request, response) {
+async function buildAdminView() {
   const queues = getExistingQueueNames();
-  let queueSizes = {};
-
+  const queueSizes = {};
   for (const queueName of queues) {
-    const size = await getQueueSize(queueName);
-    queueSizes[queueName] = size;
+    queueSizes[queueName] = await getQueueSize(queueName);
   }
+  const now = Date.now();
+  const testRunners = getTestRunners().map(runner => ({
+    hostname: runner.hostname,
+    location: runner.name,
+    setup: runner.setup,
+    lastSeenAt: runner.lastSeenAt,
+    secondsSinceSeen: runner.lastSeenAt
+      ? Math.max(0, Math.round((now - runner.lastSeenAt) / 1000))
+      : undefined
+  }));
+  return { queues, queueSizes, testRunners };
+}
 
+admin.get('/', async function (request, response) {
+  const { queues, queueSizes, testRunners } = await buildAdminView();
   response.render('admin/index', {
     bodyId: 'index',
     title: getText('index.title'),
@@ -26,7 +39,8 @@ admin.get('/', async function (request, response) {
     nconf,
     getText,
     queues,
-    queueSizes
+    queueSizes,
+    testRunners
   });
 });
 
@@ -35,14 +49,7 @@ admin.post('/', async function (request, response) {
   const queue = await getExistingQueue(name);
   await queue.empty();
 
-  const queues = getExistingQueueNames();
-  let queueSizes = {};
-
-  for (const queueName of queues) {
-    const size = await getQueueSize(queueName);
-    queueSizes[queueName] = size;
-  }
-
+  const { queues, queueSizes, testRunners } = await buildAdminView();
   response.render('admin/index', {
     bodyId: 'index',
     title: getText('index.title'),
@@ -50,6 +57,7 @@ admin.post('/', async function (request, response) {
     nconf,
     getText,
     queues,
-    queueSizes
+    queueSizes,
+    testRunners
   });
 });

@@ -9,7 +9,12 @@ import {
   getExistingQueue,
   addDeviceToQueue
 } from './queuehandler.js';
-import { addTestRunner, removeTestRunner } from './testrunners.js';
+import {
+  addTestRunner,
+  removeTestRunner,
+  touchTestRunner,
+  pruneStaleTestRunners
+} from './testrunners.js';
 import {
   testConnection,
   updateStatus,
@@ -65,8 +70,13 @@ async function setupTestRunnerQueue() {
   // Create the queue that handle testrunners
   processJob('testrunners', async job => {
     return new Promise(resolve => {
-      // The testrunner can send two different messages; either that the
-      // queue is starting or that the queue is shutting down.
+      // The testrunner can send three message types: start (new runner is
+      // up), stop (graceful shutdown) and heartbeat (still here). A runner
+      // that misses heartbeats long enough gets pruned server-side.
+      if (job.data.type === 'heartbeat') {
+        touchTestRunner(job.data.hostname);
+        return resolve();
+      }
       if (job.data.type === 'start') {
         logger.info(
           'Got a new testrunner %s : %j',
@@ -135,12 +145,23 @@ export class SitespeedioServer {
     await this.webserver.start();
     await setupTestRunnerQueue();
     await setupResultQueue();
+    // Periodically prune testrunners that have stopped heartbeating —
+    // crashes / OOM kills / host reboots never emit a graceful stop, so
+    // without this they'd stay registered forever and the metrics would
+    // lie.
+    this.pruneTimer = setInterval(pruneStaleTestRunners, 60_000);
+    this.pruneTimer.unref();
     // Tell the world that we are starting
     await publish('server', 'start');
   }
 
   async stop() {
     logger.info('Closing down server');
+
+    if (this.pruneTimer) {
+      clearInterval(this.pruneTimer);
+      this.pruneTimer = undefined;
+    }
 
     // Stop accepting new HTTP requests and drain the in-flight ones before
     // we tear down the database pool — otherwise a request mid-query will

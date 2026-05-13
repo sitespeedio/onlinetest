@@ -263,6 +263,76 @@ footer p { margin: 0; }
   .row-head .cell.action { display: none; }
 }
 
+.section-heading {
+  max-width: 980px;
+  margin: 0 auto 12px;
+  padding: 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.section-heading + .container { margin-bottom: 28px; }
+
+/* Five-column grid for the testrunners table. The base .row rule above
+   defaults to a four-column queue layout; this overrides it for the
+   testrunners container without disturbing the queue table. */
+[aria-label='Connected testrunners'] .row {
+  grid-template-columns: 48px 1fr 1fr 2fr 110px;
+}
+.cell.runner-host {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text);
+  word-break: break-all;
+}
+.cell.runner-loc, .cell.runner-setup {
+  font-size: 13.5px;
+  color: var(--text);
+  word-break: break-word;
+}
+.cell.runner-seen {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: right;
+  color: var(--text-faint);
+}
+.cell.runner-seen.is-fresh {
+  color: var(--success, #0a7d36);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+}
+.cell.runner-seen.is-fresh::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--success, #0a7d36);
+}
+.cell.runner-seen.is-stale {
+  color: var(--warning, #b06400);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  justify-self: end;
+}
+.cell.runner-seen.is-stale::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--warning, #b06400);
+}
+
+@media (max-width: 700px) {
+  [aria-label='Connected testrunners'] .row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  [aria-label='Connected testrunners'] .row-head { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

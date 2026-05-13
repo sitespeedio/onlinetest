@@ -140,6 +140,18 @@ You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 
     sudo modprobe ifb numifbs=1
     ```
 
+### Adding a third (or Nth) testrunner
+
+Each testrunner machine follows the same recipe as the first — clone the repo, write the same `.env` (point at the same `REDIS_HOST`, share the same `REDIS_PASSWORD`/`MINIO_*` secrets), then `docker compose -f deploy/docker-compose.production-testrunner.yml up -d`. The only thing that **must** differ between machines is `LOCATION_NAME` (or, on Android farms, the `deviceId` in `testrunner/config/testrunner.yaml`).
+
+Don't forget the iptables/firewall step: the server machine needs to accept Redis (6379), PostgreSQL (5432) and MinIO (9000) traffic from each new testrunner IP. Repeat the `ACCEPT` rules from the lock-down step for every additional runner.
+
+A few minutes after a runner boots it should appear under **Connected testrunners** on `/admin` with a green "fresh" badge. If it doesn't show up:
+
+- **Nothing in the table** — the testrunner couldn't reach Redis. Check `REDIS_HOST`/`REDIS_PASSWORD` and the firewall.
+- **Row shows up but stays "stale"** — the runner registered once but stopped heartbeating. Check the testrunner logs for Redis errors.
+- **Server logs `Testrunner queue collision: <hostA> and <hostB> both claim queue <name>`** — two runners chose the same `LOCATION_NAME` (plus `deviceId`, on Android). Bull hands work to whichever machine wins the race; results from one run can come from either host. Fix it by giving the new machine a unique `LOCATION_NAME` and restarting.
+
 ### Reverse proxy examples
 
 If you are running the multi-server setup you need your own reverse proxy in front of the server machine. Here are examples for Caddy and nginx.
