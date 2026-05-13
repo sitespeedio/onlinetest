@@ -193,6 +193,161 @@ export async function isDatabaseHealthy() {
   }
 }
 
+// Admin-page statistics: status breakdowns over 24 h and 7 d plus
+// hourly buckets for the activity chart. Cached for STATS_CACHE_TTL_MS
+// so the 15-second admin auto-refresh doesn't punish Postgres — the
+// numbers don't move fast enough to warrant a fresh query every tick.
+const STATS_CACHE_TTL_MS = 60_000;
+let statsCache;
+let statsCachedAt = 0;
+
+function emptyStatusTally() {
+  return { total: 0, completed: 0, failed: 0, active: 0, queued: 0, other: 0 };
+}
+
+const HOUR_MS = 3_600_000;
+
+function emptyStats() {
+  const buckets = [];
+  const startHour = new Date();
+  startHour.setMinutes(0, 0, 0);
+  for (let index = 23; index >= 0; index--) {
+    const t = new Date(startHour.getTime() - index * HOUR_MS);
+    buckets.push({
+      label: String(t.getHours()).padStart(2, '0'),
+      completed: 0,
+      failed: 0,
+      other: 0,
+      total: 0
+    });
+  }
+  return {
+    last24h: { ...emptyStatusTally(), pctCompleted: 0, pctFailed: 0 },
+    last7d: { ...emptyStatusTally(), pctCompleted: 0, pctFailed: 0 },
+    hourly: buckets
+  };
+}
+
+function tallyStatusRows(rows) {
+  const tally = emptyStatusTally();
+  for (const row of rows) {
+    const n = Number(row.count) || 0;
+    tally.total += n;
+    switch (row.status) {
+      case 'completed': {
+        tally.completed = n;
+        break;
+      }
+      case 'failed': {
+        tally.failed = n;
+        break;
+      }
+      case 'active': {
+        tally.active = n;
+        break;
+      }
+      case 'queued': {
+        tally.queued = n;
+        break;
+      }
+      default: {
+        tally.other += n;
+      }
+    }
+  }
+  tally.pctCompleted =
+    tally.total > 0 ? Math.round((tally.completed / tally.total) * 100) : 0;
+  tally.pctFailed =
+    tally.total > 0 ? Math.round((tally.failed / tally.total) * 100) : 0;
+  return tally;
+}
+
+function buildHourlyBuckets(rows) {
+  const byHour = {};
+  for (const row of rows) {
+    const t = row.hour instanceof Date ? row.hour : new Date(row.hour);
+    const key = t.toISOString();
+    if (!byHour[key]) {
+      byHour[key] = { completed: 0, failed: 0, other: 0 };
+    }
+    const n = Number(row.count) || 0;
+    switch (row.status) {
+      case 'completed': {
+        byHour[key].completed += n;
+        break;
+      }
+      case 'failed': {
+        byHour[key].failed += n;
+        break;
+      }
+      default: {
+        byHour[key].other += n;
+      }
+    }
+  }
+  const buckets = [];
+  const startHour = new Date();
+  startHour.setMinutes(0, 0, 0);
+  for (let index = 23; index >= 0; index--) {
+    const t = new Date(startHour.getTime() - index * HOUR_MS);
+    const key = t.toISOString();
+    const entry = byHour[key] || { completed: 0, failed: 0, other: 0 };
+    buckets.push({
+      label: String(t.getHours()).padStart(2, '0'),
+      completed: entry.completed,
+      failed: entry.failed,
+      other: entry.other,
+      total: entry.completed + entry.failed + entry.other
+    });
+  }
+  return buckets;
+}
+
+export async function getStatistics() {
+  const now = Date.now();
+  if (statsCache && now - statsCachedAt < STATS_CACHE_TTL_MS) {
+    return statsCache;
+  }
+  try {
+    const databaseHelper = DatabaseHelper.getInstance();
+    const [last24hResult, last7dResult, hourlyResult] = await Promise.all([
+      databaseHelper.query(
+        `SELECT status, COUNT(*)::int AS count
+           FROM sitespeed_io_test_runs
+          WHERE added_date >= NOW() - INTERVAL '24 hours'
+          GROUP BY status`
+      ),
+      databaseHelper.query(
+        `SELECT status, COUNT(*)::int AS count
+           FROM sitespeed_io_test_runs
+          WHERE added_date >= NOW() - INTERVAL '7 days'
+          GROUP BY status`
+      ),
+      databaseHelper.query(
+        `SELECT date_trunc('hour', added_date) AS hour,
+                status,
+                COUNT(*)::int AS count
+           FROM sitespeed_io_test_runs
+          WHERE added_date >= NOW() - INTERVAL '24 hours'
+          GROUP BY hour, status
+          ORDER BY hour`
+      )
+    ]);
+    statsCache = {
+      last24h: tallyStatusRows(last24hResult.rows),
+      last7d: tallyStatusRows(last7dResult.rows),
+      hourly: buildHourlyBuckets(hourlyResult.rows)
+    };
+    statsCachedAt = now;
+    return statsCache;
+  } catch (error) {
+    logError('Could not fetch admin statistics', error);
+    // Don't break /admin when stats fail — return the previous good
+    // value if we have one, otherwise zeros so the template renders.
+    return statsCache || emptyStats();
+  }
+}
+
 export async function testConnection(retries = 3, delay = 5000) {
   const test = 'SELECT 1 FROM sitespeed_io_test_runs';
   try {

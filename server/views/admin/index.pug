@@ -112,6 +112,62 @@ html(lang='en')
           span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Failed jobs across all queues') #{health.totalFailed} failed
           span.health-version v#{health.serverVersion}
           span.refresh-indicator#refresh-indicator(aria-live='polite' title='Page auto-refreshes every 15 seconds; pauses when the tab is hidden')
+      if stats
+        h2.section-heading Activity
+        .stats-section
+          .stats-strip
+            .stats-card
+              span.stats-label Last 24 hours
+              span.stats-value #{stats.last24h.total}
+              span.stats-pcts
+                span.stats-completed #{stats.last24h.pctCompleted}% completed
+                |  ·
+                span.stats-failed #{stats.last24h.pctFailed}% failed
+            .stats-card
+              span.stats-label Last 7 days
+              span.stats-value #{stats.last7d.total}
+              span.stats-pcts
+                span.stats-completed #{stats.last7d.pctCompleted}% completed
+                |  ·
+                span.stats-failed #{stats.last7d.pctFailed}% failed
+          -
+            // Stacked bar chart: one bar per hour for the last 24 h.
+            // Completed (green) sits on the baseline, failed (red) on
+            // top of completed, "other" (queued/active/etc) above that
+            // — read bottom-to-top as the test lifecycle.
+            var maxTotal = 1;
+            for (var b of stats.hourly) { if (b.total > maxTotal) maxTotal = b.total; }
+            var BAR_W = 26;
+            var STRIDE = 30;
+            var H = 110;
+          figure.stats-chart(role='figure' aria-label='Tests per hour over the last 24 hours')
+            svg.stats-chart-svg(width='100%' height='140' viewBox='0 0 720 140' preserveAspectRatio='xMinYMid meet')
+              line.stats-chart-axis(x1='0' y1='110' x2='720' y2='110')
+              each bucket, idx in stats.hourly
+                -
+                  var x = idx * STRIDE + 2;
+                  var completedH = Math.round(bucket.completed / maxTotal * H);
+                  var failedH = Math.round(bucket.failed / maxTotal * H);
+                  var otherH = Math.round(bucket.other / maxTotal * H);
+                  var yCompleted = 110 - completedH;
+                  var yFailed = yCompleted - failedH;
+                  var yOther = yFailed - otherH;
+                  var tooltip = bucket.label + ':00 — ' + bucket.total + ' tests (' + bucket.completed + ' completed, ' + bucket.failed + ' failed, ' + bucket.other + ' other)';
+                g
+                  title #{tooltip}
+                  if completedH > 0
+                    rect.stats-chart-completed(x=x y=yCompleted width=BAR_W height=completedH)
+                  if failedH > 0
+                    rect.stats-chart-failed(x=x y=yFailed width=BAR_W height=failedH)
+                  if otherH > 0
+                    rect.stats-chart-other(x=x y=yOther width=BAR_W height=otherH)
+                  if idx % 4 === 0 || idx === stats.hourly.length - 1
+                    text.stats-chart-tick(x=(x + BAR_W / 2) y='128' text-anchor='middle') #{bucket.label}
+            figcaption.stats-chart-legend
+              span.stats-legend-completed Completed
+              span.stats-legend-failed Failed
+              span.stats-legend-other Other
+              span.stats-chart-note Hourly buckets · last 24 h
       if testRunners && testRunners.length > 0
         h2.section-heading Connected testrunners
         .container(role='table' aria-label='Connected testrunners')

@@ -13,7 +13,7 @@ import {
   isRedisHealthy
 } from '../../../queuehandler.js';
 import { getTestRunners } from '../../../testrunners.js';
-import { isDatabaseHealthy } from '../../../database/index.js';
+import { isDatabaseHealthy, getStatistics } from '../../../database/index.js';
 
 const require = createRequire(import.meta.url);
 const serverVersion = require('../../../../package.json').version;
@@ -130,6 +130,10 @@ async function buildAdminView() {
     totalFailed
   };
 
+  // Pull DB-backed activity stats. The helper itself caches for 60s so
+  // the admin auto-refresh doesn't beat on Postgres every 15s.
+  const stats = await getStatistics();
+
   return {
     queues,
     queueCounts,
@@ -138,7 +142,8 @@ async function buildAdminView() {
     internalQueues: INTERNAL_QUEUES,
     activeJobs,
     failedJobs: recentFailures,
-    health
+    health,
+    stats
   };
 }
 
