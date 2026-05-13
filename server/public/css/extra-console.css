@@ -208,7 +208,6 @@ input[type="checkbox"]:focus-visible, input[type="radio"]:focus-visible {
   display: block;
   height: 22px;
   width: auto;
-  aspect-ratio: 123 / 25.375; /* matches logoHeader.svg — prevents CLS */
 }
 .navbar-burger {
   display: none;
@@ -332,7 +331,6 @@ main { flex: 1; }
   max-width: 200px;
   width: 100%;
   height: auto;
-  aspect-ratio: 90.488 / 19.543; /* matches logo.svg viewBox — prevents CLS */
   margin: 0 auto;
   display: block;
 }
@@ -1008,13 +1006,13 @@ form#analyze-form .level > div .subtitle {
   max-width: 520px;
   margin: 0 auto;
 }
-#extras .control {
+#extras .extras-fieldset .control {
   padding: 4px 0;
   display: flex;
   align-items: flex-start;
   gap: 8px;
 }
-#extras .control input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; }
+#extras .extras-fieldset .control input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; }
 .checkbox-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .field-hint {
   display: block;
