@@ -10,7 +10,7 @@ block content
         .message-header
           p #{errors ? errors : 'Error'}
         if logs
-          .message-body#logs !{logs.join('<br>')}
+          pre.message-body#logs #{logs.join('\n')}
         if message
           p.message-body #{message}
       p.has-text-centered

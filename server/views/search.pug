@@ -92,6 +92,22 @@ block content
     }
 
     document.addEventListener('DOMContentLoaded', function () {
+      // Wire up the row-level action links via data attributes so user-
+      // supplied values (label, url, slug, id) never get string-concatenated
+      // into inline onclick= JS.
+      document.addEventListener('click', function (e) {
+        var addEl = e.target.closest('[data-add]');
+        if (addEl) { addToSearch(addEl.getAttribute('data-add')); return; }
+        var rerunEl = e.target.closest('[data-rerun-id]');
+        if (rerunEl) {
+          reRunTest(
+            rerunEl.getAttribute('data-rerun-id'),
+            rerunEl.getAttribute('data-rerun-url') || '',
+            rerunEl.getAttribute('data-rerun-label') || ''
+          );
+        }
+      });
+
       var form = document.getElementById('search-form-compare');
       var btn = document.getElementById('compareButton');
       var msg = document.getElementById('compareMessage');
@@ -265,20 +281,16 @@ block content
                           a(href=test.result_url title=extras) #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
                         else
                           span #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
-                    td 
-                      - let labelOnClick = `addToSearch('label:${test.label}')`;
-                      - let slugOnClick = `addToSearch('slug:${test.slug}')`;
+                    td
                       if nconf.get('search:showLabel') === true
-                        a(role='button' onclick=labelOnClick title='Add label to search') #{test.label}
+                        a(role='button' data-add='label:' + test.label title='Add label to search') #{test.label}
                       if nconf.get('search:showSlug') === true
-                        a(role='button' onclick=slugOnClick title='Add slug to search') #{test.slug}
+                        a(role='button' data-add='slug:' + test.slug title='Add slug to search') #{test.slug}
                   td.run-date #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
-                  td 
-                    - let locationOnClick = 'addToSearch(\'location:' + test.location + '\')';
-                    a(role='button' onclick=locationOnClick title='Add location to search') #{test.location}
-                  td.is-capitalized 
-                    - let testOnClick = 'addToSearch(\'testType:' + test.test_type + '\')';
-                    a(role='button' onclick=testOnClick title='Add test type to search') #{test.test_type}
+                  td
+                    a(role='button' data-add='location:' + test.location title='Add location to search') #{test.location}
+                  td.is-capitalized
+                    a(role='button' data-add='testType:' + test.test_type title='Add test type to search') #{test.test_type}
                   td 
                     if test.status === 'completed'
                       span
@@ -290,8 +302,7 @@ block content
                     else
                       span #{test.status}
                   td
-                    - let browserOnClick = 'addToSearch(\'browser:' + test.browser_name + '\')';
-                    a(role='button' onclick=browserOnClick title='Add browser to search') #{test.browser_name}
+                    a(role='button' data-add='browser:' + test.browser_name title='Add browser to search') #{test.browser_name}
                   td
                     label.checkbox(title=getText('search.compare.selectlabel'))
                       if test.status === 'completed'
@@ -299,13 +310,11 @@ block content
                       else
                         input(type='checkbox' value=test.id name='har' disabled aria-label=getText('search.compare.selectlabel'))
                   td
-                    - let urlOnClick = test.url ? `addToSearch('url:${test.url}')` : `addToSearch('name:${ test.scripting_name}')`;
-                    a(role='button' onclick=urlOnClick)
+                    a(role='button' data-add=(test.url ? 'url:' + test.url : 'name:' + test.scripting_name))
                       span.icon.is-small
                         img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
                   td
-                    - let reRunOnClick = 'reRunTest(\'' + test.id + '\', \'' + (test.url || test.scripting_name) + '\',  \'' + (test.label || '') + '\')';
-                    a(role='button' onclick=reRunOnClick)
+                    a(role='button' data-rerun-id=test.id data-rerun-url=(test.url || test.scripting_name) data-rerun-label=(test.label || ''))
                       span.icon.is-small
                         img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
           p.has-background-white.has-text-black.p-3.has-text-centered.has-addons

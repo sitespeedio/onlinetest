@@ -107,10 +107,29 @@ function setupExpressServer() {
 
   app.enable('view cache');
 
+  // HSTS uses helmet's default (max-age=15552000; includeSubDomains). It is
+  // a no-op for plain-HTTP deployments and prevents downgrade attacks for
+  // HTTPS ones. CSP is transitional: inline <script> blocks still live in
+  // many pug templates, so 'unsafe-inline' stays for now — but external
+  // script loads and other cross-origin fetches are blocked. Tighten this
+  // policy once the inline scripts are extracted into /js files.
   app.use(
     helmet({
-      contentSecurityPolicy: false, // Disable CSP
-      hsts: false // Disable HTTP Strict Transport Security
+      contentSecurityPolicy: {
+        useDefaults: false,
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:'],
+          fontSrc: ["'self'", 'data:'],
+          connectSrc: ["'self'"],
+          frameAncestors: ["'none'"],
+          objectSrc: ["'none'"],
+          baseUri: ["'self'"],
+          formAction: ["'self'"]
+        }
+      }
     })
   );
 

@@ -39,11 +39,12 @@ export const validateKey = (request, response, next) => {
   if (key !== null && key !== undefined && key !== '') {
     const keyFromRequest = getKeyFromRequest(request);
     if (!safeCompare(keyFromRequest, key)) {
-      logger.info('Wrong key from request:' + keyFromRequest);
+      // Don't log the supplied key — typos and stale secrets used to land
+      // in long-lived log aggregation. Don't echo it back in the response
+      // either; the client already knows what they sent.
+      logger.info('Invalid API key supplied');
       return response.status(403).json({
-        message: keyFromRequest
-          ? getText('error.keynotvalid', keyFromRequest)
-          : getText('error.missingkey')
+        message: getText('error.invalidkey')
       });
     }
   }

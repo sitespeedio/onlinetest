@@ -803,6 +803,11 @@ a:has(> .icon) { display: inline-flex; line-height: 1; }
   font-family: var(--font-mono);
 }
 .message-body code, .message-body pre { font-family: var(--font-mono); font-size: 14px; }
+pre.message-body#logs {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
 
 /* --- Modal -------------------------------------------------------------- */
 .modal {

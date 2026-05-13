@@ -753,6 +753,11 @@ td span.has-text-danger::before {
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: 13px;
 }
+pre.message-body#logs {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
 
 /* --- Modal -------------------------------------------------------------- */
 .modal {
