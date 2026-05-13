@@ -91,6 +91,162 @@ block content
       }
     }
 
+    // Compare-button gating: starts disabled, requires exactly two checked
+    // boxes, refuses a third. Lifted out of DOMContentLoaded so the
+    // auto-refresh path (below) can re-run it after swapping the results
+    // table back in — the captured `enabled` array would otherwise point
+    // at stale DOM nodes after the swap.
+    var SELECT_FIRST = '#{getText("search.compare.selectfirst")}';
+    var SELECT_ONE_MORE = '#{getText("search.compare.selectonemore")}';
+
+    function initCompare() {
+      var form = document.getElementById('search-form-compare');
+      var btn = document.getElementById('compareButton');
+      var msg = document.getElementById('compareMessage');
+      if (!form || !btn) return;
+      var enabled = Array.prototype.slice.call(
+        form.querySelectorAll('input[type="checkbox"][name="har"]:not([disabled])')
+      );
+      if (enabled.length === 0) return;
+      function checkedCount() {
+        return enabled.filter(function (b) { return b.checked; }).length;
+      }
+      function update() {
+        var count = checkedCount();
+        btn.setAttribute('aria-disabled', count === 2 ? 'false' : 'true');
+        if (count >= 2) {
+          enabled.forEach(function (b) { if (!b.checked) b.disabled = true; });
+        } else {
+          enabled.forEach(function (b) { b.disabled = false; });
+        }
+        if (msg && count !== 0) { msg.textContent = ''; }
+      }
+      // Property-assignment so re-running initCompare doesn't stack
+      // duplicate handlers on a button that survived a DOM swap. (After
+      // a swap the button is a fresh node anyway, but this keeps the
+      // initial-load case safe too.)
+      btn.onclick = function (e) {
+        var count = checkedCount();
+        if (count === 2) { form.submit(); return; }
+        e.preventDefault();
+        if (msg) { msg.textContent = count === 1 ? SELECT_ONE_MORE : SELECT_FIRST; }
+      };
+      enabled.forEach(function (b) { b.addEventListener('change', update); });
+      update();
+    }
+
+    // Auto-refresh of the search results region. Off by default; user
+    // opts in via the toggle in the search button row. State is held in
+    // localStorage so a power user only has to set it once. The poll
+    // skips while the user has any checkbox ticked — replacing the
+    // results table would silently uncheck them and break the Compare
+    // flow.
+    var SEARCH_REFRESH_INTERVAL_MS = 60000;
+    var SEARCH_REFRESH_STORAGE_KEY = 'onlinetest.search.autorefresh';
+
+    function searchAutoRefreshEnabled() {
+      try {
+        return localStorage.getItem(SEARCH_REFRESH_STORAGE_KEY) === '1';
+      } catch (_e) { return false; }
+    }
+    function setSearchAutoRefresh(enabled) {
+      try {
+        if (enabled) localStorage.setItem(SEARCH_REFRESH_STORAGE_KEY, '1');
+        else localStorage.removeItem(SEARCH_REFRESH_STORAGE_KEY);
+      } catch (_e) { /* private mode etc — silently ignore */ }
+    }
+
+    function initSearchAutoRefresh() {
+      var toggle = document.getElementById('search-autorefresh-toggle');
+      var status = document.getElementById('search-autorefresh-status');
+      var region = document.getElementById('search-results-region');
+      if (!toggle || !status || !region) return;
+
+      var lastUpdatedAt = Date.now();
+      var refreshing = false;
+      var intervalId = null;
+
+      function hasSelectionInRegion() {
+        return region.querySelectorAll(
+          'input[type="checkbox"][name="har"]:checked'
+        ).length > 0;
+      }
+
+      function renderStatus() {
+        if (!toggle.checked) { status.textContent = 'Off'; return; }
+        if (refreshing) { status.textContent = 'Updating…'; return; }
+        if (hasSelectionInRegion()) {
+          status.textContent = 'Paused — clear selection to resume';
+          return;
+        }
+        var secs = Math.max(0, Math.round((Date.now() - lastUpdatedAt) / 1000));
+        status.textContent = 'On — updated ' + secs + 's ago';
+      }
+
+      async function refresh() {
+        if (!toggle.checked || refreshing || document.hidden) return;
+        if (hasSelectionInRegion()) { renderStatus(); return; }
+        refreshing = true;
+        renderStatus();
+        try {
+          var res = await fetch(window.location.href, {
+            cache: 'no-store',
+            headers: { Accept: 'text/html' }
+          });
+          if (!res.ok) return;
+          var html = await res.text();
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var fresh = doc.getElementById('search-results-region');
+          if (fresh) {
+            region.innerHTML = fresh.innerHTML;
+            // The compare-button gating closes over the checkboxes that
+            // existed at init time; after a DOM swap those are gone, so
+            // re-bind against the new ones.
+            initCompare();
+          }
+          lastUpdatedAt = Date.now();
+        } catch (_e) {
+          // Network blip — leave the page as-is, try next tick.
+        } finally {
+          refreshing = false;
+          renderStatus();
+        }
+      }
+
+      function applyToggleState() {
+        if (toggle.checked) {
+          if (!intervalId) intervalId = setInterval(refresh, SEARCH_REFRESH_INTERVAL_MS);
+        } else if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+        renderStatus();
+      }
+
+      toggle.checked = searchAutoRefreshEnabled();
+      toggle.addEventListener('change', function () {
+        setSearchAutoRefresh(toggle.checked);
+        applyToggleState();
+      });
+      // Update the "Updated Ns ago" label once a second between fetches.
+      setInterval(renderStatus, 1000);
+      // Recompute status when a checkbox toggles — flips between
+      // "Paused…" and "On — updated …".
+      document.addEventListener('change', function (e) {
+        if (
+          e.target &&
+          e.target.matches &&
+          e.target.matches('input[type="checkbox"][name="har"]')
+        ) {
+          renderStatus();
+        }
+      });
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) refresh();
+      });
+      applyToggleState();
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       // Wire up the row-level action links via data attributes so user-
       // supplied values (label, url, slug, id) never get string-concatenated
@@ -108,37 +264,8 @@ block content
         }
       });
 
-      var form = document.getElementById('search-form-compare');
-      var btn = document.getElementById('compareButton');
-      var msg = document.getElementById('compareMessage');
-      if (!form || !btn) return;
-      var enabled = Array.prototype.slice.call(
-        form.querySelectorAll('input[type="checkbox"][name="har"]:not([disabled])')
-      );
-      if (enabled.length === 0) return;
-      var SELECT_FIRST = '#{getText("search.compare.selectfirst")}';
-      var SELECT_ONE_MORE = '#{getText("search.compare.selectonemore")}';
-      function checkedCount() {
-        return enabled.filter(function (b) { return b.checked; }).length;
-      }
-      function update() {
-        var count = checkedCount();
-        btn.setAttribute('aria-disabled', count === 2 ? 'false' : 'true');
-        if (count >= 2) {
-          enabled.forEach(function (b) { if (!b.checked) b.disabled = true; });
-        } else {
-          enabled.forEach(function (b) { b.disabled = false; });
-        }
-        if (msg && count !== 0) { msg.textContent = ''; }
-      }
-      btn.addEventListener('click', function (e) {
-        var count = checkedCount();
-        if (count === 2) { form.submit(); return; }
-        e.preventDefault();
-        if (msg) { msg.textContent = count === 1 ? SELECT_ONE_MORE : SELECT_FIRST; }
-      });
-      enabled.forEach(function (b) { b.addEventListener('change', update); });
-      update();
+      initCompare();
+      initSearchAutoRefresh();
     });
 
   .modal#rerunModal(role='dialog' aria-modal='true' aria-labelledby='rerunTitle' aria-hidden='true')
@@ -191,6 +318,13 @@ block content
           button.button.is-primary.is-medium(onclick='addToSearch(\'when:lastweek\')' role='button') #{getText('search.button.lastweek')}
           button.button.is-warning.is-medium(accesskey='h' onclick='toggleSearchHelp()') #{getText('search.button.help')}
           button.button.is-warning.is-medium(accesskey='h' onclick='clearSearch()') #{getText('search.button.clear')}
+          label.search-autorefresh(title='Refresh the results every 60 seconds. Paused while you have any test ticked.')
+            input.search-autorefresh-input#search-autorefresh-toggle(type='checkbox')
+            span.search-autorefresh-track
+              span.search-autorefresh-thumb
+            span.search-autorefresh-label
+              | Auto-refresh
+              small.search-autorefresh-status#search-autorefresh-status(aria-live='polite') Off
 
         .content.p-5.has-background-white(style='display:none' id='searchHelp')
             h2.mb-3  #{getText('search.help.heading')}
@@ -246,90 +380,91 @@ block content
                 b status:
                 | - #{getText('search.help.bystatus')}
 
-      if data
-        if data.count > 0
-          p.has-background-white.has-text-black.p-3.has-text-centered 
-            b #{getText('search.result.showing', firstResultIndex, lastResultIndex, data.count)}
-          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
-            button.button.is-link.is-medium.mr-2(
-              onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
-            button.button.is-link.is-medium(
-              onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
-          form#search-form-compare(action='/compare-redirect/' method='post')
-            table.table.is-striped.is-fullwidth.is-narrow
-              tr 
-                th #{getText('search.result.urlscriptname')}
-                th
-                  if nconf.get('search:showLabel') === true
-                    | #{getText('search.result.label')}
-                  if nconf.get('search:showSlug') === true
-                    | #{getText('search.result.slug')}
-                th #{getText('search.result.rundate')}
-                th #{getText('search.result.location')}
-                th #{getText('search.result.type')}
-                th #{getText('search.result.status')}
-                th #{getText('search.result.browser')}
-                th #{getText('search.result.compare')}
-                th(colspan='2') #{getText('search.result.actions')}
-              each test in data.result
+      #search-results-region
+        if data
+          if data.count > 0
+            p.has-background-white.has-text-black.p-3.has-text-centered 
+              b #{getText('search.result.showing', firstResultIndex, lastResultIndex, data.count)}
+            p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
+              button.button.is-link.is-medium.mr-2(
+                onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
+              button.button.is-link.is-medium(
+                onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
+            form#search-form-compare(action='/compare-redirect/' method='post')
+              table.table.is-striped.is-fullwidth.is-narrow
                 tr 
-                  td
-                    span.icon-text
-                      span
-                        - const extras = `Go to test result.\n${test.connectivity?'Connectivity:' + test.connectivity + '\n':''}Added date:${dayjs(test.added_date).format(nconf.get('dateformat'))} ${test.run_date?'\nRun date:' + dayjs(test.run_date).format(nconf.get('dateformat')):''}`
-                        if test.result_url
-                          a(href=test.result_url title=extras) #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
-                        else
-                          span #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
+                  th #{getText('search.result.urlscriptname')}
+                  th
+                    if nconf.get('search:showLabel') === true
+                      | #{getText('search.result.label')}
+                    if nconf.get('search:showSlug') === true
+                      | #{getText('search.result.slug')}
+                  th #{getText('search.result.rundate')}
+                  th #{getText('search.result.location')}
+                  th #{getText('search.result.type')}
+                  th #{getText('search.result.status')}
+                  th #{getText('search.result.browser')}
+                  th #{getText('search.result.compare')}
+                  th(colspan='2') #{getText('search.result.actions')}
+                each test in data.result
+                  tr 
                     td
-                      if nconf.get('search:showLabel') === true
-                        a(role='button' data-add='label:' + test.label title='Add label to search') #{test.label}
-                      if nconf.get('search:showSlug') === true
-                        a(role='button' data-add='slug:' + test.slug title='Add slug to search') #{test.slug}
-                  td.run-date #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
-                  td
-                    a(role='button' data-add='location:' + test.location title='Add location to search') #{test.location}
-                  td.is-capitalized
-                    a(role='button' data-add='testType:' + test.test_type title='Add test type to search') #{test.test_type}
-                  td 
-                    if test.status === 'completed'
-                      span
-                        a.has-text-success(href=('/result/' + test.id) title='Go to test result') #{test.status}
-                    else if test.status === 'failed' 
-                      span.has-text-danger #{test.status}
-                    else if test.status === 'active'
-                      a(href=('/result/' + test.id) title='Go to running test') #{test.status}
-                    else
-                      span #{test.status}
-                  td
-                    a(role='button' data-add='browser:' + test.browser_name title='Add browser to search') #{test.browser_name}
-                  td
-                    label.checkbox(title=getText('search.compare.selectlabel'))
+                      span.icon-text
+                        span
+                          - const extras = `Go to test result.\n${test.connectivity?'Connectivity:' + test.connectivity + '\n':''}Added date:${dayjs(test.added_date).format(nconf.get('dateformat'))} ${test.run_date?'\nRun date:' + dayjs(test.run_date).format(nconf.get('dateformat')):''}`
+                          if test.result_url
+                            a(href=test.result_url title=extras) #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
+                          else
+                            span #{test.scripting_name ? fixScriptName(test.scripting_name) : shortURL(test.url, true)}
+                      td
+                        if nconf.get('search:showLabel') === true
+                          a(role='button' data-add='label:' + test.label title='Add label to search') #{test.label}
+                        if nconf.get('search:showSlug') === true
+                          a(role='button' data-add='slug:' + test.slug title='Add slug to search') #{test.slug}
+                    td.run-date #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
+                    td
+                      a(role='button' data-add='location:' + test.location title='Add location to search') #{test.location}
+                    td.is-capitalized
+                      a(role='button' data-add='testType:' + test.test_type title='Add test type to search') #{test.test_type}
+                    td 
                       if test.status === 'completed'
-                        input(type='checkbox' value=test.id name='har' aria-label=getText('search.compare.selectlabel'))
+                        span
+                          a.has-text-success(href=('/result/' + test.id) title='Go to test result') #{test.status}
+                      else if test.status === 'failed' 
+                        span.has-text-danger #{test.status}
+                      else if test.status === 'active'
+                        a(href=('/result/' + test.id) title='Go to running test') #{test.status}
                       else
-                        input(type='checkbox' value=test.id name='har' disabled aria-label=getText('search.compare.selectlabel'))
-                  td
-                    a(role='button' data-add=(test.url ? 'url:' + test.url : 'name:' + test.scripting_name))
-                      span.icon.is-small
-                        img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
-                  td
-                    a(role='button' data-rerun-id=test.id data-rerun-url=(test.url || test.scripting_name) data-rerun-label=(test.label || ''))
-                      span.icon.is-small
-                        img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
-          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
-            button.button.is-link.is-medium.mr-2(
-              onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
-            button.button.is-link.is-medium(
-              onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
-          p.has-background-white.has-text-black.p-3.has-text-centered
-            small #{getText('search.compare.help')}
-          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
-            button.button.is-primary.is-medium#compareButton(accesskey='c' type='button' aria-disabled='true' aria-describedby='compareMessage') #{getText('search.button.compare')}
-          p.has-background-white.has-text-black.px-3.pb-3.has-text-centered
-            small.compare-message#compareMessage(role='status' aria-live='polite')
-        else 
-          .message.is-fullwidth.is-medium.has-background-white.has-text-centered
-            .message-body
-              | #{getText('search.result.nomatch')}
+                        span #{test.status}
+                    td
+                      a(role='button' data-add='browser:' + test.browser_name title='Add browser to search') #{test.browser_name}
+                    td
+                      label.checkbox(title=getText('search.compare.selectlabel'))
+                        if test.status === 'completed'
+                          input(type='checkbox' value=test.id name='har' aria-label=getText('search.compare.selectlabel'))
+                        else
+                          input(type='checkbox' value=test.id name='har' disabled aria-label=getText('search.compare.selectlabel'))
+                    td
+                      a(role='button' data-add=(test.url ? 'url:' + test.url : 'name:' + test.scripting_name))
+                        span.icon.is-small
+                          img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
+                    td
+                      a(role='button' data-rerun-id=test.id data-rerun-url=(test.url || test.scripting_name) data-rerun-label=(test.label || ''))
+                        span.icon.is-small
+                          img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
+            p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
+              button.button.is-link.is-medium.mr-2(
+                onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
+              button.button.is-link.is-medium(
+                onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
+            p.has-background-white.has-text-black.p-3.has-text-centered
+              small #{getText('search.compare.help')}
+            p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
+              button.button.is-primary.is-medium#compareButton(accesskey='c' type='button' aria-disabled='true' aria-describedby='compareMessage') #{getText('search.button.compare')}
+            p.has-background-white.has-text-black.px-3.pb-3.has-text-centered
+              small.compare-message#compareMessage(role='status' aria-live='polite')
+          else 
+            .message.is-fullwidth.is-medium.has-background-white.has-text-centered
+              .message-body
+                | #{getText('search.result.nomatch')}
         

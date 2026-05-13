@@ -1738,3 +1738,76 @@ kbd {
   .navbar-menu .navbar-item:not(.navbar-brand .navbar-item) { min-height: 44px; padding: 10px 14px; }
   .checkbox, label.checkbox { min-height: 44px; padding: 6px 0; }
 }
+
+/* Auto-refresh toggle on the search page. Same shape as the console
+   theme — sticker border + the playful primary palette so it doesn't
+   look like a pasted-in widget. */
+.search-autorefresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 999px;
+  border: var(--border);
+  background: var(--paper);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.search-autorefresh:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--ink); }
+.search-autorefresh-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.search-autorefresh-track {
+  position: relative;
+  width: 34px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--paper-2);
+  border: 2px solid var(--ink);
+  transition: background .15s ease;
+  flex: 0 0 auto;
+}
+.search-autorefresh-thumb {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: left .15s ease;
+}
+.search-autorefresh-input:checked + .search-autorefresh-track {
+  background: var(--sun);
+}
+.search-autorefresh-input:checked + .search-autorefresh-track .search-autorefresh-thumb {
+  left: 17px;
+  background: var(--ink);
+}
+.search-autorefresh-input:focus-visible + .search-autorefresh-track {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+.search-autorefresh-label {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.15;
+  font-family: var(--font-body, inherit);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.search-autorefresh-status {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink);
+  opacity: 0.65;
+  white-space: nowrap;
+}

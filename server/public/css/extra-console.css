@@ -521,6 +521,76 @@ input#url, input[name="url"], input[name="search"] {
   color: var(--danger, #c0392b);
   font-weight: 500;
 }
+
+/* Inline auto-refresh toggle for the search page — sits next to
+   Help/Clear in the same `.buttons` row. CSS-only switch built around
+   the native <input type=checkbox> we keep for keyboard and a11y. */
+.search-autorefresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.search-autorefresh:hover { border-color: var(--text-faint); }
+.search-autorefresh-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+.search-autorefresh-track {
+  position: relative;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--surface-3, #d4d4d8);
+  transition: background .15s ease;
+  flex: 0 0 auto;
+}
+.search-autorefresh-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18);
+  transition: left .15s ease;
+}
+.search-autorefresh-input:checked + .search-autorefresh-track {
+  background: var(--primary, #005fcc);
+}
+.search-autorefresh-input:checked + .search-autorefresh-track .search-autorefresh-thumb {
+  left: 16px;
+}
+.search-autorefresh-input:focus-visible + .search-autorefresh-track {
+  outline: 2px solid var(--primary, #005fcc);
+  outline-offset: 2px;
+}
+.search-autorefresh-label {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.15;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.search-autorefresh-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
 .button.is-primary {
   background: var(--primary);
   border-color: var(--primary);
