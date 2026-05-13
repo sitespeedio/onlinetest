@@ -116,20 +116,18 @@ html(lang='en')
         h2.section-heading Activity
         .stats-section
           .stats-strip
-            .stats-card
-              span.stats-label Last 24 hours
-              span.stats-value #{stats.last24h.total}
-              span.stats-pcts
-                span.stats-completed #{stats.last24h.pctCompleted}% completed
-                |  ·
-                span.stats-failed #{stats.last24h.pctFailed}% failed
-            .stats-card
-              span.stats-label Last 7 days
-              span.stats-value #{stats.last7d.total}
-              span.stats-pcts
-                span.stats-completed #{stats.last7d.pctCompleted}% completed
-                |  ·
-                span.stats-failed #{stats.last7d.pctFailed}% failed
+            mixin stats-card(label, t)
+              .stats-card
+                span.stats-label= label
+                span.stats-value #{t.total}
+                span.stats-pcts
+                  span.stats-completed #{t.completed} completed
+                  |  ·
+                  span.stats-failed #{t.failed} failed
+            +stats-card('Last hour', stats.lastHour)
+            +stats-card('Last 24 hours', stats.last24h)
+            +stats-card('Last 7 days', stats.last7d)
+            +stats-card('Last 30 days', stats.last30d)
           -
             // Stacked bar chart: one bar per hour for the last 24 h.
             // Completed (green) sits on the baseline, failed (red) on

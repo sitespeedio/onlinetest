@@ -222,8 +222,10 @@ function emptyStats() {
     });
   }
   return {
-    last24h: { ...emptyStatusTally(), pctCompleted: 0, pctFailed: 0 },
-    last7d: { ...emptyStatusTally(), pctCompleted: 0, pctFailed: 0 },
+    lastHour: emptyStatusTally(),
+    last24h: emptyStatusTally(),
+    last7d: emptyStatusTally(),
+    last30d: emptyStatusTally(),
     hourly: buckets
   };
 }
@@ -255,10 +257,6 @@ function tallyStatusRows(rows) {
       }
     }
   }
-  tally.pctCompleted =
-    tally.total > 0 ? Math.round((tally.completed / tally.total) * 100) : 0;
-  tally.pctFailed =
-    tally.total > 0 ? Math.round((tally.failed / tally.total) * 100) : 0;
   return tally;
 }
 
@@ -310,7 +308,19 @@ export async function getStatistics() {
   }
   try {
     const databaseHelper = DatabaseHelper.getInstance();
-    const [last24hResult, last7dResult, hourlyResult] = await Promise.all([
+    const [
+      lastHourResult,
+      last24hResult,
+      last7dResult,
+      last30dResult,
+      hourlyResult
+    ] = await Promise.all([
+      databaseHelper.query(
+        `SELECT status, COUNT(*)::int AS count
+           FROM sitespeed_io_test_runs
+          WHERE added_date >= NOW() - INTERVAL '1 hour'
+          GROUP BY status`
+      ),
       databaseHelper.query(
         `SELECT status, COUNT(*)::int AS count
            FROM sitespeed_io_test_runs
@@ -324,6 +334,12 @@ export async function getStatistics() {
           GROUP BY status`
       ),
       databaseHelper.query(
+        `SELECT status, COUNT(*)::int AS count
+           FROM sitespeed_io_test_runs
+          WHERE added_date >= NOW() - INTERVAL '30 days'
+          GROUP BY status`
+      ),
+      databaseHelper.query(
         `SELECT date_trunc('hour', added_date) AS hour,
                 status,
                 COUNT(*)::int AS count
@@ -334,8 +350,10 @@ export async function getStatistics() {
       )
     ]);
     statsCache = {
+      lastHour: tallyStatusRows(lastHourResult.rows),
       last24h: tallyStatusRows(last24hResult.rows),
       last7d: tallyStatusRows(last7dResult.rows),
+      last30d: tallyStatusRows(last30dResult.rows),
       hourly: buildHourlyBuckets(hourlyResult.rows)
     };
     statsCachedAt = now;
