@@ -185,13 +185,23 @@ html(lang='en')
             span.cell.fail-action(role='columnheader' aria-label='Actions')
           each job, failIndex in failedJobs
             -
-              var whenLabel = job.secondsAgo === undefined
+              // Format the failure age into a readable label. Bull keeps
+              // failures around until `removeOnFail` evicts them, so the
+              // tail of this list can be very old — drop into days /
+              // months once we get past ~48 h instead of shouting
+              // "12608h ago" at the operator.
+              var s = job.secondsAgo;
+              var whenLabel = s === undefined
                 ? '—'
-                : job.secondsAgo < 60
-                  ? job.secondsAgo + 's ago'
-                  : job.secondsAgo < 3600
-                    ? Math.round(job.secondsAgo / 60) + 'm ago'
-                    : Math.round(job.secondsAgo / 3600) + 'h ago';
+                : s < 60
+                  ? s + 's ago'
+                  : s < 3600
+                    ? Math.round(s / 60) + 'm ago'
+                    : s < 172800
+                      ? Math.round(s / 3600) + 'h ago'
+                      : s < 5184000
+                        ? Math.round(s / 86400) + 'd ago'
+                        : Math.round(s / 2592000) + 'mo ago';
             .row(role='row')
               span.cell.idx(role='cell') #{failIndex+1}
               code.cell.job-id(role='cell')
@@ -240,8 +250,8 @@ html(lang='en')
                 | —
               else
                 | #{active}
-            span.cell.count(role='cell' class=(failed === 0 ? 'is-empty' : 'has-failed'))
-              if failed === 0
+            span.cell.count(role='cell' class=((isInternal || failed === 0) ? 'is-empty' : 'has-failed'))
+              if isInternal || failed === 0
                 | —
               else
                 | #{failed}
