@@ -453,6 +453,7 @@ footer p { margin: 0; }
   flex-wrap: wrap;
   gap: 28px;
   margin-bottom: 14px;
+  justify-content: center;
 }
 .stats-card {
   display: flex;

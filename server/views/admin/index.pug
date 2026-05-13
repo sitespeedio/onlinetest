@@ -49,7 +49,15 @@ html(lang='en')
 
         function tickIndicator() {
           var seconds = Math.max(0, Math.round((Date.now() - lastUpdatedAt) / 1000));
-          setIndicator(refreshing ? 'Updating…' : 'Updated ' + seconds + 's ago');
+          // Pad single digits with a non-breaking space so the rendered
+          // string is the same column-count every tick — otherwise the
+          // 9→10 and 14→0 transitions visibly shift the text inside the
+          // indicator. The "Updating…" mid-fetch state is gone for the
+          // same reason; the color pulse on the indicator already
+          // signals "fetch in flight", and switching the text to a
+          // different-length string just made the wobble worse.
+          var secStr = seconds < 10 ? '\u00A0' + seconds : String(seconds);
+          setIndicator('Updated ' + secStr + 's ago');
         }
 
         function captureRollups() {
