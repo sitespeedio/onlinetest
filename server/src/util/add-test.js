@@ -60,9 +60,9 @@ export async function reRunTest(request) {
 
   const queueName = getQueueName(oldTest.location, deviceId);
 
-  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
-  const removeOnFail = nconf.get('queue:removeOnFail') || 400;
-  const attempts = nconf.get('queue:attempts') || 1;
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 50;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 100;
+  const attempts = nconf.get('queue:attempts') || 2;
 
   if (queueName) {
     const testRunnerQueue = getExistingQueue(queueName);
@@ -146,9 +146,9 @@ export async function addTest(request) {
   const defaultConfig = await getDefaultSitespeedConfiguration();
 
   // The number of objects to keep in the queue before removal
-  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
-  const removeOnFail = nconf.get('queue:removeOnFail') || 400;
-  const attempts = nconf.get('queue:attempts') || 1;
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 50;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 100;
+  const attempts = nconf.get('queue:attempts') || 2;
   const userConfig = {
     browsertime: {
       browser,
@@ -267,9 +267,9 @@ export async function addTestFromAPI(
   dockerContainer
 ) {
   // The number of objects to keep in the queue before removal
-  const removeOnComplete = nconf.get('queue:removeOnComplete') || 200;
-  const removeOnFail = nconf.get('queue:removeOnFail') || 400;
-  const attempts = nconf.get('queue:attempts') || 1;
+  const removeOnComplete = nconf.get('queue:removeOnComplete') || 50;
+  const removeOnFail = nconf.get('queue:removeOnFail') || 100;
+  const attempts = nconf.get('queue:attempts') || 2;
 
   const deviceId =
     get(userConfig, 'browsertime.firefox.android.deviceSerial') ||
