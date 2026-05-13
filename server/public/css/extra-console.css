@@ -511,9 +511,15 @@ input#url, input[name="url"], input[name="search"] {
 }
 .button:hover { background: var(--surface-2); border-color: var(--text-faint); }
 .button:active { transform: translateY(1px); }
-.button:disabled, .button[disabled] {
+.button:disabled, .button[disabled], .button[aria-disabled="true"] {
   opacity: 0.55;
   cursor: not-allowed;
+}
+.compare-message {
+  display: inline-block;
+  min-height: 1.2em;
+  color: var(--danger, #c0392b);
+  font-weight: 500;
 }
 .button.is-primary {
   background: var(--primary);

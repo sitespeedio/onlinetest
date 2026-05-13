@@ -91,6 +91,40 @@ block content
       }
     }
 
+    document.addEventListener('DOMContentLoaded', function () {
+      var form = document.getElementById('search-form-compare');
+      var btn = document.getElementById('compareButton');
+      var msg = document.getElementById('compareMessage');
+      if (!form || !btn) return;
+      var enabled = Array.prototype.slice.call(
+        form.querySelectorAll('input[type="checkbox"][name="har"]:not([disabled])')
+      );
+      if (enabled.length === 0) return;
+      var SELECT_FIRST = '#{getText("search.compare.selectfirst")}';
+      var SELECT_ONE_MORE = '#{getText("search.compare.selectonemore")}';
+      function checkedCount() {
+        return enabled.filter(function (b) { return b.checked; }).length;
+      }
+      function update() {
+        var count = checkedCount();
+        btn.setAttribute('aria-disabled', count === 2 ? 'false' : 'true');
+        if (count >= 2) {
+          enabled.forEach(function (b) { if (!b.checked) b.disabled = true; });
+        } else {
+          enabled.forEach(function (b) { b.disabled = false; });
+        }
+        if (msg && count !== 0) { msg.textContent = ''; }
+      }
+      btn.addEventListener('click', function (e) {
+        var count = checkedCount();
+        if (count === 2) { form.submit(); return; }
+        e.preventDefault();
+        if (msg) { msg.textContent = count === 1 ? SELECT_ONE_MORE : SELECT_FIRST; }
+      });
+      enabled.forEach(function (b) { b.addEventListener('change', update); });
+      update();
+    });
+
   .modal#rerunModal(role='dialog' aria-modal='true' aria-labelledby='rerunTitle' aria-hidden='true')
     .modal-background(onclick='closeRerunModal()')
     .modal-card
@@ -219,7 +253,8 @@ block content
                 th #{getText('search.result.type')}
                 th #{getText('search.result.status')}
                 th #{getText('search.result.browser')}
-                th(colspan='3') #{getText('search.result.actions')}
+                th #{getText('search.result.compare')}
+                th(colspan='2') #{getText('search.result.actions')}
               each test in data.result
                 tr 
                   td
@@ -258,11 +293,11 @@ block content
                     - let browserOnClick = 'addToSearch(\'browser:' + test.browser_name + '\')';
                     a(role='button' onclick=browserOnClick title='Add browser to search') #{test.browser_name}
                   td
-                    label.checkbox
-                      if test.status === 'completed' 
-                        input(type='checkbox' value=test.id name='har')
-                      else 
-                        input(type='checkbox' value=test.id name='har' disabled)
+                    label.checkbox(title=getText('search.compare.selectlabel'))
+                      if test.status === 'completed'
+                        input(type='checkbox' value=test.id name='har' aria-label=getText('search.compare.selectlabel'))
+                      else
+                        input(type='checkbox' value=test.id name='har' disabled aria-label=getText('search.compare.selectlabel'))
                   td
                     - let urlOnClick = test.url ? `addToSearch('url:${test.url}')` : `addToSearch('name:${ test.scripting_name}')`;
                     a(role='button' onclick=urlOnClick)
@@ -278,8 +313,12 @@ block content
               onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
             button.button.is-link.is-medium(
               onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
-          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons 
-            button.button.is-primary.is-medium(accesskey='c' form='search-form-compare') #{getText('search.button.compare')}
+          p.has-background-white.has-text-black.p-3.has-text-centered
+            small #{getText('search.compare.help')}
+          p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
+            button.button.is-primary.is-medium#compareButton(accesskey='c' type='button' aria-disabled='true' aria-describedby='compareMessage') #{getText('search.button.compare')}
+          p.has-background-white.has-text-black.px-3.pb-3.has-text-centered
+            small.compare-message#compareMessage(role='status' aria-live='polite')
         else 
           .message.is-fullwidth.is-medium.has-background-white.has-text-centered
             .message-body
