@@ -154,8 +154,14 @@ async function buildAdminView() {
     if (buckets) queueSparklines[queueName] = buckets;
   }
 
+  // The Queues table is for operator-actionable queues only. Internal
+  // orchestration queues (testrunners, result) have no worker, no
+  // sparkline, no failure handling and an inert Empty button — showing
+  // them just adds rows you can't do anything with.
+  const visibleQueues = queues.filter(q => !INTERNAL_QUEUES.has(q));
+
   return {
-    queues,
+    queues: visibleQueues,
     queueCounts,
     testRunners,
     servedQueues,

@@ -428,6 +428,14 @@ footer p { margin: 0; }
   color: var(--text-faint);
   margin-left: 6px;
   white-space: nowrap;
+  /* "Updated 14s ago" → "Updated 0s ago" loses a column once per cycle.
+     Without a stable width that one-character shrink reflows .health-
+     version (margin-left: auto) one column to the right every 15 s,
+     reading as a "shake" especially next to the refresh pulse. Pin to
+     the longest expected string so the indicator owns its slot. */
+  min-width: 15ch;
+  text-align: right;
+  display: inline-block;
 }
 
 /* --- Activity stats + chart ----------------------------------------- */
