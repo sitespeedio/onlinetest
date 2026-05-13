@@ -28,6 +28,21 @@ html(lang='en')
     header(role='banner')
       h1 Admin
     main#main(role='main')
+      if health
+        .health-bar(role='status' aria-label='Server status')
+          span.health-pill(class=(health.redis ? 'is-ok' : 'is-down') title='Redis / KeyDB connection')
+            span.health-dot
+            | Redis #{health.redis ? 'up' : 'down'}
+          span.health-pill(class=(health.database ? 'is-ok' : 'is-down') title='PostgreSQL connection')
+            span.health-dot
+            | DB #{health.database ? 'up' : 'down'}
+          span.health-pill(class=(health.runnerCount > 0 ? 'is-ok' : 'is-warning') title='Connected testrunners')
+            span.health-dot
+            | #{health.runnerCount} testrunner#{health.runnerCount === 1 ? '' : 's'}
+          span.health-pill.is-neutral(title='Jobs waiting across all queues') #{health.totalPending} pending
+          span.health-pill(class=(health.totalActive > 0 ? 'is-active' : 'is-neutral') title='Jobs running across all queues') #{health.totalActive} running
+          span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Failed jobs across all queues') #{health.totalFailed} failed
+          span.health-version v#{health.serverVersion}
       if testRunners && testRunners.length > 0
         h2.section-heading Connected testrunners
         .container(role='table' aria-label='Connected testrunners')
@@ -57,6 +72,38 @@ html(lang='en')
                   |  #{s.type}/#{(s.browsers || []).join('+') || (s.deviceId || '?')}
               span.cell.runner-seen(role='cell' class=(fresh ? 'is-fresh' : (stale ? 'is-stale' : '')))
                 | #{seenLabel}
+      if activeJobs && activeJobs.length > 0
+        h2.section-heading Currently running
+        .container(role='table' aria-label='Currently running tests')
+          .row.row-head(role='row')
+            span.cell.idx(role='columnheader') #
+            span.cell.job-id(role='columnheader') Test
+            span.cell.job-target(role='columnheader') URL / script
+            span.cell.job-queue(role='columnheader') Queue
+            span.cell.job-runner(role='columnheader') Runner
+            span.cell.job-elapsed(role='columnheader') Running for
+          each job, jobIndex in activeJobs
+            -
+              var target = job.scriptingName || job.url || job.label || '(unknown)';
+              var elapsedLabel = job.secondsRunning === undefined
+                ? '—'
+                : job.secondsRunning < 60
+                  ? job.secondsRunning + 's'
+                  : Math.round(job.secondsRunning / 60) + 'm';
+              var longRunning = job.secondsRunning !== undefined && job.secondsRunning > 600;
+            .row(role='row')
+              span.cell.idx(role='cell') #{jobIndex+1}
+              code.cell.job-id(role='cell')
+                a(href='/result/' + job.id title='Open result page') #{job.id}
+              span.cell.job-target(role='cell') #{target}
+              code.cell.job-queue(role='cell') #{job.queue}
+              span.cell.job-runner(role='cell')
+                if job.runner
+                  code #{job.runner}
+                else
+                  span.text-faint —
+              span.cell.job-elapsed(role='cell' class=(longRunning ? 'is-long' : ''))
+                | #{elapsedLabel}
       h2.section-heading Queues
       .container(role='table' aria-label='Queue list')
         .row.row-head(role='row')

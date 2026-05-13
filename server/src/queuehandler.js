@@ -136,6 +136,30 @@ export async function getQueueCounts(name) {
   }
 }
 
+// Active jobs across a queue, capped so the admin call can't pull
+// thousands of records on a runaway. The job objects Bull returns are
+// heavy — the caller is expected to project only what it needs.
+export async function getActiveJobs(name, limit = 20) {
+  const queue = getQueue(name);
+  try {
+    return await queue.getActive(0, limit - 1);
+  } catch {
+    return [];
+  }
+}
+
+// Cheap health probe. Any open Bull queue exposes its underlying ioredis
+// client; status 'ready' means the connection is up and authenticated.
+// We pick the first connected queue — if none exist yet (very first
+// request after boot, before any testrunner has registered) we fall back
+// to 'unknown' rather than lying with 'down'.
+export function isRedisHealthy() {
+  for (const queue of Object.values(queues)) {
+    if (queue.client && queue.client.status === 'ready') return true;
+  }
+  return false;
+}
+
 export function getExistingQueue(name) {
   return queues[name];
 }

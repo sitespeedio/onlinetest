@@ -372,6 +372,98 @@ footer p { margin: 0; }
   [aria-label='Connected testrunners'] .row-head { display: none; }
 }
 
+/* --- Health banner ---------------------------------------------------- */
+.health-bar {
+  max-width: 980px;
+  margin: 0 auto 22px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+.health-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+}
+.health-pill .health-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.health-pill.is-ok .health-dot { background: var(--success, #0a7d36); }
+.health-pill.is-ok { color: var(--success, #0a7d36); border-color: var(--success, #0a7d36); }
+.health-pill.is-down .health-dot { background: var(--danger, #c0392b); }
+.health-pill.is-down { color: var(--danger, #c0392b); border-color: var(--danger, #c0392b); }
+.health-pill.is-warning .health-dot { background: var(--warning, #b06400); }
+.health-pill.is-warning { color: var(--warning, #b06400); border-color: var(--warning, #b06400); }
+.health-pill.is-active { color: var(--success, #0a7d36); }
+.health-pill.is-failed { color: var(--danger, #c0392b); }
+.health-pill.is-neutral { color: var(--text-muted); }
+.health-version {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--text-faint);
+}
+
+/* --- Currently-running tests ----------------------------------------- */
+[aria-label='Currently running tests'] .row {
+  grid-template-columns: 48px 110px 1fr 1fr 1fr 90px;
+}
+.cell.job-id {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  word-break: break-all;
+}
+.cell.job-id a { color: var(--text); text-decoration: none; border-bottom: 1px dotted var(--text-faint); }
+.cell.job-id a:hover { color: var(--primary); border-bottom-color: var(--primary); }
+.cell.job-target {
+  font-size: 13.5px;
+  color: var(--text);
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cell.job-queue, .cell.job-runner {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-2, var(--text));
+  word-break: break-all;
+}
+.cell.job-runner .text-faint { color: var(--text-faint); }
+.cell.job-elapsed {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-align: right;
+  color: var(--text-muted);
+}
+.cell.job-elapsed.is-long {
+  color: var(--warning, #b06400);
+  font-weight: 600;
+}
+
+@media (max-width: 700px) {
+  [aria-label='Currently running tests'] .row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  [aria-label='Currently running tests'] .row-head { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

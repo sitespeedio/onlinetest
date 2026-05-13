@@ -179,6 +179,20 @@ export async function getTestHar(id) {
   }
 }
 
+// Cheap one-shot DB ping for the admin health banner. Unlike
+// testConnection() (which retries with a 5s delay and is meant for
+// startup), this returns false fast on any failure so it won't stall
+// the admin page when Postgres is down.
+export async function isDatabaseHealthy() {
+  try {
+    const databaseHelper = DatabaseHelper.getInstance();
+    await databaseHelper.query('SELECT 1');
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function testConnection(retries = 3, delay = 5000) {
   const test = 'SELECT 1 FROM sitespeed_io_test_runs';
   try {
