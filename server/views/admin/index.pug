@@ -104,6 +104,38 @@ html(lang='en')
                   span.text-faint —
               span.cell.job-elapsed(role='cell' class=(longRunning ? 'is-long' : ''))
                 | #{elapsedLabel}
+      if failedJobs && failedJobs.length > 0
+        h2.section-heading Recent failures
+        .container(role='table' aria-label='Recent failed tests')
+          .row.row-head(role='row')
+            span.cell.idx(role='columnheader') #
+            span.cell.job-id(role='columnheader') Test
+            span.cell.fail-target(role='columnheader') URL / script
+            span.cell.fail-reason(role='columnheader') Reason
+            span.cell.fail-when(role='columnheader') When
+            span.cell.fail-action(role='columnheader' aria-label='Actions')
+          each job, failIndex in failedJobs
+            -
+              var whenLabel = job.secondsAgo === undefined
+                ? '—'
+                : job.secondsAgo < 60
+                  ? job.secondsAgo + 's ago'
+                  : job.secondsAgo < 3600
+                    ? Math.round(job.secondsAgo / 60) + 'm ago'
+                    : Math.round(job.secondsAgo / 3600) + 'h ago';
+            .row(role='row')
+              span.cell.idx(role='cell') #{failIndex+1}
+              code.cell.job-id(role='cell')
+                a(href='/result/' + job.id title='Open result page') #{job.id}
+              span.cell.fail-target(role='cell') #{job.target || '(unknown)'}
+              span.cell.fail-reason(role='cell' title=job.reason)
+                | #{job.reason || '(no reason recorded)'}
+              span.cell.fail-when(role='cell') #{whenLabel}
+              span.cell.fail-action(role='cell')
+                form(method='POST' action='/admin/retry' style='margin:0')
+                  input(type='hidden' name='queueName' value=job.queue)
+                  input(type='hidden' name='jobId' value=job.id)
+                  button.retry-btn(type='submit' aria-label=`Retry job ${job.id}`) Retry
       h2.section-heading Queues
       .container(role='table' aria-label='Queue list')
         .row.row-head(role='row')

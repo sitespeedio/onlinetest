@@ -464,6 +464,73 @@ footer p { margin: 0; }
   [aria-label='Currently running tests'] .row-head { display: none; }
 }
 
+/* --- Recent failures table ------------------------------------------- */
+[aria-label='Recent failed tests'] .row {
+  grid-template-columns: 48px 110px 1fr 1.6fr 90px 80px;
+}
+.cell.fail-target {
+  font-size: 13.5px;
+  color: var(--text);
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cell.fail-reason {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--danger, #c0392b);
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cell.fail-when {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: right;
+}
+.retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13.5px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background .12s, border-color .12s, color .12s;
+  white-space: nowrap;
+}
+.retry-btn::before {
+  content: "↻";
+  font-family: var(--font-mono);
+  color: var(--text-faint);
+}
+.retry-btn:hover {
+  background: var(--primary-soft, rgba(0, 95, 204, 0.08));
+  border-color: var(--primary, #005fcc);
+  color: var(--primary, #005fcc);
+}
+.retry-btn:hover::before { color: var(--primary, #005fcc); }
+.retry-btn:focus-visible {
+  outline: 2px solid var(--primary, #005fcc);
+  outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+  [aria-label='Recent failed tests'] .row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  [aria-label='Recent failed tests'] .row-head { display: none; }
+  .cell.fail-reason { white-space: normal; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
