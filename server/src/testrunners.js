@@ -20,13 +20,27 @@ function queueNamesForConfig(config) {
   );
 }
 
+// Merge an incoming registration into the known runners. The append
+// behavior exists for the legitimate case of multiple testrunner
+// processes sharing a hostname — each sends its own setup, and we
+// keep them all. The bug it papered over: when the *same* process
+// restarts and re-registers, its setup array gets concatenated to
+// the previous one and grows on every restart (you'd see
+// "desktop/chrome+firefox, emulated/chrome, desktop/chrome+firefox,
+// emulated/chrome" on the admin page until the 120 s stale-prune
+// caught up). Dedupe by queue name on merge so a re-register
+// replaces its own entries instead of duplicating them.
 function mergeByHostname(target, source) {
   const now = Date.now();
   if (target[source.hostname]) {
-    target[source.hostname].setup = [
-      ...target[source.hostname].setup,
-      ...source.setup
-    ];
+    const byQueue = new Map();
+    for (const s of target[source.hostname].setup) {
+      if (s.queue) byQueue.set(s.queue, s);
+    }
+    for (const s of source.setup) {
+      if (s.queue) byQueue.set(s.queue, s);
+    }
+    target[source.hostname].setup = [...byQueue.values()];
     target[source.hostname].lastSeenAt = now;
   } else {
     target[source.hostname] = { ...source, firstSeenAt: now, lastSeenAt: now };
