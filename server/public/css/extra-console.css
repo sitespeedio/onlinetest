@@ -760,6 +760,17 @@ td.run-date { white-space: nowrap; font-family: var(--font-mono); font-size: 13p
 .table td:first-child {
   font-family: var(--font-mono);
   font-size: 13.5px;
+  /* URLs in the first column can be long with sparse break points; let
+     them wrap at any character so they don't push the table past its
+     1100px container and shove the page off-centre on wide viewports. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+/* Safety net: if a row still demands more horizontal space than the
+   container can give it, scroll the table itself rather than the whole
+   page. Keeps the rest of the search UI centred. */
+#search-results-region form#search-form-compare {
+  overflow-x: auto;
 }
 
 .has-text-success { color: var(--success); font-weight: 500; }

@@ -642,6 +642,18 @@ input[type="radio"]:not(.is-default):disabled {
 .table a { color: var(--ink); font-weight: 700; text-decoration: none; }
 .table a:hover { text-decoration: underline wavy var(--grape); }
 td.run-date { white-space: nowrap; }
+/* URLs in the first column can be very long with sparse break points;
+   let them wrap at any character so they don't push the table past its
+   container and shove the page off-centre. */
+.table td:first-child {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+/* If a row still demands more space than the container has, scroll the
+   table itself rather than the whole page. */
+#search-results-region form#search-form-compare {
+  overflow-x: auto;
+}
 
 .has-text-success { color: var(--green); font-weight: 700; }
 .has-text-danger { color: var(--red); font-weight: 700; }
