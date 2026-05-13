@@ -23,24 +23,38 @@ function queueNamesForConfig(config) {
 // Merge an incoming registration into the known runners. The append
 // behavior exists for the legitimate case of multiple testrunner
 // processes sharing a hostname — each sends its own setup, and we
-// keep them all. The bug it papered over: when the *same* process
-// restarts and re-registers, its setup array gets concatenated to
-// the previous one and grows on every restart (you'd see
-// "desktop/chrome+firefox, emulated/chrome, desktop/chrome+firefox,
-// emulated/chrome" on the admin page until the 120 s stale-prune
-// caught up). Dedupe by queue name on merge so a re-register
-// replaces its own entries instead of duplicating them.
+// keep them all. We also need to handle the *same* process restarting
+// (same hostname, same setup re-sent): without dedupe, every restart
+// concatenates a fresh copy and the admin page shows the runner's
+// capabilities repeated until the 120 s stale-prune catches up.
+//
+// Two setup entries can share a queue name (the testrunner derives
+// queue from location + deviceId only, so e.g. "Desktop Browsers" and
+// "Emulated Mobile" on the same location both land on queue
+// "<location>"). So dedupe has to key on the full setup identity, not
+// just `queue` — otherwise multiple types collapse into the last one
+// and the admin / index dropdowns lose options.
+function setupIdentity(s) {
+  return [
+    s.queue || '',
+    s.type || '',
+    (s.browsers || []).join(','),
+    s.deviceId || '',
+    s.useDocker ? '1' : '0'
+  ].join('|');
+}
+
 function mergeByHostname(target, source) {
   const now = Date.now();
   if (target[source.hostname]) {
-    const byQueue = new Map();
+    const bySetup = new Map();
     for (const s of target[source.hostname].setup) {
-      if (s.queue) byQueue.set(s.queue, s);
+      bySetup.set(setupIdentity(s), s);
     }
     for (const s of source.setup) {
-      if (s.queue) byQueue.set(s.queue, s);
+      bySetup.set(setupIdentity(s), s);
     }
-    target[source.hostname].setup = [...byQueue.values()];
+    target[source.hostname].setup = [...bySetup.values()];
     target[source.hostname].lastSeenAt = now;
   } else {
     target[source.hostname] = { ...source, firstSeenAt: now, lastSeenAt: now };
