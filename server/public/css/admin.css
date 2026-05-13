@@ -144,7 +144,7 @@ main {
 
 .row {
   display: grid;
-  grid-template-columns: 48px 1fr 90px 80px 80px auto;
+  grid-template-columns: 48px 1fr 110px 90px 80px 80px auto;
   align-items: center;
   gap: 14px;
   padding: 10px 16px;
@@ -278,7 +278,9 @@ footer p { margin: 0; }
 @media (max-width: 700px) {
   /* Narrow viewport: stack the queue row so the three counts share one
      line below the queue name. Hide the header row entirely — the count
-     cells get inline labels via ::before instead. */
+     cells get inline labels via ::before instead. The 24 h sparkline
+     drops off here; the count cells convey the same "alive or dead?"
+     signal on the small screen. */
   [aria-label='Queue list'] .row {
     grid-template-columns: 32px 1fr;
     grid-template-areas:
@@ -290,6 +292,7 @@ footer p { margin: 0; }
   [aria-label='Queue list'] .row-head { display: none; }
   [aria-label='Queue list'] .cell.idx { grid-area: idx; }
   [aria-label='Queue list'] .cell.name { grid-area: name; }
+  [aria-label='Queue list'] .cell.queue-spark { display: none; }
   [aria-label='Queue list'] .cell.count {
     grid-area: counts;
     justify-self: start;
@@ -628,9 +631,102 @@ footer p { margin: 0; }
   .cell.fail-reason { white-space: normal; }
 }
 
+/* --- Per-queue 24 h sparkline ----------------------------------------
+   Tiny inline trend chart on each queue row. Independently scaled per
+   queue (max = that queue's own 24 h peak), so a slow location and a
+   busy one both show meaningful shape. Aggregate signal only — the
+   exact count lives in the pending/active/failed cells. */
+.cell.queue-spark {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.row-head .cell.queue-spark {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.queue-spark-svg {
+  display: block;
+  width: 96px;
+  height: 20px;
+}
+.queue-spark-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.queue-spark-area {
+  fill: var(--primary);
+  opacity: 0.12;
+  stroke: none;
+}
+.queue-spark-empty {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-faint);
+}
+
+/* --- Animations ------------------------------------------------------
+   Three subtle motions, all gated by prefers-reduced-motion below:
+   1. Bar-chart entrance on first paint (staggered by --bar-i).
+   2. Refresh-indicator pulse fires on each fetch start.
+   3. data-rollup numbers tween from old to new in JS — no CSS needed
+      for the tween itself, but a brief color flash signals "this just
+      changed" so the eye knows where to land.
+*/
+
+/* 1) Bar-chart entrance. Each <g> sets --bar-i for the stagger and the
+      child <rect> inherits it for animation-delay. The gate on
+      body[data-stage="initial"] keeps the animation to first paint
+      only; the inline script clears the attr after ~1.2s. */
+.stats-chart-svg rect.bar-enter {
+  transform-origin: bottom;
+  transform-box: fill-box;
+}
+body[data-stage="initial"] .stats-chart-svg rect.bar-enter {
+  animation: bar-enter 520ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  animation-delay: calc(var(--bar-i, 0) * 22ms);
+}
+@keyframes bar-enter {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+/* 2) Refresh-indicator pulse. JS adds .is-refreshing on each fetch and
+      relies on a forced reflow to restart the animation. */
+.refresh-indicator.is-refreshing {
+  animation: refresh-pulse 700ms ease-out;
+}
+@keyframes refresh-pulse {
+  0%   { color: var(--text-faint); }
+  35%  { color: var(--primary); }
+  100% { color: var(--text-faint); }
+}
+
+/* 3) Rolling numbers — the value is driven from JS; the surrounding
+      pill gets a subtle accent for the duration of the rollup so the
+      eye is drawn to whichever counter changed.
+
+      Implementation note: we can't trigger a CSS animation reliably on
+      every text-content change, so we just use the JS rAF tween for
+      the value itself and rely on prefers-reduced-motion to short-
+      circuit (the tween still updates, but the duration is ~0). */
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+  body[data-stage="initial"] .stats-chart-svg rect.bar-enter {
+    animation: none !important;
   }
 }

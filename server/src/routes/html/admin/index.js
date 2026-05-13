@@ -42,12 +42,19 @@ async function buildAdminView() {
       : undefined
   }));
   // Map every queue name to a hostname (if any) so the active-jobs table
-  // can show which testrunner picked up each job.
+  // can show which testrunner picked up each job. Also keep a queue ->
+  // location map so the queue-row sparkline can pull the right 24 h
+  // throughput slice (per-location is the closest signal we have
+  // without storing the queue name on each test row).
   const queueToHostname = {};
+  const queueToLocation = {};
   for (const runner of testRunners) {
     for (const setup of runner.setup || []) {
       if (setup.queue && !queueToHostname[setup.queue]) {
         queueToHostname[setup.queue] = runner.hostname;
+      }
+      if (setup.queue && !queueToLocation[setup.queue]) {
+        queueToLocation[setup.queue] = runner.location;
       }
     }
   }
@@ -134,6 +141,19 @@ async function buildAdminView() {
   // the admin auto-refresh doesn't beat on Postgres every 15s.
   const stats = await getStatistics();
 
+  // Per-queue sparkline arrays (24 hourly totals). Only filled for
+  // non-internal queues whose location we can resolve from a currently-
+  // connected runner — anything else gets no sparkline rather than a
+  // misleading flat line.
+  const queueSparklines = {};
+  for (const queueName of queues) {
+    if (INTERNAL_QUEUES.has(queueName)) continue;
+    const loc = queueToLocation[queueName];
+    if (!loc) continue;
+    const buckets = stats.hourlyByLocation && stats.hourlyByLocation[loc];
+    if (buckets) queueSparklines[queueName] = buckets;
+  }
+
   return {
     queues,
     queueCounts,
@@ -143,7 +163,8 @@ async function buildAdminView() {
     activeJobs,
     failedJobs: recentFailures,
     health,
-    stats
+    stats,
+    queueSparklines
   };
 }
 

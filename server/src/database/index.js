@@ -226,7 +226,8 @@ function emptyStats() {
     last24h: emptyStatusTally(),
     last7d: emptyStatusTally(),
     last30d: emptyStatusTally(),
-    hourly: buckets
+    hourly: buckets,
+    hourlyByLocation: {}
   };
 }
 
@@ -258,6 +259,35 @@ function tallyStatusRows(rows) {
     }
   }
   return tally;
+}
+
+// Per-location 24 h sparklines: one 24-element array of total counts
+// (all statuses summed) keyed by `location`. Drives the inline trend
+// preview on each queue row in /admin. We aggregate across status here
+// because the sparkline is a "is this queue alive?" indicator — a
+// 60×16 SVG isn't the place to read off completed vs. failed split.
+function buildHourlyByLocation(rows) {
+  const byLocHour = {};
+  for (const row of rows) {
+    const loc = row.location;
+    if (!loc) continue;
+    const t = row.hour instanceof Date ? row.hour : new Date(row.hour);
+    const key = t.toISOString();
+    if (!byLocHour[loc]) byLocHour[loc] = {};
+    byLocHour[loc][key] = (byLocHour[loc][key] || 0) + (Number(row.count) || 0);
+  }
+  const startHour = new Date();
+  startHour.setMinutes(0, 0, 0);
+  const result = {};
+  for (const [loc, hours] of Object.entries(byLocHour)) {
+    const buckets = [];
+    for (let index = 23; index >= 0; index--) {
+      const t = new Date(startHour.getTime() - index * HOUR_MS);
+      buckets.push(hours[t.toISOString()] || 0);
+    }
+    result[loc] = buckets;
+  }
+  return result;
 }
 
 function buildHourlyBuckets(rows) {
@@ -341,11 +371,12 @@ export async function getStatistics() {
       ),
       databaseHelper.query(
         `SELECT date_trunc('hour', added_date) AS hour,
+                location,
                 status,
                 COUNT(*)::int AS count
            FROM sitespeed_io_test_runs
           WHERE added_date >= NOW() - INTERVAL '24 hours'
-          GROUP BY hour, status
+          GROUP BY hour, location, status
           ORDER BY hour`
       )
     ]);
@@ -354,7 +385,8 @@ export async function getStatistics() {
       last24h: tallyStatusRows(last24hResult.rows),
       last7d: tallyStatusRows(last7dResult.rows),
       last30d: tallyStatusRows(last30dResult.rows),
-      hourly: buildHourlyBuckets(hourlyResult.rows)
+      hourly: buildHourlyBuckets(hourlyResult.rows),
+      hourlyByLocation: buildHourlyByLocation(hourlyResult.rows)
     };
     statsCachedAt = now;
     return statsCache;

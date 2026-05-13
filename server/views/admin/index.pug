@@ -28,11 +28,19 @@ html(lang='en')
       // Pauses when the tab isn't visible (Page Visibility API) so we
       // don't keep hammering the server in background tabs. The "Updated
       // …s ago" indicator ticks every second between fetches.
+      //
+      // Visual feedback layered on top:
+      //   * data-rollup numbers are animated from their pre-swap value
+      //     to their post-swap value so the eye picks up "+1 pending"
+      //     instead of the number just teleporting.
+      //   * The refresh indicator pulses on each fetch start.
+      //   * body[data-stage="initial"] gates the bar-chart entrance so
+      //     it plays once on first paint, not on every refresh.
       (function () {
         var REFRESH_INTERVAL_MS = 15000;
+        var ROLLUP_MS = 420;
         var lastUpdatedAt = Date.now();
         var refreshing = false;
-        var intervalId = null;
 
         function setIndicator(text) {
           var el = document.getElementById('refresh-indicator');
@@ -44,9 +52,64 @@ html(lang='en')
           setIndicator(refreshing ? 'Updating…' : 'Updated ' + seconds + 's ago');
         }
 
+        function captureRollups() {
+          var map = {};
+          var nodes = document.querySelectorAll('[data-rollup]');
+          for (var i = 0; i < nodes.length; i++) {
+            var key = nodes[i].getAttribute('data-rollup');
+            var n = parseInt(nodes[i].textContent, 10);
+            map[key] = isNaN(n) ? 0 : n;
+          }
+          return map;
+        }
+
+        function prefersReducedMotion() {
+          return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        }
+
+        function animateNumber(el, from, to) {
+          if (prefersReducedMotion()) {
+            el.textContent = to;
+            return;
+          }
+          var start = performance.now();
+          function frame(now) {
+            var t = Math.min(1, (now - start) / ROLLUP_MS);
+            // easeOutCubic — quick start, gentle landing.
+            var eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = Math.round(from + (to - from) * eased);
+            if (t < 1) requestAnimationFrame(frame);
+          }
+          requestAnimationFrame(frame);
+        }
+
+        function applyRollups(prevMap) {
+          var nodes = document.querySelectorAll('[data-rollup]');
+          for (var i = 0; i < nodes.length; i++) {
+            var el = nodes[i];
+            var key = el.getAttribute('data-rollup');
+            var to = parseInt(el.textContent, 10);
+            if (isNaN(to)) continue;
+            var from = prevMap[key];
+            if (from === undefined || from === to) continue;
+            animateNumber(el, from, to);
+          }
+        }
+
+        function pulseIndicator() {
+          var el = document.getElementById('refresh-indicator');
+          if (!el) return;
+          el.classList.remove('is-refreshing');
+          // Force a reflow so the animation restarts even if the class
+          // was just toggled off and on within the same tick.
+          void el.offsetWidth;
+          el.classList.add('is-refreshing');
+        }
+
         async function refresh() {
           if (document.hidden || refreshing) return;
           refreshing = true;
+          pulseIndicator();
           tickIndicator();
           try {
             var res = await fetch('/admin/', {
@@ -64,7 +127,9 @@ html(lang='en')
               // buttons don't "jump out" mid-tab.
               var active = document.activeElement;
               var activeId = active && active.id ? active.id : null;
+              var prevRollups = captureRollups();
               current.innerHTML = fresh.innerHTML;
+              applyRollups(prevRollups);
               if (activeId) {
                 var restored = document.getElementById(activeId);
                 if (restored && typeof restored.focus === 'function') {
@@ -84,14 +149,19 @@ html(lang='en')
         document.addEventListener('DOMContentLoaded', function () {
           tickIndicator();
           setInterval(tickIndicator, 1000);
-          intervalId = setInterval(refresh, REFRESH_INTERVAL_MS);
+          setInterval(refresh, REFRESH_INTERVAL_MS);
+          // Let the staggered bar-chart entrance finish, then drop the
+          // gate so subsequent refreshes don't replay it.
+          setTimeout(function () {
+            document.body.removeAttribute('data-stage');
+          }, 1200);
         });
 
         document.addEventListener('visibilitychange', function () {
           if (!document.hidden) refresh();
         });
       })();
-  body
+  body(data-stage='initial')
     a.skip-link(href='#main') Skip to content
     header(role='banner')
       h1 Admin
@@ -106,28 +176,39 @@ html(lang='en')
             | DB #{health.database ? 'up' : 'down'}
           span.health-pill(class=(health.runnerCount > 0 ? 'is-ok' : 'is-warning') title='Connected testrunners')
             span.health-dot
-            | #{health.runnerCount} testrunner#{health.runnerCount === 1 ? '' : 's'}
-          span.health-pill.is-neutral(title='Jobs waiting across all queues') #{health.totalPending} pending
-          span.health-pill(class=(health.totalActive > 0 ? 'is-active' : 'is-neutral') title='Jobs running across all queues') #{health.totalActive} running
-          span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Failed jobs across all queues') #{health.totalFailed} failed
+            span(data-rollup='runnerCount')= health.runnerCount
+            |  testrunner#{health.runnerCount === 1 ? '' : 's'}
+          span.health-pill.is-neutral(title='Jobs waiting across all queues')
+            span(data-rollup='totalPending')= health.totalPending
+            |  pending
+          span.health-pill(class=(health.totalActive > 0 ? 'is-active' : 'is-neutral') title='Jobs running across all queues')
+            span(data-rollup='totalActive')= health.totalActive
+            |  running
+          span.health-pill(class=(health.totalFailed > 0 ? 'is-failed' : 'is-neutral') title='Failed jobs across all queues')
+            span(data-rollup='totalFailed')= health.totalFailed
+            |  failed
           span.health-version v#{health.serverVersion}
           span.refresh-indicator#refresh-indicator(aria-live='polite' title='Page auto-refreshes every 15 seconds; pauses when the tab is hidden')
       if stats
         h2.section-heading Activity
         .stats-section
           .stats-strip
-            mixin stats-card(label, t)
+            mixin stats-card(label, t, key)
               .stats-card
                 span.stats-label= label
-                span.stats-value #{t.total}
+                span.stats-value(data-rollup='stats-' + key + '-total')= t.total
                 span.stats-pcts
-                  span.stats-completed #{t.completed} completed
+                  span.stats-completed
+                    span(data-rollup='stats-' + key + '-completed')= t.completed
+                    |  completed
                   |  ·
-                  span.stats-failed #{t.failed} failed
-            +stats-card('Last hour', stats.lastHour)
-            +stats-card('Last 24 hours', stats.last24h)
-            +stats-card('Last 7 days', stats.last7d)
-            +stats-card('Last 30 days', stats.last30d)
+                  span.stats-failed
+                    span(data-rollup='stats-' + key + '-failed')= t.failed
+                    |  failed
+            +stats-card('Last hour', stats.lastHour, 'lastHour')
+            +stats-card('Last 24 hours', stats.last24h, 'last24h')
+            +stats-card('Last 7 days', stats.last7d, 'last7d')
+            +stats-card('Last 30 days', stats.last30d, 'last30d')
           -
             // Stacked bar chart: one bar per hour for the last 24 h.
             // Completed (green) sits on the baseline, failed (red) on
@@ -151,14 +232,14 @@ html(lang='en')
                   var yFailed = yCompleted - failedH;
                   var yOther = yFailed - otherH;
                   var tooltip = bucket.label + ':00 — ' + bucket.total + ' tests (' + bucket.completed + ' completed, ' + bucket.failed + ' failed, ' + bucket.other + ' other)';
-                g
+                g(style=`--bar-i: ${idx}`)
                   title #{tooltip}
                   if completedH > 0
-                    rect.stats-chart-completed(x=x y=yCompleted width=BAR_W height=completedH)
+                    rect.stats-chart-completed.bar-enter(x=x y=yCompleted width=BAR_W height=completedH)
                   if failedH > 0
-                    rect.stats-chart-failed(x=x y=yFailed width=BAR_W height=failedH)
+                    rect.stats-chart-failed.bar-enter(x=x y=yFailed width=BAR_W height=failedH)
                   if otherH > 0
-                    rect.stats-chart-other(x=x y=yOther width=BAR_W height=otherH)
+                    rect.stats-chart-other.bar-enter(x=x y=yOther width=BAR_W height=otherH)
                   if idx % 4 === 0 || idx === stats.hourly.length - 1
                     text.stats-chart-tick(x=(x + BAR_W / 2) y='128' text-anchor='middle') #{bucket.label}
             figcaption.stats-chart-legend
@@ -274,6 +355,7 @@ html(lang='en')
         .row.row-head(role='row')
           span.cell.idx(role='columnheader') #
           span.cell.name(role='columnheader') Queue
+          span.cell.queue-spark(role='columnheader' title='Tests added per hour over the last 24 h') 24 h
           span.cell.count(role='columnheader') Pending
           span.cell.count(role='columnheader') Active
           span.cell.count(role='columnheader') Failed
@@ -287,6 +369,25 @@ html(lang='en')
             var isInternal = internalQueues && internalQueues.has(queue);
             var hasWorker = isInternal || (servedQueues && servedQueues.has(queue));
             var showNoWorker = !isInternal && !hasWorker && pending > 0;
+            var spark = queueSparklines && queueSparklines[queue];
+            var sparkTotal = spark ? spark.reduce(function (a, b) { return a + b; }, 0) : 0;
+            var sparkPoints = '';
+            var sparkArea = '';
+            if (spark && sparkTotal > 0) {
+              var SP_W = 96, SP_H = 20, SP_PAD = 2;
+              var maxV = 1;
+              for (var v of spark) { if (v > maxV) maxV = v; }
+              var usable = SP_H - SP_PAD * 2;
+              var step = spark.length > 1 ? SP_W / (spark.length - 1) : 0;
+              var pts = [];
+              for (var i = 0; i < spark.length; i++) {
+                var px = (i * step).toFixed(1);
+                var py = (SP_PAD + (1 - spark[i] / maxV) * usable).toFixed(1);
+                pts.push(px + ',' + py);
+              }
+              sparkPoints = pts.join(' ');
+              sparkArea = '0,' + SP_H + ' ' + sparkPoints + ' ' + SP_W + ',' + SP_H;
+            }
           .row(role='row')
             span.cell.idx(role='cell') #{index+1}
             code.cell.name(role='cell')
@@ -294,6 +395,13 @@ html(lang='en')
               if showNoWorker
                 |
                 span.tag.tag-warning(title='No connected testrunner is serving this queue') no worker
+            span.cell.queue-spark(role='cell')
+              if sparkPoints
+                svg.queue-spark-svg(width='96' height='20' viewbox='0 0 96 20' preserveaspectratio='none' aria-label=`Last 24 h: ${sparkTotal} tests`)
+                  polyline.queue-spark-area(points=sparkArea)
+                  polyline.queue-spark-line(points=sparkPoints)
+              else
+                span.queue-spark-empty(title='No tests recorded for this queue in the last 24 h') —
             span.cell.count(role='cell' class=(pending === 0 ? 'is-empty' : 'has-items'))
               if pending === 0
                 | empty
