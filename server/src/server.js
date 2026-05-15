@@ -30,8 +30,11 @@ async function setActiveStatus(jobid) {
   return updateStatus(jobid, 'active');
 }
 
-async function setFailedStatus(jobid) {
-  return updateStatus(jobid, 'failed');
+async function setFailedStatus(jobid, error) {
+  // Bull's global:failed event passes the failedReason string as the
+  // second argument — persist it so /admin can show why the job died
+  // even after Bull evicts the failed job per `removeOnFail`.
+  return updateStatus(jobid, 'failed', error);
 }
 
 function setupLogging() {
@@ -47,7 +50,8 @@ async function setupResultQueue() {
       job.data.runTime,
       job.data.result.pageSummaryUrl,
       job.data.result.browsertime,
-      job.data.result.har
+      job.data.result.har,
+      job.data.failedReason
     );
 
     const test = await getTest(job.data.id);

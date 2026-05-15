@@ -58,12 +58,28 @@ export async function saveTest(
 }
 
 /**
- * Update the status of the test
+ * Update the status of the test. When the new status is terminal
+ * (completed/failed) we also stamp finished_date so we can measure
+ * end-to-end duration; for failed transitions we capture the reason
+ * (Bull failedReason, caught error, etc.) so /admin can surface it
+ * without having to round-trip through Bull's retained-failures list.
  */
-export async function updateStatus(id, status) {
+export async function updateStatus(id, status, reason) {
   logger.info('Update %s with %s', id, status);
-  const update = 'UPDATE sitespeed_io_test_runs SET status = $1 WHERE id = $2';
-  const values = [status, id];
+  let update;
+  let values;
+  if (status === 'failed') {
+    update =
+      'UPDATE sitespeed_io_test_runs SET status = $1, finished_date = NOW(), failed_reason = $2 WHERE id = $3';
+    values = [status, reason || undefined, id];
+  } else if (status === 'completed') {
+    update =
+      'UPDATE sitespeed_io_test_runs SET status = $1, finished_date = NOW() WHERE id = $2';
+    values = [status, id];
+  } else {
+    update = 'UPDATE sitespeed_io_test_runs SET status = $1 WHERE id = $2';
+    values = [status, id];
+  }
   try {
     await DatabaseHelper.getInstance().query(update, values);
   } catch (error) {
@@ -107,7 +123,9 @@ export async function updateLabel(id, label) {
 }
 
 /**
- * Update a test.
+ * Update a test. failedReason is the testrunner-supplied explanation
+ * (exit code + tail of stderr) when status='failed'; for 'completed'
+ * runs it is undefined and the column stays NULL.
  */
 export async function updateTest(
   id,
@@ -115,10 +133,14 @@ export async function updateTest(
   runTime,
   resultURL,
   browsertimeJSON,
-  har
+  har,
+  failedReason
 ) {
+  // finished_date = NOW() captures the wall-clock time the result
+  // landed in the DB; pair with added_date / run_date to measure queue
+  // wait and run duration.
   const update =
-    'UPDATE sitespeed_io_test_runs SET status = $1, run_date = $2, result_url = $3, browsertime_result = $4,  har = $5 WHERE id = $6';
+    'UPDATE sitespeed_io_test_runs SET status = $1, run_date = $2, result_url = $3, browsertime_result = $4,  har = $5, finished_date = NOW(), failed_reason = $6 WHERE id = $7';
 
   const values = [
     status,
@@ -126,6 +148,7 @@ export async function updateTest(
     resultURL,
     JSON.stringify(browsertimeJSON),
     JSON.stringify(har),
+    failedReason || undefined,
     id
   ];
   try {

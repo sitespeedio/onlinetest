@@ -126,7 +126,8 @@ export default async function runJob(job) {
         result: testResult.result,
         id: job.id,
         status: testResult.exitCode === 0 ? 'completed' : 'failed',
-        runTime
+        runTime,
+        failedReason: testResult.failedReason
       },
       {
         removeOnComplete,
@@ -213,6 +214,7 @@ async function runDocker(
   dockerLogger
 ) {
   let exitCode = 0;
+  let failedReason;
   try {
     const process = execa('docker', parameters);
 
@@ -230,16 +232,33 @@ async function runDocker(
   } catch (error) {
     logger.error('Could not run Docker:' + error);
     exitCode = error.exitCode;
+    failedReason = buildFailedReason(error);
   }
 
   try {
     const result = await readFile(join(workingDirectory, resultFileName));
-    return { result: JSON.parse(result.toString()), exitCode };
+    return { result: JSON.parse(result.toString()), exitCode, failedReason };
   } catch {
-    return { result: {}, exitCode };
+    return { result: {}, exitCode, failedReason };
   } finally {
     await cleanupWorkingDirectory(workingDirectory, logger);
   }
+}
+
+// Same shape as the non-docker runner: exit code (always present)
+// plus the last non-empty line of stderr when available. The wrapped
+// process is sitespeed.io running inside the container, so its stderr
+// surfaces here; if docker itself fails (image pull, daemon issues)
+// the same path captures docker's stderr instead.
+function buildFailedReason(error) {
+  const tail = (error.stderr || '')
+    .split('\n')
+    .map(line => line.trim())
+    .findLast(Boolean);
+  let reason = `Test runner exited with code ${error.exitCode}`;
+  if (tail) reason += `: ${tail}`;
+  if (reason.length > 500) reason = reason.slice(0, 497) + '...';
+  return reason;
 }
 
 async function cleanupWorkingDirectory(directory, logger) {

@@ -2,6 +2,16 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 4.0.0 - 2026-05-15
+
+**Major bump because the database schema changes** — existing deployments must run `server/database/migrations/001-add-failure-fields.sh apply` (or the equivalent SQL by hand) against the live Postgres *before* rolling the server forward, otherwise the new `UPDATE` statements will fail. The migration is metadata-only on Postgres 11+ so it runs in milliseconds with no table rewrite.
+
+Schema and testrunner plumbing so `/admin` can stop relying on Bull's retained-failures list as the source of truth for failed tests. No user-visible UI change yet — that lands in the follow-up that switches the Recent failures table to the database.
+
+### Added
+* New `failed_reason TEXT` and `finished_date TIMESTAMP` columns on `sitespeed_io_test_runs`. `failed_reason` is populated from three paths the DB previously knew nothing about: Bull's `global:failed` event (the testrunner threw), the queue-down submit path in `add-test.js` (Redis unreachable when the test was queued), and the result-queue path when sitespeed.io itself exits non-zero (testrunner now sends `Test runner exited with code N: <last line of stderr>`, capped at 500 chars). `finished_date` is stamped on every terminal transition, so end-to-end duration can be derived as `finished_date - added_date` and run duration as `finished_date - run_date` (which is the browsertime *start* timestamp, not finish) [#TBD](https://github.com/sitespeedio/onlinetest/pull/TBD).
+* `server/database/migrations/` directory establishes the convention for schema changes against existing deployments — `setup.sql` only runs on a fresh Postgres data dir, so live databases need ALTERs applied separately. Each migration ships with a `.sh` helper (`check` / `backup` / `dry-run` / `apply` / `verify` / `rollback`) that runs `psql` inside the compose Postgres container, plus a README documenting the manual path. Existing deployments must run `001-add-failure-fields.sh apply` before rolling the server forward [#TBD](https://github.com/sitespeedio/onlinetest/pull/TBD).
+
 ## 3.8.0 - 2026-05-15
 
 Picks up sitespeed.io 41 as the default test engine, plus a `/admin` accuracy fix and a vendored compare-bundle refresh.

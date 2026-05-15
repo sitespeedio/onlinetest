@@ -55,7 +55,8 @@ export default async function runJob(job) {
         result: testResult.result,
         id: job.id,
         status: testResult.exitCode === 0 ? 'completed' : 'failed',
-        runTime
+        runTime,
+        failedReason: testResult.failedReason
       },
       {
         removeOnComplete,
@@ -156,6 +157,7 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   }
 
   let exitCode = 0;
+  let failedReason;
   try {
     const process = execa(binary, parameters, environment);
     process.stdout.on('data', chunk => {
@@ -173,15 +175,32 @@ async function runTest(job, workingDirectory, configFileName, logger) {
     logger.error(`Stdout: ${error.stdout}`);
     logger.error(`Stderr: ${error.stderr}`);
     exitCode = error.exitCode;
+    failedReason = buildFailedReason(error);
   }
   try {
     const result = await readFile(
       join(workingDirectory, `${job.queue.name}-${job.id}-result.json`)
     );
-    return { result: JSON.parse(result.toString()), exitCode };
+    return { result: JSON.parse(result.toString()), exitCode, failedReason };
   } catch {
-    return { result: {}, exitCode };
+    return { result: {}, exitCode, failedReason };
   }
+}
+
+// Build a short, single-line explanation of why the test runner
+// exited non-zero, suitable for the failed_reason DB column. Prefer
+// the last non-empty line of stderr (execa buffers stderr by default
+// even when piped) but always include the exit code as a fallback —
+// some failures produce no stderr output at all (kills, OOM, etc.).
+function buildFailedReason(error) {
+  const tail = (error.stderr || '')
+    .split('\n')
+    .map(line => line.trim())
+    .findLast(Boolean);
+  let reason = `Test runner exited with code ${error.exitCode}`;
+  if (tail) reason += `: ${tail}`;
+  if (reason.length > 500) reason = reason.slice(0, 497) + '...';
+  return reason;
 }
 
 async function setupParameters(job, workingDirectory, configFileName) {

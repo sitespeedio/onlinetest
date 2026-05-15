@@ -238,7 +238,7 @@ export async function addTest(request) {
         `Setting status to failed for ${jobId} because queue is down`,
         error
       );
-      await updateStatus(jobId, 'failed');
+      await updateStatus(jobId, 'failed', error.message);
       throw new Error('Could not connect to queue');
     }
 
@@ -330,7 +330,7 @@ export async function addTestFromAPI(
       `Setting status to failed for ${jobId} because queue is down`,
       error
     );
-    await updateStatus(jobId, 'failed');
+    await updateStatus(jobId, 'failed', error.message);
     throw new Error('Could not connect to queue');
   }
 
