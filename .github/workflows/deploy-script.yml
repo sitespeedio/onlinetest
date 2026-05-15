@@ -1,0 +1,74 @@
+name: Deploy script
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+jobs:
+  install-logic:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+      with:
+        egress-policy: audit
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+    - name: ShellCheck update.sh
+      run: shellcheck deploy/update.sh
+    - name: Run install (no-start)
+      run: ./deploy/update.sh --no-start --mode all-in-one --domain=test.localhost
+    - name: Verify .env state
+      run: |
+        set -e
+        if grep -q CHANGE_ME .env; then
+          echo "CHANGE_ME placeholders still present in .env:"
+          grep CHANGE_ME .env
+          exit 1
+        fi
+        grep -q "^DOMAIN=test.localhost$" .env
+        grep -q '^RESULT_BASE_URL="https://test.localhost/sitespeedio"' .env
+        grep -q '^SITESPEED.IO_HTML_HOMEURL="https://test.localhost/"' .env
+    - name: Verify redis.conf has no requirepass
+      run: |
+        if grep -qE "^[[:space:]]*requirepass[[:space:]]" redis-conf/redis.conf; then
+          echo "requirepass line found in redis-conf/redis.conf — should have been removed"
+          exit 1
+        fi
+    - name: Snapshot .env
+      run: cp .env .env.first-run
+    - name: Re-run install (idempotency)
+      run: ./deploy/update.sh --no-start
+    - name: Verify .env unchanged on re-run
+      run: diff .env .env.first-run
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Harden Runner
+      uses: step-security/harden-runner@5ef0c079ce82195b2a36a210272d6b661572d83e # v2.14.2
+      with:
+        egress-policy: audit
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+    - name: Run install + start (all-in-one with internal TLS)
+      # test.localhost matches Caddy's automatic internal-CA rule, so Caddy
+      # issues a self-signed cert from its local CA without contacting
+      # Let's Encrypt. curl -k below ignores the resulting trust failure.
+      run: ./deploy/update.sh --mode all-in-one --domain=test.localhost
+    - name: Wait for HTTPS endpoint to respond
+      run: |
+        for i in $(seq 1 60); do
+          if curl -fsS --resolve test.localhost:443:127.0.0.1 -k https://test.localhost/api/ >/dev/null 2>&1; then
+            echo "Server reachable after ${i} attempts"
+            exit 0
+          fi
+          sleep 5
+        done
+        echo "Server did not respond on https://test.localhost/api/ in time"
+        exit 1
+    - name: Container status on failure
+      if: failure()
+      run: |
+        docker compose -f deploy/docker-compose.production.yml ps || true
+        docker compose -f deploy/docker-compose.production.yml logs --tail=200 || true
