@@ -349,6 +349,13 @@ case "$MODE" in
     ;;
 esac
 
+# Compose v2 reads .env from the *project directory* (defaults to the dir of
+# the first -f file), not the CWD. The production compose files live under
+# deploy/ but .env is at the repo root — so we point compose at it explicitly.
+# Only do this once .env exists; on first run the install path creates it
+# before we ever call compose.
+COMPOSE_FILES=(--env-file .env "${COMPOSE_FILES[@]}")
+
 RUN_MODE="$(detect_run_mode)"
 
 if [ "$RUN_MODE" = "install" ]; then
