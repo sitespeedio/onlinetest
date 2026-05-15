@@ -224,6 +224,24 @@ export async function getTestHar(id) {
   }
 }
 
+/**
+ * Most-recent failed test runs within the last 24 h, ordered newest-first.
+ * Bounded to the same 24 h window as the health pill so the table and the
+ * pill always agree on what counts as "recent" — unlike Bull's retained-
+ * failures list, which accumulates indefinitely and never decays.
+ */
+export async function getRecentFailures(limit) {
+  const select =
+    "SELECT id, location, url, scripting_name, label, failed_reason, finished_date FROM sitespeed_io_test_runs WHERE status = 'failed' AND finished_date >= NOW() - INTERVAL '24 hours' ORDER BY finished_date DESC LIMIT $1";
+  try {
+    const result = await DatabaseHelper.getInstance().query(select, [limit]);
+    return result.rows;
+  } catch (error) {
+    logError('Could not get recent failures', error);
+    return [];
+  }
+}
+
 // Cheap one-shot DB ping for the admin health banner. Unlike
 // testConnection() (which retries with a 5s delay and is meant for
 // startup), this returns false fast on any failure so it won't stall

@@ -421,7 +421,9 @@ block content
                           a(role='button' data-add='label:' + test.label title='Add label to search') #{test.label}
                         if nconf.get('search:showSlug') === true
                           a(role='button' data-add='slug:' + test.slug title='Add slug to search') #{test.slug}
-                    td.run-date #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
+                    - var runMs = (test.run_date && test.finished_date) ? (new Date(test.finished_date) - new Date(test.run_date)) : null;
+                    - var runLabel = (runMs != null && runMs >= 0) ? (runMs < 1000 ? runMs + 'ms' : runMs < 60000 ? (runMs/1000).toFixed(1) + 's' : Math.floor(runMs/60000) + 'm ' + Math.round((runMs%60000)/1000) + 's') : null;
+                    td.run-date(title=runLabel ? 'Run time: ' + runLabel : undefined) #{dayjs(test.run_date?test.run_date:test.added_date).format(nconf.get('dateformat'))}
                     td
                       a(role='button' data-add='location:' + test.location title='Add location to search') #{test.location}
                     td.is-capitalized
