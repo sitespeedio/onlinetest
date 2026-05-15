@@ -22,14 +22,19 @@ jobs:
     - name: Verify .env state
       run: |
         set -e
-        if grep -q CHANGE_ME .env; then
-          echo "CHANGE_ME placeholders still present in .env:"
-          grep CHANGE_ME .env
+        if grep -qE '^[A-Z_]+=CHANGE_ME_' .env; then
+          echo "CHANGE_ME_* placeholders still present in .env:"
+          grep -E '^[A-Z_]+=CHANGE_ME_' .env
           exit 1
         fi
         grep -q "^DOMAIN=test.localhost$" .env
         grep -q '^RESULT_BASE_URL="https://test.localhost/sitespeedio"' .env
         grep -q '^SITESPEED.IO_HTML_HOMEURL="https://test.localhost/"' .env
+        # Exactly one line per derived variable (regression guard for the
+        # commented-out example duplicate that bit us in CI).
+        test "$(grep -cE '^DOMAIN=' .env)" = "1"
+        test "$(grep -cE '^RESULT_BASE_URL=' .env)" = "1"
+        test "$(grep -cE '^SITESPEED.IO_HTML_HOMEURL=' .env)" = "1"
     - name: Verify redis.conf has no requirepass
       run: |
         if grep -qE "^[[:space:]]*requirepass[[:space:]]" redis-conf/redis.conf; then

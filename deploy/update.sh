@@ -116,12 +116,14 @@ require_openssl() {
 
 # ─── install-path helpers ─────────────────────────────────────────────────────
 
-# Echoes "install" if this looks like a first run (no .env, or any CHANGE_ME
-# placeholder still present); echoes "update" otherwise.
+# Echoes "install" if this looks like a first run (no .env, or any
+# VARNAME=CHANGE_ME_… placeholder still present); echoes "update" otherwise.
+# The pattern is intentionally strict so comment text mentioning CHANGE_ME
+# (e.g. in .env.example's header) does not trigger an install loop.
 detect_run_mode() {
   if [ ! -f .env ]; then
     echo install
-  elif grep -q 'CHANGE_ME' .env; then
+  elif grep -qE '^[A-Z_]+=CHANGE_ME_' .env; then
     echo install
   else
     echo update
@@ -172,16 +174,26 @@ set_env_domain() {
   trap 'rm -f "$tmp"' RETURN
 
   local saw_domain=0 saw_result=0 saw_home=0
+  # .env.example may contain both an uncommented line and a commented example
+  # for the same variable. Replace only the first match for each variable;
+  # drop any subsequent matches so the resulting .env has exactly one line
+  # per variable.
   while IFS= read -r line || [ -n "$line" ]; do
     if [[ "$line" =~ ^DOMAIN= ]] || [[ "$line" =~ ^[[:space:]]*#[[:space:]]*DOMAIN= ]]; then
-      printf 'DOMAIN=%s\n' "$value" >> "$tmp"
-      saw_domain=1
+      if [ "$saw_domain" -eq 0 ]; then
+        printf 'DOMAIN=%s\n' "$value" >> "$tmp"
+        saw_domain=1
+      fi
     elif [[ "$line" =~ ^RESULT_BASE_URL= ]] || [[ "$line" =~ ^[[:space:]]*#[[:space:]]*RESULT_BASE_URL= ]]; then
-      printf 'RESULT_BASE_URL="%s"\n' "$result_url" >> "$tmp"
-      saw_result=1
+      if [ "$saw_result" -eq 0 ]; then
+        printf 'RESULT_BASE_URL="%s"\n' "$result_url" >> "$tmp"
+        saw_result=1
+      fi
     elif [[ "$line" =~ ^SITESPEED\.IO_HTML_HOMEURL= ]] || [[ "$line" =~ ^[[:space:]]*#[[:space:]]*SITESPEED\.IO_HTML_HOMEURL= ]]; then
-      printf 'SITESPEED.IO_HTML_HOMEURL="%s"\n' "$home_url" >> "$tmp"
-      saw_home=1
+      if [ "$saw_home" -eq 0 ]; then
+        printf 'SITESPEED.IO_HTML_HOMEURL="%s"\n' "$home_url" >> "$tmp"
+        saw_home=1
+      fi
     else
       printf '%s\n' "$line" >> "$tmp"
     fi
