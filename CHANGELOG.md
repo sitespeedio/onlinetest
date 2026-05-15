@@ -2,6 +2,18 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 3.8.0 - 2026-05-15
+
+Picks up sitespeed.io 41 as the default test engine, plus a `/admin` accuracy fix and a vendored compare-bundle refresh.
+
+### Changed
+* Default sitespeed.io Docker image bumped from 40 to 41 in `.env.example`. The README "Update sitespeed.io version" snippets now reference 41 / 42 as the current and next-major tags.
+* Vendored compare bundle rolled to pagexray 5.0.0 (HTTP/3 detection, case-insensitive `Cache-Control` directives, `missingCompression` over-count fix). The bundle shrinks from ~28 KB to ~17 KB thanks to pagexray's switch from uglify-es to terser [#262](https://github.com/sitespeedio/onlinetest/pull/262).
+
+### Fixed
+* `/admin` "failed" pill is now a real health signal: it counts failed test runs in the last 24 h from Postgres instead of Bull's `getJobCounts()`, which was capped by `removeOnFail` and only decayed on a successful retry — so the pill accumulated weeks of stale failures and shouted "13 failed" next to activity cards that correctly showed 0 in 24 h [#261](https://github.com/sitespeedio/onlinetest/pull/261).
+* Compare cookie list no longer renders domains like `.example.com\nUIDR=...` when a HAR concatenates multiple `Set-Cookie` response headers into one newline-joined value — the next cookie's name was leaking into the previous cookie's `Domain=` attribute. Picked up via the pagexray bump [#262](https://github.com/sitespeedio/onlinetest/pull/262).
+
 ## 3.7.0 - 2026-05-13
 
 More `/admin` polish — per-queue trend lines, small motion cues, and a couple of testrunner re-registration fixes.
