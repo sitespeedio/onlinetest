@@ -88,6 +88,28 @@ export async function updateStatus(id, status, reason) {
 }
 
 /**
+ * IDs of tests stuck at status='active' for longer than the given
+ * grace window. Used by the periodic reconcile pass to find rows that
+ * a dead testrunner left behind — a healthy worker updates the row
+ * within seconds, so anything still 'active' minutes later is a
+ * candidate to re-check against Bull's actual state.
+ */
+export async function getStaleActiveTestIds(graceMinutes) {
+  const select = `SELECT id FROM sitespeed_io_test_runs
+                   WHERE status = 'active'
+                     AND added_date < NOW() - ($1 || ' minutes')::interval`;
+  try {
+    const result = await DatabaseHelper.getInstance().query(select, [
+      String(graceMinutes)
+    ]);
+    return result.rows.map(row => row.id);
+  } catch (error) {
+    logError('Could not list stale active tests', error);
+    return [];
+  }
+}
+
+/**
  * Get the latests tests.
  */
 export async function getLatestTests(limit, page) {

@@ -57,15 +57,44 @@ result.get('/:id', async function (request, response) {
             }
           }
         }
+
+        // Bull keeps a job in the 'active' set until its periodic
+        // stalled-jobs check moves it back to 'wait' — up to
+        // ~stalledInterval (default 30 s) after the worker dies.
+        // During that window getState() still says 'active' even
+        // though no live worker is touching it, and running.pug would
+        // happily render "Streaming logs · running" over stale log
+        // lines from the dead worker. Cheap inline fix: peek at the
+        // job's lock key in Redis. No lock owner means the worker
+        // has died and Bull hasn't caught up yet — render the
+        // stalled message instead.
+        let stalled = false;
+        if (status === 'active') {
+          try {
+            const lockOwner = await workQueue.client.get(job.lockKey());
+            if (!lockOwner) {
+              stalled = true;
+            }
+          } catch (error) {
+            logger.error('Lock probe failed for %s: %s', id, error.message);
+          }
+        }
+
+        let message;
+        if (stalled) {
+          message = getText('index.stalledretrying');
+        } else if (count > 1) {
+          message = getText('index.inqueue', count, placeInQueue);
+        } else {
+          message = getText('index.waitingtorunnext');
+        }
+
         response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
         response.header('Pragma', 'no-cache');
         response.header('Expires', 0);
         return response.render('running', {
-          status: status,
-          message:
-            count > 1
-              ? getText('index.inqueue', count, placeInQueue)
-              : getText('index.waitingtorunnext'),
+          status: stalled ? 'stalled' : status,
+          message,
           id: id,
           url: testConfig.url,
           nconf,

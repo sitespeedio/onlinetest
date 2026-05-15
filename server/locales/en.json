@@ -30,6 +30,7 @@
   "index.waitingtestrunners": "Waiting for test runners to come online.",
   "index.refresh": "Refresh",
   "index.waitingtorunnext": "Waiting to run next.",
+  "index.stalledretrying": "The previous test runner stopped before this test finished. The queue will hand it to the next available worker for a retry.",
   "index.inqueue": "There are %s jobs in the queue and your job is placed %s in the queue",
   "search.button.lasthour": "Last hour",
   "search.button.today": "Today",
