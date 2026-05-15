@@ -8,12 +8,14 @@ import {
   getExistingQueueNames,
   getQueueCounts,
   getActiveJobs,
-  getFailedJobs,
-  retryFailedJob,
   isRedisHealthy
 } from '../../../queuehandler.js';
 import { getTestRunners } from '../../../testrunners.js';
-import { isDatabaseHealthy, getStatistics } from '../../../database/index.js';
+import {
+  isDatabaseHealthy,
+  getStatistics,
+  getRecentFailures
+} from '../../../database/index.js';
 
 const require = createRequire(import.meta.url);
 const serverVersion = require('../../../../package.json').version;
@@ -86,35 +88,23 @@ async function buildAdminView() {
   }
   activeJobs.sort((a, b) => (a.startedAt || 0) - (b.startedAt || 0));
 
-  // Recent failures across non-internal queues. Bull's `failedReason` is
-  // the first line of whatever the testrunner threw. Truncate it for the
-  // table so a 4-line stack trace doesn't blow up the layout; the full
-  // log is one click away on /result/<id>.
-  const failedJobs = [];
-  for (const queueName of queues) {
-    if (INTERNAL_QUEUES.has(queueName)) continue;
-    const jobs = await getFailedJobs(queueName, 20);
-    for (const job of jobs) {
-      const finishedAt = job.finishedOn;
-      let reason = (job.failedReason || '').split('\n')[0].trim();
-      if (reason.length > 160) reason = reason.slice(0, 157) + '…';
-      failedJobs.push({
-        id: String(job.id),
-        queue: queueName,
-        target:
-          job.data?.scriptingName || job.data?.url || job.data?.label || '',
-        reason,
-        attemptsMade: job.attemptsMade || 0,
-        finishedAt,
-        secondsAgo: finishedAt
-          ? Math.max(0, Math.round((now - finishedAt) / 1000))
-          : undefined
-      });
-    }
-  }
-  failedJobs.sort((a, b) => (b.finishedAt || 0) - (a.finishedAt || 0));
-  // Show at most this many across all queues so the page stays scannable.
-  const recentFailures = failedJobs.slice(0, 25);
+  const failureRows = await getRecentFailures(25);
+  const recentFailures = failureRows.map(row => {
+    let reason = (row.failed_reason || '').split('\n')[0].trim();
+    if (reason.length > 160) reason = reason.slice(0, 157) + '…';
+    const finishedAt = row.finished_date
+      ? new Date(row.finished_date).getTime()
+      : undefined;
+    return {
+      id: String(row.id),
+      target: row.scripting_name || row.url || row.label || '',
+      reason,
+      finishedAt,
+      secondsAgo: finishedAt
+        ? Math.max(0, Math.round((now - finishedAt) / 1000))
+        : undefined
+    };
+  });
 
   // Pull DB-backed activity stats first — the health banner uses the
   // 24 h failed count from here. The helper itself caches for 60s so
@@ -206,16 +196,4 @@ admin.post('/', async function (request, response) {
   await queue.empty();
   response.set('Cache-Control', 'no-store');
   renderAdmin(response, await buildAdminView());
-});
-
-// Re-enqueue a failed job. Bull's job.retry() pushes it back to the
-// queue's wait list, so the next available testrunner on that queue
-// picks it up and runs it again — same data, same attempt counter.
-admin.post('/retry', async function (request, response) {
-  const queueName = request.body.queueName;
-  const jobId = request.body.jobId;
-  if (queueName && jobId) {
-    await retryFailedJob(queueName, jobId);
-  }
-  response.redirect('/admin/');
 });
