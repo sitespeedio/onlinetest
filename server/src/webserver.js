@@ -121,7 +121,13 @@ function setupExpressServer() {
           defaultSrc: ["'self'"],
           scriptSrc: ["'self'", "'unsafe-inline'"],
           styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:'],
+          // Compare HARs carry absolute URLs to the screenshots, filmstrip
+          // frames and video on the originating sitespeed.io result server
+          // (`_meta.screenshot` / `_meta.filmstrip[].file` / `_meta.video`).
+          // Allow any HTTPS origin for those media types so cross-origin
+          // result servers render instead of showing empty image/video slots.
+          imgSrc: ["'self'", 'data:', 'https:'],
+          mediaSrc: ["'self'", 'https:'],
           fontSrc: ["'self'", 'data:'],
           connectSrc: ["'self'"],
           frameAncestors: ["'none'"],
