@@ -75,10 +75,22 @@ export class SitespeedioTestRunner {
 
     // Heartbeat. Reuses the existing `testrunners` queue used by start/stop;
     // the server treats a missing heartbeat as a dead runner and prunes us.
+    // The serverConfig rides along so a server that no longer knows us
+    // (pruned during a Redis blip, or restarted while our start broadcast
+    // was lost) can re-register us instead of ignoring the heartbeat.
     const testRunnerQueue = await queueHandler.getQueue('testrunners');
     heartbeatTimer = setInterval(() => {
       testRunnerQueue
-        .add({ type: 'heartbeat', hostname: serverConfig.hostname })
+        .add(
+          {
+            type: 'heartbeat',
+            hostname: serverConfig.hostname,
+            serverConfig: serverConfig
+          },
+          // Heartbeats fire every 30s and carry the full serverConfig —
+          // without cleanup the completed jobs pile up in Redis forever.
+          { removeOnComplete: true, removeOnFail: true }
+        )
         .catch(error =>
           logger.error('Failed to publish heartbeat: %s', error.message)
         );
