@@ -17,9 +17,9 @@ services:
         condition: service_healthy
       postgresql:
         condition: service_healthy
-      minio:
+      seaweedfs:
         condition: service_healthy
-      mc:
+      seaweedfs-init:
         condition: service_completed_successfully
     healthcheck:
       test: [
