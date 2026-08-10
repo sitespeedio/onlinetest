@@ -24,7 +24,7 @@ jobs:
     - name: Build testrunner
       run: docker build --load  --tag sitespeedio/testrunner:local-action -f ./testrunner/Dockerfile testrunner
     - name: Pull sitespeed.io
-      run: docker pull sitespeedio/sitespeed.io:41
+      run: docker pull sitespeedio/sitespeed.io:42
     - name: Prepare env
       run: cp .env.example .env
     - name: Start dependencies
