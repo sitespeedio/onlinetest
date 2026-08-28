@@ -19,7 +19,7 @@ services:
         condition: service_healthy
   redis:
     image: redis:${REDIS_DOCKER_VERSION}
-    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD}"]
     restart: always
     networks:
       - skynet
