@@ -49,7 +49,7 @@ services:
       timeout: 5s
       retries: 30
   minio:
-    image: minio/minio:${MINIO_DOCKER_VERSION}
+    image: quay.io/minio/minio:${MINIO_DOCKER_VERSION}
     volumes:
       - minio-data:/data
     environment:
@@ -65,7 +65,7 @@ services:
       timeout: 3s
       retries: 30
   mc:
-    image: minio/mc:${MINIO_MC_DOCKER_VERSION}
+    image: quay.io/minio/mc:${MINIO_MC_DOCKER_VERSION}
     depends_on:
       minio:
         condition: service_healthy

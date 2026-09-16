@@ -2,7 +2,11 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
-## 4.0.1 - 2026-05-22
+## 4.0.2 - 2026-09-16
+
+### Fixed
+* Pull the MinIO images from `quay.io` instead of Docker Hub. MinIO removed its images from Docker Hub after archiving the community edition, so a fresh `docker compose up` could no longer start result storage. The quay.io mirror still serves the same pinned releases, and no `.env` changes are needed. This keeps 4.x deployable until result storage moves to SeaweedFS [#270](https://github.com/sitespeedio/onlinetest/pull/270).
+
 
 ### Fixed
 * Compare page now renders screenshots, the filmstrip and the run video when the HAR points at a different sitespeed.io result server (e.g. wikiperformance comparing HARs that live on wikimedia.sitespeed.io). The helmet CSP only allowed `'self'` for images and — via the inherited `default-src` — for video, so the cross-origin URLs the HAR carries in `_meta.screenshot` / `_meta.filmstrip[].file` / `_meta.video` were blocked and the slots came up empty. `img-src` now also allows any `https:` origin and a new `media-src` does the same for video [#269](https://github.com/sitespeedio/onlinetest/pull/269).
