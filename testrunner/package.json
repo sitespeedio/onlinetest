@@ -1,6 +1,6 @@
 {
   "name": "@sitespeed.io/testrunner",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "A test runner for sitespeed.io server.",
   "type": "module",
   "exports": "./app.js",
