@@ -21,6 +21,7 @@ import { result } from './routes/html/result.js';
 import { search } from './routes/html/search.js';
 import { har } from './routes/html/har.js';
 import { api } from './routes/api/api.js';
+import { slack } from './routes/slack/slack.js';
 
 import { BasicAuth } from './middleware/basicauth.js';
 import { error404, error500 } from './middleware/errorhandler.js';
@@ -180,6 +181,13 @@ function setupExpressServer() {
     );
   } else {
     logger.warn('Running /admin without basic auth');
+  }
+
+  // The Slack route needs the raw body to verify the signature, so add it
+  // before the generic body parser. It is below /api/ to skip basic auth.
+  if (nconf.any('slack:signingsecret', 'slack:signingSecret')) {
+    logger.info('Enable the Slack command');
+    app.use('/api/slack', slack);
   }
 
   app.use(

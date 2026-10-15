@@ -25,6 +25,24 @@ api:
   # The status endpoint stays open because the GUI's running page polls it.
   protectReads: false
 
+# Add tests from Slack with a slash command. Create a Slack app with a slash
+# command that posts to https://YOUR_SERVER/api/slack/command. The command is
+# only enabled when signingSecret is set. Tests use the same domain check
+# (validTestDomains) as the GUI.
+slack:
+  # The signing secret of your Slack app
+  signingSecret:
+  # The test runner location to use (location.name in the testrunner config)
+  location:
+  # The public URL of this server, used to link to the test while it runs
+  serverUrl:
+  # Only accept commands from these channel ids. Empty means all channels.
+  allowedChannels: []
+  # The label for tests from Slack, so you can search for them
+  label: slack
+  # The connectivity profile for the tests
+  connectivity: native
+
 # Regular expression that needs to match the domain that you test. If there's a miss match, no tests will run.
 validTestDomains: "^(?:[\\w-]+\\.)*wikipedia\\.org$"
 
