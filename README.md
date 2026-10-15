@@ -102,6 +102,26 @@ The server exposes a REST API that the CLI uses under the hood. You can also cal
 | GET | `/api/har/:testId` | Get the HAR file for a completed test |
 | POST | `/api/add` | Add a new test (used by the sitespeed.io CLI) |
 
+## Run tests from Slack
+
+You can add tests with a Slack slash command. The result is posted back to the channel when the test is done.
+
+1. Create a Slack app with a slash command (for example `/sitespeed`). Set the request URL to `https://YOUR_SERVER/api/slack/command`. The server must be reachable from the internet over HTTPS.
+2. Configure the `slack` block in the [server configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/server.yaml): at least `signingSecret` (from the Slack app) and `location` (the test runner to use). Add `allowedChannels` to only accept tests from some channels.
+3. Restart the server.
+
+Then run a test from Slack:
+
+```
+/sitespeed https://www.sitespeed.io
+/sitespeed https://www.sitespeed.io firefox runs=5
+/sitespeed https://www.sitespeed.io mobile replay runs=11
+```
+
+The options are `chrome`, `firefox` or `edge`, `mobile` (emulated mobile), `replay` (use WebPageReplay) and `runs=N` (1 to 21). Only these options are accepted, not other sitespeed.io parameters. The URL must match `validTestDomains`, like tests from the GUI.
+
+Slack lets the server post to a command for 30 minutes. If the test is still in the queue after that, the result is not posted, but you find it in the search with the `slack` label.
+
 ## Configuration
 
 The **[.env.example](https://github.com/sitespeedio/onlinetest/blob/main/.env.example)** has the configuration that you usually need to change/configure between different environments. If you use the .env file, it will automatically be picked up.

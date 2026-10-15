@@ -24,6 +24,7 @@ import {
   getStaleActiveTestIds
 } from './database/index.js';
 import DatabaseHelper from './database/databasehelper.js';
+import { notifySlack } from './util/slack.js';
 import { testsCompletedTotal, testsFailedTotal } from './metrics.js';
 
 const logger = getLogger('sitespeedio.server');
@@ -146,6 +147,12 @@ async function setupResultQueue() {
     );
 
     const test = await getTest(job.data.id);
+    await notifySlack(
+      job.data.id,
+      job.data.status,
+      job.data.result.pageSummaryUrl,
+      test?.url
+    );
     if (test) {
       const labels = {
         test_type: test.test_type,
