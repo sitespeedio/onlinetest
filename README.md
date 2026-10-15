@@ -47,7 +47,7 @@ Follow these steps to quickly set up and run the online version of sitespeed.io 
     cp .env.example .env
     ```
 
-4. **Start the Docker containers (Redis/PostgreSQL/MinIO/sitespeed.io server and testrunner) on the same server:**
+4. **Start the Docker containers (Redis/PostgreSQL/SeaweedFS/sitespeed.io server and testrunner) on the same server:**
 
     ```bash
     docker compose -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up
@@ -131,7 +131,7 @@ Running on your own machine the result is served from localhost. If you deploy o
 
 ```RESULT_BASE_URL="http://127.0.0.1:9000/sitespeedio"```
 
-By default the result is served by [MinIO](https://min.io) on port 9000. If you serve the result on the URL `https://sitespeed.domain.com` you change your result base to: ```RESULT_BASE_URL="https://sitespeed.domain.com/sitespeedio"```
+By default the result is served by [SeaweedFS](https://github.com/seaweedfs/seaweedfs) on port 9000. If you serve the result on the URL `https://sitespeed.domain.com` you change your result base to: ```RESULT_BASE_URL="https://sitespeed.domain.com/sitespeedio"```
 
 #### Update server and testrunner
 You can configure which version of the server and the testrunner you want to use. You can either use latest stable version or specify a specific tag. In the *.env* file you configure which Docker tag to use.
@@ -224,7 +224,7 @@ The setup is split into three compose files ([docker-compose.dependencies.yml](h
 
 * **A Database**: - [PostgreSQL](https://www.postgresql.org) - the open source database.
 
-* **A Test Result Storage**: - Somewhere to store test results. The default setup uses [MinIO](https://min.io), an open source implementation of S3 but you can use all the result storages that work with sitespeed.io: S3, Google Cloud Storage or your own storage where you can scp the result.
+* **A Test Result Storage**: - Somewhere to store test results. The default setup uses [SeaweedFS](https://github.com/seaweedfs/seaweedfs), an open source S3-compatible object store, but you can use all the result storages that work with sitespeed.io: S3, Google Cloud Storage or your own storage where you can scp the result.
 
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 
