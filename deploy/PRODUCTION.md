@@ -11,7 +11,7 @@ Both models use Docker Compose and the same `.env` configuration.
 
 ## Single-server deployment (with Caddy)
 
-All services (Redis, PostgreSQL, MinIO, the sitespeed.io server, testrunner, and Caddy) run on the same machine. Only ports 80 and 443 are exposed — Caddy handles TLS termination and proxies traffic to the server and MinIO.
+All services (Redis, PostgreSQL, SeaweedFS, the sitespeed.io server, testrunner, and Caddy) run on the same machine. Only ports 80 and 443 are exposed — Caddy handles TLS termination and proxies traffic to the server and SeaweedFS.
 
 ### Steps
 
@@ -56,7 +56,7 @@ Make sure your DNS points `yourdomain.com` to the server's IP. Caddy will automa
 | Port | Service |
 |------|---------|
 | 80   | Caddy (HTTP → HTTPS redirect) |
-| 443  | Caddy (HTTPS → server + MinIO) |
+| 443  | Caddy (HTTPS → server + SeaweedFS) |
 
 All other services communicate internally on the `skynet` Docker network.
 
@@ -84,19 +84,21 @@ This exposes:
 | 3000 | Server     |
 | 5432 | PostgreSQL |
 | 6379 | Redis      |
-| 9000 | MinIO      |
+| 9000 | SeaweedFS  |
+
+SeaweedFS also listens on 9333 (master), 8080 (volume) and 8888 (filer) inside the Docker network. Those ports have no authentication, so never publish them. Only port 9000 (the S3 API) should ever leave the `skynet` network.
 
 You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 and 9000 for HTTPS — see [Reverse proxy examples](#reverse-proxy-examples) below.
 
-3. **Lock down ports with iptables** — Redis, PostgreSQL, and MinIO should only be accessible from your testrunner machine(s), not the public internet. Replace `<testrunner-ip>` with the IP of each testrunner:
+3. **Lock down ports with iptables** — Redis, PostgreSQL, and SeaweedFS should only be accessible from your testrunner machine(s), not the public internet. Replace `<testrunner-ip>` with the IP of each testrunner:
 
     ```bash
     # Allow testrunner(s) to reach Redis
     sudo iptables -A INPUT -p tcp --dport 6379 -s <testrunner-ip> -j ACCEPT
-    # Allow testrunner(s) to reach MinIO
+    # Allow testrunner(s) to reach SeaweedFS
     sudo iptables -A INPUT -p tcp --dport 9000 -s <testrunner-ip> -j ACCEPT
 
-    # Block everyone else from Redis, PostgreSQL, and MinIO
+    # Block everyone else from Redis, PostgreSQL, and SeaweedFS
     sudo iptables -A INPUT -p tcp --dport 6379 -j DROP
     sudo iptables -A INPUT -p tcp --dport 5432 -j DROP
     sudo iptables -A INPUT -p tcp --dport 9000 -j DROP
@@ -149,7 +151,7 @@ You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 
 
 Each testrunner machine follows the same recipe as the first — clone the repo, write the same `.env` (point at the same `REDIS_HOST`, share the same `REDIS_PASSWORD`/`MINIO_*` secrets), then `docker compose -f deploy/docker-compose.production-testrunner.yml up -d`. The only thing that **must** differ between machines is `LOCATION_NAME` (or, on Android farms, the `deviceId` in `testrunner/config/testrunner.yaml`).
 
-Don't forget the iptables/firewall step: the server machine needs to accept Redis (6379), PostgreSQL (5432) and MinIO (9000) traffic from each new testrunner IP. Repeat the `ACCEPT` rules from the lock-down step for every additional runner.
+Don't forget the iptables/firewall step: the server machine needs to accept Redis (6379), PostgreSQL (5432) and SeaweedFS (9000) traffic from each new testrunner IP. Repeat the `ACCEPT` rules from the lock-down step for every additional runner.
 
 A few minutes after a runner boots it should appear under **Connected testrunners** on `/admin` with a green "fresh" badge. If it doesn't show up:
 
@@ -329,3 +331,90 @@ To move to a new major release of the server/testrunner, pass `--version`:
 ```
 
 This rewrites `SITESPEED_IO_SERVER_VERSION` and `SITESPEED_IO_TESTRUNNER_VERSION` in `.env` to `3.4.0` before pulling.
+
+### Upgrading from MinIO to SeaweedFS
+
+Result storage moved from MinIO (whose community edition was archived
+in 2026) to SeaweedFS. The S3 port (9000) and the
+`MINIO_USER`/`MINIO_PASSWORD` variables are unchanged, so the upgrade
+is two `.env` edits on the machine that runs storage:
+
+1. Pull the new compose files (`git pull` or checkout the new tag).
+2. In `.env`: add `SEAWEEDFS_DOCKER_VERSION=4.46` and change
+   `SITESPEED_IO_S3_ENDPOINT` from `http://minio:9000` to
+   `http://seaweedfs:9000`. The `MINIO_DOCKER_VERSION` and
+   `MINIO_MC_DOCKER_VERSION` lines are no longer used and can be
+   removed.
+3. Run `./deploy/update.sh` with your usual mode. `--remove-orphans`
+   removes the old `minio` and `mc` containers; `seaweedfs-init`
+   creates the bucket and the 30 day expiry automatically.
+4. Single-server only: `docker compose -f deploy/docker-compose.production.yml restart caddy`.
+   The Caddyfile now proxies results to `seaweedfs` and Caddy doesn't
+   re-read a changed config file on its own.
+
+Multi-server testrunner boxes need no changes at all: their
+`SITESPEED_IO_S3_ENDPOINT` points at the server machine's IP and port
+9000, both of which still work, and the iptables rules stay the same.
+
+Old results are **not** migrated automatically: links to runs uploaded
+before the switch stop working unless you copy them over (see below).
+They would have expired within 30 days anyway. The test history in
+PostgreSQL is untouched. If you run your own reverse proxy in front of
+result storage (instead of the bundled Caddyfile), repoint it from the
+MinIO container to `seaweedfs:9000`.
+
+#### Keeping the old results
+
+MinIO stores objects in its own on-disk format, so the files cannot be
+copied straight out of the old volume. Instead, start the old MinIO
+once more next to SeaweedFS and let [rclone](https://rclone.org) copy the
+bucket through the S3 API. The old `minio-data` volume survives the
+switch; only `docker compose down -v` removes volumes.
+
+MinIO's images are no longer on Docker Hub or quay.io, so use the MinIO
+image that is still on the machine from before the upgrade. Run
+`docker images | grep minio` to find it. If it was removed (for example by
+`docker system prune`), the old results cannot be read anymore. The
+Chainguard image `cgr.dev/chainguard/minio:latest` is still public and
+may read the old data, but it is a newer MinIO version and not tested
+with old volumes.
+
+Run this on the machine that runs storage, after step 3 above, while
+SeaweedFS is up. Copy `MINIO_USER` and `MINIO_PASSWORD` from your `.env`:
+
+```bash
+export MINIO_USER=sitespeedio
+export MINIO_PASSWORD='<the MINIO_PASSWORD value from .env>'
+
+# Find the old volume (onlinetest_minio-data or deploy_minio-data)
+# and the old MinIO image
+docker volume ls | grep minio-data
+docker images | grep minio
+
+# Start the old MinIO on the skynet network without publishing any port
+docker run -d --rm --name minio-old --network skynet \
+  -v <project>_minio-data:/data \
+  -e MINIO_ROOT_USER="$MINIO_USER" -e MINIO_ROOT_PASSWORD="$MINIO_PASSWORD" \
+  <the minio image from the list> server /data
+
+# Copy the bucket. Safe to re-run: it only copies what is missing.
+docker run --rm --network skynet \
+  -e RCLONE_CONFIG_OLD_TYPE=s3 -e RCLONE_CONFIG_OLD_PROVIDER=Minio \
+  -e RCLONE_CONFIG_OLD_ENDPOINT=http://minio-old:9000 \
+  -e RCLONE_CONFIG_OLD_ACCESS_KEY_ID="$MINIO_USER" \
+  -e RCLONE_CONFIG_OLD_SECRET_ACCESS_KEY="$MINIO_PASSWORD" \
+  -e RCLONE_CONFIG_NEW_TYPE=s3 -e RCLONE_CONFIG_NEW_PROVIDER=SeaweedFS \
+  -e RCLONE_CONFIG_NEW_ENDPOINT=http://seaweedfs:9000 \
+  -e RCLONE_CONFIG_NEW_ACCESS_KEY_ID="$MINIO_USER" \
+  -e RCLONE_CONFIG_NEW_SECRET_ACCESS_KEY="$MINIO_PASSWORD" \
+  rclone/rclone:1.71.2 copy old:sitespeedio new:sitespeedio --progress
+
+# Stop the old MinIO (--rm removes the container) and reclaim the disk
+docker stop minio-old
+docker volume rm <project>_minio-data
+```
+
+The copy keeps content types, so the old reports render as before. Every
+copied object gets a fresh 30 day TTL from the time of the copy, so old
+results live up to 30 more days. Large volumes take a while; run the
+copy in `tmux` or `screen` so a dropped SSH session doesn't interrupt it.

@@ -30,43 +30,65 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-  minio:
-    image: quay.io/minio/minio:${MINIO_DOCKER_VERSION}
+  seaweedfs:
+    image: chrislusf/seaweedfs:${SEAWEEDFS_DOCKER_VERSION}
+    restart: always
     volumes:
-      - minio-data:/data
+      - seaweedfs-data:/data
     ports:
       - "9000:9000"
+    # The image entrypoint adds -dir=/data and -volume.max=0 and runs weed as
+    # the unprivileged seaweed user. The admin S3 credentials come from the
+    # AWS_* environment variables. The mounted config file only adds the
+    # anonymous identity that gives public read access to the result bucket
+    # (what "mc anonymous set download" did on MinIO). The S3 API listens on
+    # 9000, the same port MinIO used.
+    #
+    # SeaweedFS expires whole volumes, not single files. A volume is deleted
+    # 30 days after the newest file in it was written. Small 1 GB volumes fill
+    # fast, so results live close to the 30 day TTL. With the 30 GB default a
+    # quiet server could keep results for months. The filer splits files larger
+    # than 4 MB into chunks, so the volume size does not limit the file size.
+    command: server -filer -s3 -s3.port=9000 -s3.config=/etc/seaweedfs/s3.json -master.volumeSizeLimitMB=1024
     environment:
-      - MINIO_ROOT_USER=${MINIO_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_PASSWORD}
-      - MINIO_REGION=motown
-    command: server /data --console-address ":9001"
+      - AWS_ACCESS_KEY_ID=${MINIO_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_PASSWORD}
+    configs:
+      - source: seaweedfs-s3
+        target: /etc/seaweedfs/s3.json
     networks:
       - skynet
+    # The S3 port answers before the volume server has registered with the
+    # master, and reads fail until it has. Wait for both.
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9000/minio/health/ready > /dev/null"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9000/healthz && wget -q -O - http://127.0.0.1:9333/dir/status | grep -q '\"Max\":[1-9]'"]
       interval: 5s
       timeout: 3s
       retries: 30
-  mc:
-    image: quay.io/minio/mc:${MINIO_MC_DOCKER_VERSION}
+  seaweedfs-init:
+    image: chrislusf/seaweedfs:${SEAWEEDFS_DOCKER_VERSION}
     depends_on:
-      minio:
+      seaweedfs:
         condition: service_healthy
     networks:
       - skynet
     restart: on-failure
+    # The 30 day expiry uses SeaweedFS native TTL (fs.configure) instead of an
+    # S3 lifecycle rule, because lifecycle rules have a history of not being enforced.
+    # The TTL counts from write time and only applies to files written after it
+    # is set.
     entrypoint: >
       /bin/sh -c "
-      /usr/bin/mc alias set sitespeedio http://minio:9000 ${MINIO_USER} ${MINIO_PASSWORD} &&
-      (/usr/bin/mc mb --ignore-existing --region=motown sitespeedio/sitespeedio || echo 'Bucket already exists') &&
-      /usr/bin/mc ilm rule add --expire-days 30 sitespeedio/sitespeedio &&
-      /usr/bin/mc anonymous set download sitespeedio/sitespeedio &&
-      /usr/bin/mc admin config set sitespeedio compression extensions=\".html,.css,.js\" &&
-      echo 'MinIO and lifecycle policy setup complete.'"
+      (echo 's3.bucket.create -name sitespeedio' | weed shell -master=seaweedfs:9333 || echo 'Bucket already exists') &&
+      echo 'fs.configure -locationPrefix=/buckets/sitespeedio/ -ttl=30d -apply' | weed shell -master=seaweedfs:9333 &&
+      echo 'SeaweedFS bucket and TTL setup complete.'"
+configs:
+  seaweedfs-s3:
+    content: |
+      {"identities":[{"name":"anonymous","actions":["Read:sitespeedio"]}]}
 volumes:
   postgres-data:
-  minio-data:
+  seaweedfs-data:
   redis_data:
     driver: local
 networks:
