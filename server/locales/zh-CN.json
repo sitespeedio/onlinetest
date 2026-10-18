@@ -80,6 +80,7 @@
   "error.urlnotvalid": "URL %s 不是有效的 URL",
   "error.nonmatchingdomain": "URL %s 与主机名 %s 配置的 regex 不匹配",
   "error.invalidkey": "无效的 API key。",
+  "error.apidisabled": "API 已关闭。请在服务器配置中设置 api.key 以启用它。",
   "error.missinglocation": "缺少位置",
   "error.nonexistingqueue": "队列不存在",
   "navigationbar.search": "搜索",

@@ -80,6 +80,7 @@
   "error.urlnotvalid": "L’URL %s n’est pas valide",
   "error.nonmatchingdomain": "L’URL %s ne correspond pas à la regex configurée pour le nom d’hôte %s",
   "error.invalidkey": "Clé d’API invalide.",
+  "error.apidisabled": "L’API est désactivée. Définissez api.key dans la configuration du serveur pour l’activer.",
   "error.missinglocation": "Lieu manquant",
   "error.nonexistingqueue": "File inexistante",
   "navigationbar.search": "Rechercher",

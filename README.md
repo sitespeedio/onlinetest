@@ -65,28 +65,26 @@ You can use your existing sitespeed.io installation to add tests to the server v
 
 ```bash
 # Run a desktop test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop https://www.sitespeed.io
 
 # Run with Firefox and 5 iterations
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop -b firefox -n 5 https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop -b firefox -n 5 https://www.sitespeed.io
 
 # Emulated mobile test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType emulatedMobile https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType emulatedMobile https://www.sitespeed.io
 
 # Add a label to identify your test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop --api.label "Before release" https://www.sitespeed.io
-
-# With an API key (when the server has api.key configured)
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop --api.key YOUR_SECRET_KEY https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.label "Before release" https://www.sitespeed.io
 
 # Set priority (1 = highest, default is 10)
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop --api.priority 1 https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.priority 1 https://www.sitespeed.io
 ```
 
 The required parameters are:
 * `--api.hostname` — the URL of your server
 * `--api.location` — the testrunner location name (e.g. `default`)
 * `--api.testType` — one of `desktop`, `emulatedMobile`, or `android`
+* `--api.key` — the key configured on the server (see [Secure the API with a key](#secure-the-api-with-a-key))
 
 You can pass any normal sitespeed.io flags (like `-b`, `-n`, `--slug`, `--browsertime.*`, etc.) and they will be forwarded to the test runner.
 
@@ -142,14 +140,14 @@ SITESPEED_IO_TESTRUNNER_VERSION=3
 ```
 
 ### Secure the API with a key
-You can and should require an API key for all tests submitted via the CLI/API. In your server configuration file add:
+The API only accepts new tests when the server has an API key. Without a key, `POST /api/add` returns 403. The web GUI works with or without a key. Set the key in your server configuration file:
 
 ```yaml
 api:
   key: YOUR_SECRET_KEY
 ```
 
-Then pass the key when adding tests: `--api.key YOUR_SECRET_KEY`.
+Or set `API_KEY` in your `.env` file. Then pass the key when adding tests: `--api.key YOUR_SECRET_KEY`.
 
 ### Localization
 The GUI is available in multiple languages. Set the locale in your `.env` file:

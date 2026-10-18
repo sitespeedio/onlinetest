@@ -86,6 +86,7 @@
   "error.urlnotvalid": "The URL %s is not a valid URL",
   "error.nonmatchingdomain": "The URL %s does not match the configured regex for the hostname %s",
   "error.invalidkey": "Invalid API key.",
+  "error.apidisabled": "The API is turned off. Set api.key in the server configuration to turn it on.",
   "error.missinglocation": "Missing location",
   "error.nonexistingqueue": "Non-existing queue",
   "navigationbar.search": "Search",

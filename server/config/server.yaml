@@ -16,6 +16,7 @@ log:
   verbose: false
 
 # Make sure only users with the correct key can add tests
+# The API does not accept new tests until you set a key.
 api:
   key:
   # If true, the API key (configured above) is also required to read HAR and

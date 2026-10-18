@@ -80,6 +80,7 @@
   "error.urlnotvalid": "URL %s درست نہیں",
   "error.nonmatchingdomain": "URL %s ہوسٹ نیم %s کے regex سے نہیں ملا",
   "error.invalidkey": "غلط API key۔",
+  "error.apidisabled": "API بند ہے۔ اسے چالو کرنے کے لیے سرور کنفیگریشن میں api.key سیٹ کریں۔",
   "error.missinglocation": "مقام نہیں",
   "error.nonexistingqueue": "قطار موجود نہیں",
   "navigationbar.search": "تلاش",

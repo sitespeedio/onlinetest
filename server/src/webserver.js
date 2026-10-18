@@ -201,6 +201,10 @@ function setupExpressServer() {
     app.use('/search', search);
   }
 
+  if (!nconf.get('api:key')) {
+    logger.warn('No api.key is set, the API will not accept new tests');
+  }
+
   app.use('/admin', admin);
   app.use('/result/', result);
   app.use('/api', api);

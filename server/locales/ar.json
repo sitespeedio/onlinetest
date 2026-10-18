@@ -80,6 +80,7 @@
   "error.urlnotvalid": "URL %s غير صالح",
   "error.nonmatchingdomain": "URL %s لا يطابق regex للمضيف %s",
   "error.invalidkey": "مفتاح API غير صالح.",
+  "error.apidisabled": "واجهة API معطلة. اضبط api.key في إعدادات الخادم لتفعيلها.",
   "error.missinglocation": "موقع مفقود",
   "error.nonexistingqueue": "طابور غير موجود",
   "navigationbar.search": "بحث",

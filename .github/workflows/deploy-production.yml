@@ -44,7 +44,7 @@ jobs:
         git clone https://github.com/sitespeedio/sitespeed.io.git
         cd sitespeed.io
         npm install
-        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1 --api.port 80 --api.location default --headless --api.json
+        bin/sitespeed.js https://www.wikipedia.org -n 1 --api.hostname 127.0.0.1 --api.port 80 --api.location default --api.key CHANGE_ME_API_KEY --headless --api.json
     - name: Display Caddy log
       if: failure() || success()
       run: docker logs deploy-caddy-1

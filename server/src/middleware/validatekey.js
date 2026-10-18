@@ -34,19 +34,25 @@ function getKeyFromRequest(request) {
 }
 
 export const validateKey = (request, response, next) => {
-  // If a key is setup, verify it
   const key = nconf.get('api:key');
-  if (key !== null && key !== undefined && key !== '') {
-    const keyFromRequest = getKeyFromRequest(request);
-    if (!safeCompare(keyFromRequest, key)) {
-      // Don't log the supplied key — typos and stale secrets used to land
-      // in long-lived log aggregation. Don't echo it back in the response
-      // either; the client already knows what they sent.
-      logger.info('Invalid API key supplied');
-      return response.status(403).json({
-        message: getText('error.invalidkey')
-      });
-    }
+  // Without a key anyone could choose the Docker image and the
+  // sitespeed.io configuration, so the API stays closed.
+  if (key === null || key === undefined || key === '') {
+    logger.info('API call refused because api.key is not set');
+    return response.status(403).json({
+      message: getText('error.apidisabled')
+    });
+  }
+  // If a key is setup, verify it
+  const keyFromRequest = getKeyFromRequest(request);
+  if (!safeCompare(keyFromRequest, key)) {
+    // Don't log the supplied key — typos and stale secrets used to land
+    // in long-lived log aggregation. Don't echo it back in the response
+    // either; the client already knows what they sent.
+    logger.info('Invalid API key supplied');
+    return response.status(403).json({
+      message: getText('error.invalidkey')
+    });
   }
   next();
 };
