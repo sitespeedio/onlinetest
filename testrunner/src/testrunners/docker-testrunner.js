@@ -161,7 +161,8 @@ async function handleScriptingFile(job, workingDirectory) {
   // `scriptingName + ext` is always truthy (even "undefined.mjs") so the
   // `|| job.id + ext` branch never fired — scripted runs without a name
   // were written as `undefined.mjs`. Resolve the basename first.
-  const basename = (job.data.scriptingName || job.id) + scriptExtension;
+  const basename =
+    path.basename(job.data.scriptingName || job.id) + scriptExtension;
   const filename = join(workingDirectory, basename);
 
   await writeFile(filename, job.data.scripting);
