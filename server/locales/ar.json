@@ -77,6 +77,7 @@
   "error.missingresultbaseurl": "resultBaseURL غير مضبوط لـ sitespeed.io.",
   "error.testfailed": "فشل الاختبار",
   "error.parsingscript": "تعذر تحليل السكربت",
+  "error.scriptingdisabled": "اختبارات البرمجة النصية معطلة على هذا الخادم.",
   "error.urlnotvalid": "URL %s غير صالح",
   "error.nonmatchingdomain": "URL %s لا يطابق regex للمضيف %s",
   "error.invalidkey": "مفتاح API غير صالح.",

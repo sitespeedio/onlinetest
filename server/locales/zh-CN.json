@@ -77,6 +77,7 @@
   "error.missingresultbaseurl": "未配置 sitespeeed.io 的 resultBaseURL。请在配置中修复。",
   "error.testfailed": "测试运行失败",
   "error.parsingscript": "无法解析脚本",
+  "error.scriptingdisabled": "此服务器已关闭脚本测试。",
   "error.urlnotvalid": "URL %s 不是有效的 URL",
   "error.nonmatchingdomain": "URL %s 与主机名 %s 配置的 regex 不匹配",
   "error.invalidkey": "无效的 API key。",
