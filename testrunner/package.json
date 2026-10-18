@@ -49,20 +49,20 @@
     "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "eslint": "9.39.2",
+    "eslint": "9.39.5",
     "eslint-config-prettier": "10.1.8",
-    "eslint-plugin-prettier": "5.5.4",
+    "eslint-plugin-prettier": "5.5.7",
     "eslint-plugin-unicorn": "62.0.0",
-    "prettier": "3.7.4"
+    "prettier": "3.9.10"
   },
   "dependencies": {
     "@sitespeed.io/log": "1.0.0",
     "bull": "4.16.5",
-    "dotenv": "17.2.3",
+    "dotenv": "17.4.2",
     "nconf": "0.13.0",
     "execa": "9.6.1",
     "lodash.get": "4.4.2",
-    "joi": "18.0.2",
-    "js-yaml": "4.1.1"
+    "joi": "18.3.0",
+    "js-yaml": "4.3.2"
   }
 }
