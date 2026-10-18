@@ -51,14 +51,20 @@ script(type='text/javascript').
         messageElement.appendChild(header);
         messageElement.appendChild(image);
       } else {
-        document.getElementById('message').innerHTML = serverResponse.logs.join('<br>');
+        // The logs and the test name come from the user, so add them as text
+        const messageElement = document.getElementById('message');
+        messageElement.replaceChildren();
+        serverResponse.logs.forEach(function (line, index) {
+          if (index > 0) messageElement.appendChild(document.createElement('br'));
+          messageElement.appendChild(document.createTextNode(line));
+        });
       }
       if (serverResponse.status === 'waiting') {
-        document.getElementById('title').innerHTML = "Waiting to run tests " + testName;
-        document.getElementById('message').innerHTML = serverResponse.message;
+        document.getElementById('title').textContent = "Waiting to run tests " + testName;
+        document.getElementById('message').textContent = serverResponse.message;
         setTimeout(worker, 2000);
       } else if (serverResponse.status === 'active' || serverResponse.status === 'stuck') {
-          document.getElementById('title').innerHTML = "Testing " + testName;
+          document.getElementById('title').textContent = "Testing " + testName;
           setTimeout(worker, 1000);
       } 
       else if (serverResponse.status === 'completed' || serverResponse.status === 'failed') {
