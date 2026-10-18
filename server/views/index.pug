@@ -71,7 +71,8 @@ block content
           button.tab.is-active(role='tab' type='button' id='tab-settings' aria-selected='true' aria-controls='settings' tabindex='0' onclick='openTab(event,"settings")') #{getText('index.tab.settings')}
           button.tab(role='tab' type='button' id='tab-commandline' aria-selected='false' aria-controls='commandline' tabindex='-1' onclick='openTab(event,"commandline")') #{getText('index.tab.cli')}
           button.tab(role='tab' type='button' id='tab-extras' aria-selected='false' aria-controls='extras' tabindex='-1' onclick='openTab(event,"extras")') #{getText('index.tab.extras')}
-          button.tab(role='tab' type='button' id='tab-scripting' aria-selected='false' aria-controls='scripting' tabindex='-1' onclick='openTab(event,"scripting")') #{getText('index.tab.scripting')}
+          if !nconf.any('disablescripting', 'disableScripting')
+            button.tab(role='tab' type='button' id='tab-scripting' aria-selected='false' aria-controls='scripting' tabindex='-1' onclick='openTab(event,"scripting")') #{getText('index.tab.scripting')}
 
         form#analyze-form(method='post' action='/')
           .content-tab#settings(role='tabpanel' aria-labelledby='tab-settings')
@@ -80,8 +81,9 @@ block content
             include includes/index/tabs/extras.pug
           .content-tab#commandline(role='tabpanel' aria-labelledby='tab-commandline' hidden)
             include includes/index/tabs/commandLine.pug
-          .content-tab#scripting(role='tabpanel' aria-labelledby='tab-scripting' hidden)
-            include includes/index/tabs/scripting.pug
+          if !nconf.any('disablescripting', 'disableScripting')
+            .content-tab#scripting(role='tabpanel' aria-labelledby='tab-scripting' hidden)
+              include includes/index/tabs/scripting.pug
             
       else
         .level
