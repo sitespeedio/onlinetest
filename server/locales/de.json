@@ -77,6 +77,7 @@
   "error.missingresultbaseurl": "resultBaseURL ist für sitespeed.io nicht gesetzt. Bitte in der Konfiguration ergänzen (inkl. http:// oder https://).",
   "error.testfailed": "Der Testlauf ist fehlgeschlagen",
   "error.parsingscript": "Skript konnte nicht verarbeitet werden",
+  "error.scriptingdisabled": "Skript-Tests sind auf diesem Server deaktiviert.",
   "error.urlnotvalid": "Die URL %s ist keine valide URL",
   "error.nonmatchingdomain": "Die URL %s passt nicht zum konfigurierten regex für den Hostnamen %s",
   "error.invalidkey": "Ungültiger API-Schlüssel.",

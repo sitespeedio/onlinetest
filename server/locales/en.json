@@ -83,6 +83,7 @@
   "error.missingresultbaseurl": "Missing resultBaseURL setup for sitespeed.io. You need to fix that in your configuration.",
   "error.testfailed": "The test failed to run",
   "error.parsingscript": "Could not parse the script",
+  "error.scriptingdisabled": "Scripting tests are turned off on this server.",
   "error.urlnotvalid": "The URL %s is not a valid URL",
   "error.nonmatchingdomain": "The URL %s does not match the configured regex for the hostname %s",
   "error.invalidkey": "Invalid API key.",

@@ -77,6 +77,7 @@
   "error.missingresultbaseurl": "resultBaseURL सेट नहीं (sitespeed.io)।",
   "error.testfailed": "टेस्ट विफल",
   "error.parsingscript": "पार्स त्रुटि",
+  "error.scriptingdisabled": "इस सर्वर पर स्क्रिप्टिंग टेस्ट बंद हैं।",
   "error.urlnotvalid": "URL %s वैध नहीं है",
   "error.nonmatchingdomain": "URL %s होस्टनेम %s regex से नहीं मिला",
   "error.invalidkey": "अमान्य API key।",
