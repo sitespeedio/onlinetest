@@ -80,6 +80,7 @@
   "error.urlnotvalid": "URL %s বৈধ নয়",
   "error.nonmatchingdomain": "URL %s হোস্টনেম %s-এর regex মেলে না",
   "error.invalidkey": "অবৈধ API key।",
+  "error.apidisabled": "API বন্ধ আছে। চালু করতে সার্ভার কনফিগারেশনে api.key সেট করুন।",
   "error.missinglocation": "অবস্থান",
   "error.nonexistingqueue": "কিউ নেই",
   "navigationbar.search": "সার্চ",

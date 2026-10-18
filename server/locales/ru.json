@@ -80,6 +80,7 @@
   "error.urlnotvalid": "URL %s некорректен",
   "error.nonmatchingdomain": "URL %s не соответствует regex для hostname %s",
   "error.invalidkey": "Недействительный API-ключ.",
+  "error.apidisabled": "API отключён. Укажите api.key в конфигурации сервера, чтобы включить его.",
   "error.missinglocation": "Нет локации",
   "error.nonexistingqueue": "Очереди нет",
   "navigationbar.search": "Поиск",

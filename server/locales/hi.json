@@ -80,6 +80,7 @@
   "error.urlnotvalid": "URL %s वैध नहीं है",
   "error.nonmatchingdomain": "URL %s होस्टनेम %s regex से नहीं मिला",
   "error.invalidkey": "अमान्य API key।",
+  "error.apidisabled": "API बंद है। इसे चालू करने के लिए सर्वर कॉन्फ़िगरेशन में api.key सेट करें।",
   "error.missinglocation": "लोकेशन",
   "error.nonexistingqueue": "क्यू नहीं",
   "navigationbar.search": "खोज",
