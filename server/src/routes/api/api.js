@@ -28,6 +28,7 @@ import { validateParameters } from '../../middleware/validateparameters.js';
 import { addTestFromAPI } from '../../util/add-test.js';
 import { getTestRunners } from '../../testrunners.js';
 import { getText } from '../../util/text.js';
+import { safeResultUrl } from '../../util/resulturl.js';
 import { validateQueue } from '../../middleware/validatequeue.js';
 const logger = getLogger('sitespeedio.server.api');
 
@@ -130,7 +131,10 @@ api.get('/status/:testId', async function (request, response) {
         url: testResult.url,
         scriptingName: testResult.scripting_name,
         message: '',
-        result: testResult.status === 'completed' ? testResult.result_url : ''
+        result:
+          testResult.status === 'completed'
+            ? safeResultUrl(testResult.result_url)
+            : ''
       });
     }
   }
@@ -145,7 +149,10 @@ api.get('/status/:testId', async function (request, response) {
           url: testResult.url,
           scriptingName: testResult.scripting_name,
           message: '',
-          result: testResult.status === 'completed' ? testResult.result_url : ''
+          result:
+            testResult.status === 'completed'
+              ? safeResultUrl(testResult.result_url)
+              : ''
         })
       : response.status(400).json({
           id: id,
@@ -185,7 +192,7 @@ api.get('/status/:testId', async function (request, response) {
       logger.info('Job %s completed for %s', id, testConfig.url);
 
       message = 'Job completed.';
-      resultUrl = job.returnvalue?.pageSummaryUrl;
+      resultUrl = safeResultUrl(job.returnvalue?.pageSummaryUrl);
       break;
     }
     case 'active': {
