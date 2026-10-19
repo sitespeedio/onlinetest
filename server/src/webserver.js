@@ -176,6 +176,11 @@ function setupExpressServer() {
   );
 
   if (adminLogin != undefined && adminPassword != undefined) {
+    if (adminPassword === '' || String(adminPassword).startsWith('CHANGE_ME')) {
+      logger.warn(
+        'The /admin password is empty or still the example value from .env.example. Change ADMIN_BASICAUTH_PASSWORD.'
+      );
+    }
     const adminAuth = new BasicAuth(
       adminLogin,
       adminPassword,
@@ -187,7 +192,9 @@ function setupExpressServer() {
       adminAuth.authenticate(request, response, next)
     );
   } else {
-    logger.warn('Running /admin without basic auth');
+    logger.warn(
+      'Running /admin without basic auth. Anyone can open /admin and empty the queues. Set ADMIN_BASICAUTH_LOGIN and ADMIN_BASICAUTH_PASSWORD in .env.'
+    );
   }
 
   app.use(
