@@ -1,5 +1,11 @@
 {$DOMAIN} {
     handle /sitespeedio/* {
+        # Tests write the result files. The sandbox gives each result page
+        # its own origin, so its scripts cannot act on the onlinetest site.
+        header {
+            Content-Security-Policy "sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads"
+            defer
+        }
         reverse_proxy seaweedfs:9000
     }
     handle {

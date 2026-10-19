@@ -163,11 +163,17 @@ A few minutes after a runner boots it should appear under **Connected testrunner
 
 If you are running the multi-server setup you need your own reverse proxy in front of the server machine. Here are examples for Caddy and nginx.
 
+Both examples send a `Content-Security-Policy: sandbox` header with the results. Tests write the result files, and a scripting test can put its own HTML and JavaScript there. The sandbox gives each result page its own origin, so its scripts cannot act on the onlinetest site. The sitespeed.io report, including the waterfall, video and filmstrip, works with the sandbox. Keep the header if you write your own proxy configuration.
+
 #### Caddy
 
 ```
 yourdomain.com {
     handle /sitespeedio/* {
+        header {
+            Content-Security-Policy "sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads"
+            defer
+        }
         reverse_proxy <server-machine-ip>:9000
     }
     handle {
@@ -187,6 +193,8 @@ server {
     ssl_certificate_key /path/to/key.pem;
 
     location /sitespeedio/ {
+        proxy_hide_header Content-Security-Policy;
+        add_header Content-Security-Policy "sandbox allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads" always;
         proxy_pass http://<server-machine-ip>:9000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
