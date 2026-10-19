@@ -35,10 +35,14 @@ disableGUI: false
 # You can disable searching through the GUI
 disableSearchGUI: false
 
-# Turn off scripting tests in the GUI and the API. A scripting test runs
-# Node.js code where sitespeed.io runs. Turn them off on a public instance
-# unless you trust everyone who can add tests.
-disableScripting: false
+# Turn off scripting tests. A scripting test runs Node.js code where
+# sitespeed.io runs. Turn them off on a public instance unless you trust
+# everyone who can add tests.
+#   false - scripting tests are allowed in the GUI and the API
+#   gui   - only the API can add scripting tests, so they need the API key.
+#           This is the default.
+#   true  - scripting tests are turned off in the GUI and the API
+disableScripting: gui
 
 # How many max entries do you want per page?
 search:

@@ -24,6 +24,7 @@ import { setConfigById } from '../configs.js';
 import { updateStatus } from '../database/index.js';
 import { testsSubmittedTotal } from '../metrics.js';
 import { getText } from './text.js';
+import { isScriptingAllowed } from './scripting.js';
 
 const logger = getLogger('sitespeedio.server');
 
@@ -54,7 +55,8 @@ export async function reRunTest(request) {
   }
     */
   const oldTest = await getTest(id);
-  if (oldTest?.scripting && nconf.any('disablescripting', 'disableScripting')) {
+  // A rerun comes from the web GUI
+  if (oldTest?.scripting && !isScriptingAllowed(false)) {
     throw new Error(getText('error.scriptingdisabled'));
   }
 

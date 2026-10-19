@@ -26,7 +26,9 @@ jobs:
     - name: Pull sitespeed.io
       run: docker pull sitespeedio/sitespeed.io:42
     - name: Prepare env
-      run: cp .env.example .env
+      run: |
+        cp .env.example .env
+        echo "DISABLESCRIPTING=false" >> .env
     - name: Start dependencies
       env:
         SITESPEED_IO_SERVER_VERSION: "local-action"
