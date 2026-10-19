@@ -77,6 +77,7 @@
   "error.missingresultbaseurl": "Configuração resultBaseURL ausente para sitespeeed.io. Você precisa corrigir isso na sua configuração.",
   "error.testfailed": "O teste falhou ao executar",
   "error.parsingscript": "Erro ao interpretar script",
+  "error.scriptingdisabled": "Os testes com scripts estão desativados neste servidor.",
   "error.urlnotvalid": "A URL %s não é válida",
   "error.nonmatchingdomain": "A URL %s não corresponde à regex configurada para o hostname %s",
   "error.invalidkey": "Chave de API inválida.",

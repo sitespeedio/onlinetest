@@ -1,4 +1,5 @@
 import { getText } from '../util/text.js';
+import { nconf } from '../config.js';
 
 export const validateParameters = (request, response, next) => {
   let url = request.body.url;
@@ -15,6 +16,10 @@ export const validateParameters = (request, response, next) => {
   const location = request.body.location || api.location;
   const testType = request.body.testType || api.testType;
 
+  if (scripting && nconf.any('disablescripting', 'disableScripting')) {
+    request.inputValidationError = getText('error.scriptingdisabled');
+    return next();
+  }
   if (!url && !scripting) {
     request.inputValidationError = getText(
       'error.validation.missingurlorscripting'
