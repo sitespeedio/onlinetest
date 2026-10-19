@@ -1,275 +1,10 @@
 extends ./layouts/default.pug
 
 block content
-  script(type='text/javascript').
-    function toggleSearchHelp() {
-      var el = document.getElementById('searchHelp');
-      if (el.style.display === 'none') {
-        el.style.display = 'block';
-      } else {
-        el.style.display = 'none';
-      }
-    }
-    function addToSearch(text) {
-      var search = document.getElementById('search');
-      if (search) {
-        if (search.value==='') {
-          search.value = text;
-        } else {
-          search.value += ' ' + text;
-        }
-      }
-    }
-    function clearSearch() {
-      var search = document.getElementById('search');
-      if (search) {
-        search.value = '';
-      }
-    }
-    var __previousFocus = null;
-    var __modalKeyHandler = null;
-
-    function trapModalKeys(modal) {
-      var focusables = modal.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
-      __modalKeyHandler = function (e) {
-        if (e.key === 'Escape') { e.preventDefault(); closeRerunModal(); return; }
-        if (e.key !== 'Tab' || focusables.length === 0) return;
-        var first = focusables[0], last = focusables[focusables.length - 1];
-        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-      };
-      document.addEventListener('keydown', __modalKeyHandler);
-    }
-
-    function reRunTest(id, url, label) {
-      const modal = document.getElementById("rerunModal");
-      const testIdInput = document.getElementById("rerunTestId");
-      const rerunTestUrl = document.getElementById("rerunTestUrl");
-      const rerunTestLabel = document.getElementById("rerunTestLabel");
-      testIdInput.value = id;
-      rerunTestUrl.value = url;
-      rerunTestUrl.disabled = !url.startsWith('http');
-      rerunTestLabel.value = label;
-      __previousFocus = document.activeElement;
-      modal.classList.add("is-active");
-      modal.removeAttribute('inert');
-      modal.setAttribute('aria-hidden', 'false');
-
-      // Move focus into the dialog
-      setTimeout(function () {
-        var firstField = rerunTestUrl.disabled ? rerunTestLabel : rerunTestUrl;
-        firstField.focus();
-      }, 0);
-
-      trapModalKeys(modal);
-
-      document.getElementById("cancelRerun").onclick = closeRerunModal;
-      document.getElementById("modalClose").onclick = closeRerunModal;
-      document.getElementById("confirmRerun").onclick = function (e) {
-        e.preventDefault();
-        document.getElementById("rerunForm").submit();
-      };
-      document.getElementById("updateLabel").onclick = function (e) {
-        e.preventDefault();
-        document.getElementById("rerunForm").action = '/update';
-        document.getElementById("rerunForm").submit();
-      };
-    }
-
-    function closeRerunModal() {
-      const modal = document.getElementById("rerunModal");
-      modal.classList.remove("is-active");
-      modal.setAttribute('aria-hidden', 'true');
-      if (__modalKeyHandler) {
-        document.removeEventListener('keydown', __modalKeyHandler);
-        __modalKeyHandler = null;
-      }
-      if (__previousFocus && typeof __previousFocus.focus === 'function') {
-        __previousFocus.focus();
-      }
-    }
-
-    // Compare-button gating: starts disabled, requires exactly two checked
-    // boxes, refuses a third. Lifted out of DOMContentLoaded so the
-    // auto-refresh path (below) can re-run it after swapping the results
-    // table back in — the captured `enabled` array would otherwise point
-    // at stale DOM nodes after the swap.
-    var SELECT_FIRST = '#{getText("search.compare.selectfirst")}';
-    var SELECT_ONE_MORE = '#{getText("search.compare.selectonemore")}';
-
-    function initCompare() {
-      var form = document.getElementById('search-form-compare');
-      var btn = document.getElementById('compareButton');
-      var msg = document.getElementById('compareMessage');
-      if (!form || !btn) return;
-      var enabled = Array.prototype.slice.call(
-        form.querySelectorAll('input[type="checkbox"][name="har"]:not([disabled])')
-      );
-      if (enabled.length === 0) return;
-      function checkedCount() {
-        return enabled.filter(function (b) { return b.checked; }).length;
-      }
-      function update() {
-        var count = checkedCount();
-        btn.setAttribute('aria-disabled', count === 2 ? 'false' : 'true');
-        if (count >= 2) {
-          enabled.forEach(function (b) { if (!b.checked) b.disabled = true; });
-        } else {
-          enabled.forEach(function (b) { b.disabled = false; });
-        }
-        if (msg && count !== 0) { msg.textContent = ''; }
-      }
-      // Property-assignment so re-running initCompare doesn't stack
-      // duplicate handlers on a button that survived a DOM swap. (After
-      // a swap the button is a fresh node anyway, but this keeps the
-      // initial-load case safe too.)
-      btn.onclick = function (e) {
-        var count = checkedCount();
-        if (count === 2) { form.submit(); return; }
-        e.preventDefault();
-        if (msg) { msg.textContent = count === 1 ? SELECT_ONE_MORE : SELECT_FIRST; }
-      };
-      enabled.forEach(function (b) { b.addEventListener('change', update); });
-      update();
-    }
-
-    // Auto-refresh of the search results region. Off by default; user
-    // opts in via the toggle in the search button row. State is held in
-    // localStorage so a power user only has to set it once. The poll
-    // skips while the user has any checkbox ticked — replacing the
-    // results table would silently uncheck them and break the Compare
-    // flow.
-    var SEARCH_REFRESH_INTERVAL_MS = 60000;
-    var SEARCH_REFRESH_STORAGE_KEY = 'onlinetest.search.autorefresh';
-
-    function searchAutoRefreshEnabled() {
-      try {
-        return localStorage.getItem(SEARCH_REFRESH_STORAGE_KEY) === '1';
-      } catch (_e) { return false; }
-    }
-    function setSearchAutoRefresh(enabled) {
-      try {
-        if (enabled) localStorage.setItem(SEARCH_REFRESH_STORAGE_KEY, '1');
-        else localStorage.removeItem(SEARCH_REFRESH_STORAGE_KEY);
-      } catch (_e) { /* private mode etc — silently ignore */ }
-    }
-
-    function initSearchAutoRefresh() {
-      var toggle = document.getElementById('search-autorefresh-toggle');
-      var status = document.getElementById('search-autorefresh-status');
-      var region = document.getElementById('search-results-region');
-      if (!toggle || !status || !region) return;
-
-      var lastUpdatedAt = Date.now();
-      var refreshing = false;
-      var intervalId = null;
-
-      function hasSelectionInRegion() {
-        return region.querySelectorAll(
-          'input[type="checkbox"][name="har"]:checked'
-        ).length > 0;
-      }
-
-      function renderStatus() {
-        if (!toggle.checked) { status.textContent = 'Off'; return; }
-        if (refreshing) { status.textContent = 'Updating…'; return; }
-        if (hasSelectionInRegion()) {
-          status.textContent = 'Paused — clear selection to resume';
-          return;
-        }
-        var secs = Math.max(0, Math.round((Date.now() - lastUpdatedAt) / 1000));
-        status.textContent = 'On — updated ' + secs + 's ago';
-      }
-
-      async function refresh() {
-        if (!toggle.checked || refreshing || document.hidden) return;
-        if (hasSelectionInRegion()) { renderStatus(); return; }
-        refreshing = true;
-        renderStatus();
-        try {
-          var res = await fetch(window.location.href, {
-            cache: 'no-store',
-            headers: { Accept: 'text/html' }
-          });
-          if (!res.ok) return;
-          var html = await res.text();
-          var doc = new DOMParser().parseFromString(html, 'text/html');
-          var fresh = doc.getElementById('search-results-region');
-          if (fresh) {
-            region.innerHTML = fresh.innerHTML;
-            // The compare-button gating closes over the checkboxes that
-            // existed at init time; after a DOM swap those are gone, so
-            // re-bind against the new ones.
-            initCompare();
-          }
-          lastUpdatedAt = Date.now();
-        } catch (_e) {
-          // Network blip — leave the page as-is, try next tick.
-        } finally {
-          refreshing = false;
-          renderStatus();
-        }
-      }
-
-      function applyToggleState() {
-        if (toggle.checked) {
-          if (!intervalId) intervalId = setInterval(refresh, SEARCH_REFRESH_INTERVAL_MS);
-        } else if (intervalId) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
-        renderStatus();
-      }
-
-      toggle.checked = searchAutoRefreshEnabled();
-      toggle.addEventListener('change', function () {
-        setSearchAutoRefresh(toggle.checked);
-        applyToggleState();
-      });
-      // Update the "Updated Ns ago" label once a second between fetches.
-      setInterval(renderStatus, 1000);
-      // Recompute status when a checkbox toggles — flips between
-      // "Paused…" and "On — updated …".
-      document.addEventListener('change', function (e) {
-        if (
-          e.target &&
-          e.target.matches &&
-          e.target.matches('input[type="checkbox"][name="har"]')
-        ) {
-          renderStatus();
-        }
-      });
-      document.addEventListener('visibilitychange', function () {
-        if (!document.hidden) refresh();
-      });
-      applyToggleState();
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-      // Wire up the row-level action links via data attributes so user-
-      // supplied values (label, url, slug, id) never get string-concatenated
-      // into inline onclick= JS.
-      document.addEventListener('click', function (e) {
-        var addEl = e.target.closest('[data-add]');
-        if (addEl) { addToSearch(addEl.getAttribute('data-add')); return; }
-        var rerunEl = e.target.closest('[data-rerun-id]');
-        if (rerunEl) {
-          reRunTest(
-            rerunEl.getAttribute('data-rerun-id'),
-            rerunEl.getAttribute('data-rerun-url') || '',
-            rerunEl.getAttribute('data-rerun-label') || ''
-          );
-        }
-      });
-
-      initCompare();
-      initSearchAutoRefresh();
-    });
+  script(src='/js/search.js?v=' + serverVersion data-select-first=getText('search.compare.selectfirst') data-select-one-more=getText('search.compare.selectonemore'))
 
   .modal#rerunModal(role='dialog' aria-modal='true' aria-labelledby='rerunTitle' aria-hidden='true')
-    .modal-background(onclick='closeRerunModal()')
+    .modal-background(data-search-action='close-rerun')
     .modal-card
       header.modal-card-head
         p.modal-card-title#rerunTitle #{getText('edit.title')}
@@ -312,12 +47,12 @@ block content
                   kbd ⌘↵
       p.control
         .buttons.py-2
-          button.button.is-primary.is-medium(onclick='addToSearch(\'when:lasthour\')' role='button') #{getText('search.button.lasthour')}
-          button.button.is-primary.is-medium(onclick='addToSearch(\'when:today\')' role='button') #{getText('search.button.today')}
-          button.button.is-primary.is-medium(onclick='addToSearch(\'when:yesterday\')' role='button') #{getText('search.button.yesterday')}
-          button.button.is-primary.is-medium(onclick='addToSearch(\'when:lastweek\')' role='button') #{getText('search.button.lastweek')}
-          button.button.is-warning.is-medium(accesskey='h' onclick='toggleSearchHelp()') #{getText('search.button.help')}
-          button.button.is-warning.is-medium(accesskey='h' onclick='clearSearch()') #{getText('search.button.clear')}
+          button.button.is-primary.is-medium(data-add='when:lasthour' role='button') #{getText('search.button.lasthour')}
+          button.button.is-primary.is-medium(data-add='when:today' role='button') #{getText('search.button.today')}
+          button.button.is-primary.is-medium(data-add='when:yesterday' role='button') #{getText('search.button.yesterday')}
+          button.button.is-primary.is-medium(data-add='when:lastweek' role='button') #{getText('search.button.lastweek')}
+          button.button.is-warning.is-medium(accesskey='h' data-search-action='toggle-help') #{getText('search.button.help')}
+          button.button.is-warning.is-medium(accesskey='h' data-search-action='clear') #{getText('search.button.clear')}
           label.search-autorefresh(title='Refresh the results every 60 seconds. Paused while you have any test ticked.')
             input.search-autorefresh-input#search-autorefresh-toggle(type='checkbox')
             span.search-autorefresh-track
@@ -333,23 +68,22 @@ block content
             ul 
               li 
                 b 
-                  - let browserOnClick = 'addToSearch(\'date:' + dayjs().format('YYYY-MM-DD') + '\')';
-                  a(role='button' onclick=browserOnClick) date:#{dayjs().format('YYYY-MM-DD')}
+                  - var addValue = 'date:' + dayjs().format('YYYY-MM-DD')
+                  a(role='button' data-add=addValue) date:#{dayjs().format('YYYY-MM-DD')}
                 | - #{getText('search.help.bydate')}
               li
                 b 
-                  - browserOnClick = 'addToSearch(\'before:' + dayjs().format('YYYY-MM-DD') + '\')';
-                  a(role='button' onclick=browserOnClick) before:#{dayjs().format('YYYY-MM-DD')} 
+                  - var addValue = 'before:' + dayjs().format('YYYY-MM-DD')
+                  a(role='button' data-add=addValue) before:#{dayjs().format('YYYY-MM-DD')} 
                 | - #{getText('search.help.beforedate')}
               li 
                 b 
-                  - browserOnClick = 'addToSearch(\'after:' + dayjs().format('YYYY-MM-DD') + '\')';
-                  a(role='button' onclick=browserOnClick) after:#{dayjs().format('YYYY-MM-DD')} 
+                  - var addValue = 'after:' + dayjs().format('YYYY-MM-DD')
+                  a(role='button' data-add=addValue) after:#{dayjs().format('YYYY-MM-DD')} 
                 | - #{getText('search.help.afterdate')}
               li 
                 b 
-                  - browserOnClick = 'addToSearch(\'when:today\')';
-                  a(role='button' onclick=browserOnClick) when:today 
+                  a(role='button' data-add='when:today') when:today 
                 | - #{getText('search.help.byday')}
               li 
                 b label:the_label 
@@ -362,16 +96,14 @@ block content
                 | - #{getText('search.help.byurl')}
               li
                 b 
-                  - browserOnClick = 'addToSearch(\'testType:desktop\')';
-                  a(role='button' onclick=browserOnClick) testType:desktop 
+                  a(role='button' data-add='testType:desktop') testType:desktop 
                 | - #{getText('search.help.bytesttype')}
               li 
                 b location:
                 | - #{getText('search.help.bylocation')}
               li
                 b 
-                  - browserOnClick = 'addToSearch(\'browser:firefox\')';
-                  a(role='button' onclick=browserOnClick) browser:firefox 
+                  a(role='button' data-add='browser:firefox') browser:firefox 
                 | - #{getText('search.help.bybrowser')}
               li
                 b name:
@@ -387,9 +119,9 @@ block content
               b #{getText('search.result.showing', firstResultIndex, lastResultIndex, data.count)}
             p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
               button.button.is-link.is-medium.mr-2(
-                onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
+                data-page=currentPage - 1 aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
               button.button.is-link.is-medium(
-                onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
+                data-page=currentPage + 1 aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
             form#search-form-compare(action='/compare-redirect/' method='post')
               table.table.is-striped.is-fullwidth.is-narrow
                 tr 
@@ -456,9 +188,9 @@ block content
                           img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
             p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
               button.button.is-link.is-medium.mr-2(
-                onclick=`document.getElementById('page').value=${currentPage - 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
+                data-page=currentPage - 1 aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
               button.button.is-link.is-medium(
-                onclick=`document.getElementById('page').value=${currentPage + 1};document.getElementById('search-form').submit();` aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
+                data-page=currentPage + 1 aria-label='Go to page #{currentPage + 1}' disabled=(currentPage >= totalPages)) #{getText('search.button.next')}
             p.has-background-white.has-text-black.p-3.has-text-centered
               small #{getText('search.compare.help')}
             p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
