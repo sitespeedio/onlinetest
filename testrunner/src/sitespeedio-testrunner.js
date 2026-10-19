@@ -67,6 +67,10 @@ export class SitespeedioTestRunner {
         jobQueue.process(runDocker);
       } else {
         logger.info('Setup testrunner for %s', testRunnerName);
+        logger.warn(
+          '%s runs tests without Docker, so the code in scripting tests runs directly on this machine. On a public instance, set useDocker: true or turn on disableScripting on the server.',
+          testRunnerName
+        );
         jobQueue.process(run);
       }
     }
