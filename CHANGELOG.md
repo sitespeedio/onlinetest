@@ -2,13 +2,27 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
-## 5.0.0 - UNRELEASED
+## 5.0.0 - 2026-10-19
 
 **Major version because result storage changes from MinIO to SeaweedFS.** Before you update an existing deployment, edit `.env`: add `SEAWEEDFS_DOCKER_VERSION` and set `SITESPEED_IO_S3_ENDPOINT` to `http://seaweedfs:9000`. Then run `deploy/update.sh`. Results that were uploaded before the update are not moved automatically. The upgrade guide has an rclone recipe to copy them, otherwise their links stop working. The test history in PostgreSQL does not change. The compose files need Docker Compose 2.23.1 or later. See [Upgrading from MinIO to SeaweedFS](deploy/PRODUCTION.md#upgrading-from-minio-to-seaweedfs).
+
+**The API now needs a key.** Until you set `api.key` in the server configuration (or `API_KEY` in `.env`), `POST /api/add` answers 403 and the server logs a warning at startup. Pass the key with `--api.key` when you add tests from the sitespeed.io CLI. The web GUI works with or without a key [#278](https://github.com/sitespeedio/onlinetest/pull/278).
+
+**If you use your own reverse proxy**, add the `Content-Security-Policy: sandbox` header for results from the [reverse proxy examples](deploy/PRODUCTION.md#reverse-proxy-examples). The Caddy setup in `deploy/` sends it already [#283](https://github.com/sitespeedio/onlinetest/pull/283).
+
+### Added
+* New `disableScripting` setting (or `DISABLESCRIPTING=true` in `.env`) that turns off scripting tests. A scripting test runs Node.js code where sitespeed.io runs, so on a public instance anyone who can add a test can run code there. With the setting on, the server rejects scripting tests from the web form, the API and reruns, and the form does not show the scripting tab. It is off by default [#282](https://github.com/sitespeedio/onlinetest/pull/282).
 
 ### Fixed
 * Result storage uses [SeaweedFS](https://github.com/seaweedfs/seaweedfs) instead of MinIO. The MinIO community edition is archived, gets no security patches and its images are not on Docker Hub or quay.io anymore, so a new install could not start [#215](https://github.com/sitespeedio/onlinetest/issues/215). SeaweedFS is Apache-2 licensed and does what MinIO did for us: S3 uploads from the testrunner, public read access to results and a 30 day expiry. The S3 API is still on port 9000, the `MINIO_USER`/`MINIO_PASSWORD` variables are the same and result URLs do not change. MinIO compressed html/css/js on disk; SeaweedFS does not, so results use more disk [#270](https://github.com/sitespeedio/onlinetest/pull/270).
 * The storage container restarts automatically (`restart: always`) like Redis and PostgreSQL, so result links work again after a host reboot [#270](https://github.com/sitespeedio/onlinetest/pull/270).
+* The API did not need a key by default, so anyone who could reach the server could add tests and choose the Docker image and the sitespeed.io configuration, including options that the web GUI blocks. The API now only accepts tests when a key is set [#278](https://github.com/sitespeedio/onlinetest/pull/278).
+* The scripting test name was used as-is in the file path on the testrunner. A name with `../` or an absolute path could write the script outside the job folder, and the public form could do this without a key. Only the base name is used now [#276](https://github.com/sitespeedio/onlinetest/pull/276).
+* The page shown while a test waits or runs added the test name and the job logs as HTML. A scripting test could use them to run JavaScript for everyone who opened its link. They are now added as text [#279](https://github.com/sitespeedio/onlinetest/pull/279).
+* The server sent the browser to the result URL from the test's result file without a check. A test can change that file, so it could make the running page open a `javascript:` URL. Only http and https result URLs are followed now [#280](https://github.com/sitespeedio/onlinetest/pull/280).
+* All JavaScript in the web GUI loads from `/js`, so the Content Security Policy no longer allows inline scripts or inline event handlers, and HTML injection cannot run JavaScript. The vendored compare app keeps the old policy on `/compare/` until the compare project removes its inline code [#284](https://github.com/sitespeedio/onlinetest/pull/284).
+* Results are served from the same origin as onlinetest, and a scripting test can put its own HTML and JavaScript in its result. Caddy now sends a `Content-Security-Policy: sandbox` header with all results, so each result page gets its own origin and cannot act on the onlinetest site. The sitespeed.io report works the same in the sandbox [#283](https://github.com/sitespeedio/onlinetest/pull/283).
+* Updated Express to 5.3.0 and the other server and testrunner dependencies to their latest minor and patch versions. This fixes the known advisories in `proxy-addr`, `path-to-regexp`, `body-parser` and `qs` [#277](https://github.com/sitespeedio/onlinetest/pull/277), [#281](https://github.com/sitespeedio/onlinetest/pull/281).
 
 ## 4.0.2 - 2026-09-16
 
