@@ -163,7 +163,7 @@ You can customize the look and feel of the GUI and enable/disable features in th
 * **Custom logo** — replace the default logo
 * **Disable GUI** — set `disableGUI: true` to run in API-only mode
 * **Disable search** — set `disableSearchGUI: true`
-* **Disable scripting tests** — set `disableScripting: true` (or `DISABLESCRIPTING=true` in `.env`). Recommended on public instances, because a scripting test runs Node.js code on the testrunner.
+* **Disable scripting tests** — set `disableScripting: true` (or `DISABLESCRIPTING=true` in `.env`) to turn them off everywhere. By default (`disableScripting: gui`) they are off in the web GUI, so only API calls with the API key can add them, because a scripting test runs Node.js code on the testrunner. Set `disableScripting: false` (or `DISABLESCRIPTING=false`) to turn on scripting in the web GUI when you trust everyone who can open it.
 * **Basic auth** — protect the GUI with a login/password
 * **Lighthouse** — enable the Lighthouse integration with `html.useLighthouse: true` - also need the +1 container
 
