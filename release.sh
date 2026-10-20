@@ -44,7 +44,22 @@ npm version "$VERSION" --no-git-tag-version
 npm publish
 
 cd "${ROOT_DIR}"
-git add server/package.json server/npm-shrinkwrap.json testrunner/package.json testrunner/npm-shrinkwrap.json
+
+# New installs copy .env.example, so point it and the README at the major
+# version of this release. Pre-releases keep the current version.
+if [[ "$VERSION" != *-* ]]; then
+  MAJOR="${VERSION%%.*}"
+  for file in .env.example README.md; do
+    awk -v v="$MAJOR" '
+      /^SITESPEED_IO_SERVER_VERSION=/ { print "SITESPEED_IO_SERVER_VERSION=" v; next }
+      /^SITESPEED_IO_TESTRUNNER_VERSION=/ { print "SITESPEED_IO_TESTRUNNER_VERSION=" v; next }
+      { print }
+    ' "$file" > "$file.tmp"
+    mv "$file.tmp" "$file"
+  done
+fi
+
+git add server/package.json server/npm-shrinkwrap.json testrunner/package.json testrunner/npm-shrinkwrap.json .env.example README.md
 git commit -m "Release v$VERSION"
 git push
 
