@@ -71,15 +71,17 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
+# Compose reads .env next to the compose file, not from the repository root,
+# so give it the file here. Without it the image tags are empty.
 case "$MODE" in
   all-in-one)
-    COMPOSE_FILES=(-f deploy/docker-compose.production.yml)
+    COMPOSE_FILES=(--env-file .env -f deploy/docker-compose.production.yml)
     ;;
   server)
-    COMPOSE_FILES=(-f deploy/docker-compose.production-server.yml)
+    COMPOSE_FILES=(--env-file .env -f deploy/docker-compose.production-server.yml)
     ;;
   testrunner)
-    COMPOSE_FILES=(-f deploy/docker-compose.production-testrunner.yml)
+    COMPOSE_FILES=(--env-file .env -f deploy/docker-compose.production-testrunner.yml)
     ;;
   *)
     echo "Unknown --mode: $MODE (expected all-in-one|server|testrunner)" >&2
