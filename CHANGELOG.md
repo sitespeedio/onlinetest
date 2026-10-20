@@ -2,6 +2,16 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 6.0.0 - UNRELEASED
+
+**Major version because scripting tests are off in the web GUI by default.** A scripting test runs Node.js code on the testrunner, so a public instance let anyone who could open it run code there. After the update the web GUI does not show the scripting tab and the server rejects scripting tests from the web form and reruns. API calls with the API key can still add them. To allow scripting tests in the web GUI again, set `disableScripting: false` in the server configuration (or `DISABLESCRIPTING=false` in `.env`). Scripting stays off in the web GUI when the setting is missing, also with your own configuration file [#286](https://github.com/sitespeedio/onlinetest/pull/286).
+
+**Tests older than 30 days are removed from PostgreSQL.** Once a day the server removes tests older than `retention.days` (30 by default, the same as the result files in SeaweedFS), and the first pass runs a minute after the update. If you want to keep your test history, set `RETENTION_DAYS=0` in `.env` before you update, or set `RETENTION_REMOVE=data` to keep the tests in search and only clear their HAR and browsertime result. If you use your own configuration file and it has no `retention` section, nothing is removed. See [Data retention](deploy/PRODUCTION.md#data-retention).
+
+### Added
+* The server removes old test data from PostgreSQL once a day. Every test stored its HAR and browsertime result in the database forever, so the database grew without limit, while the result files in SeaweedFS already expire after 30 days. `retention.days` sets how many days to keep (0 keeps everything) and `retention.remove` is `test` (the default) to remove the whole test or `data` to keep the test in search and clear only the HAR and the browsertime result. The server removes data in small batches and never removes a test that waits or runs.
+* `disableScripting` has a new value `gui`, which is the default: scripting tests are off in the web GUI and on through the API. `true` turns them off everywhere and `false` turns them on everywhere. The server checks the setting for every test that it gets, so a request sent outside the web form cannot get around it. A value of `false` in `.env` now overrides the default in `server.yaml` [#286](https://github.com/sitespeedio/onlinetest/pull/286).
+
 ## 5.0.0 - 2026-10-19
 
 **Major version because result storage changes from MinIO to SeaweedFS.** Before you update an existing deployment, edit `.env`: add `SEAWEEDFS_DOCKER_VERSION` and set `SITESPEED_IO_S3_ENDPOINT` to `http://seaweedfs:9000`. Then run `deploy/update.sh`. Results that were uploaded before the update are not moved automatically. The upgrade guide has an rclone recipe to copy them, otherwise their links stop working. The test history in PostgreSQL does not change. The compose files need Docker Compose 2.23.1 or later. See [Upgrading from MinIO to SeaweedFS](deploy/PRODUCTION.md#upgrading-from-minio-to-seaweedfs).
