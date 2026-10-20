@@ -2,15 +2,24 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
-## 6.0.0 - UNRELEASED
+## 6.0.0 - 2026-10-20
+
+Before you update, [back up PostgreSQL](deploy/PRODUCTION.md#back-up-postgresql) and follow [Upgrading to a new major version](deploy/PRODUCTION.md#upgrading-to-a-new-major-version).
 
 **Major version because scripting tests are off in the web GUI by default.** A scripting test runs Node.js code on the testrunner, so a public instance let anyone who could open it run code there. After the update the web GUI does not show the scripting tab and the server rejects scripting tests from the web form and reruns. API calls with the API key can still add them. To allow scripting tests in the web GUI again, set `disableScripting: false` in the server configuration (or `DISABLESCRIPTING=false` in `.env`). Scripting stays off in the web GUI when the setting is missing, also with your own configuration file [#286](https://github.com/sitespeedio/onlinetest/pull/286).
 
 **Tests older than 30 days are removed from PostgreSQL.** Once a day the server removes tests older than `retention.days` (30 by default, the same as the result files in SeaweedFS), and the first pass runs a minute after the update. If you want to keep your test history, set `RETENTION_DAYS=0` in `.env` before you update, or set `RETENTION_REMOVE=data` to keep the tests in search and only clear their HAR and browsertime result. If you use your own configuration file and it has no `retention` section, nothing is removed. See [Data retention](deploy/PRODUCTION.md#data-retention).
 
 ### Added
-* The server removes old test data from PostgreSQL once a day. Every test stored its HAR and browsertime result in the database forever, so the database grew without limit, while the result files in SeaweedFS already expire after 30 days. `retention.days` sets how many days to keep (0 keeps everything) and `retention.remove` is `test` (the default) to remove the whole test or `data` to keep the test in search and clear only the HAR and the browsertime result. The server removes data in small batches and never removes a test that waits or runs.
+* The server removes old test data from PostgreSQL once a day. Every test stored its HAR and browsertime result in the database forever, so the database grew without limit, while the result files in SeaweedFS already expire after 30 days. `retention.days` sets how many days to keep (0 keeps everything) and `retention.remove` is `test` (the default) to remove the whole test or `data` to keep the test in search and clear only the HAR and the browsertime result. The server removes data in small batches and never removes a test that waits or runs [#289](https://github.com/sitespeedio/onlinetest/pull/289).
 * `disableScripting` has a new value `gui`, which is the default: scripting tests are off in the web GUI and on through the API. `true` turns them off everywhere and `false` turns them on everywhere. The server checks the setting for every test that it gets, so a request sent outside the web form cannot get around it. A value of `false` in `.env` now overrides the default in `server.yaml` [#286](https://github.com/sitespeedio/onlinetest/pull/286).
+* The production docs show how to back up and restore PostgreSQL, and how to upgrade to a new major version, with the steps for 6.0.
+
+### Fixed
+* New installs got version 3.8.0 of the server and testrunner, from May 2026, without the security fixes in 4.x and 5.0, because `.env.example` and the README still pointed at version 3. They now point at the current major version, and the release script keeps them up to date [#290](https://github.com/sitespeedio/onlinetest/pull/290).
+* `deploy/update.sh` did not give `.env` to Docker Compose. Newer Docker Compose versions only read `.env` next to the compose file, so the image tags were empty and the update stopped with `invalid reference format`.
+* Pages that do not exist are answered with 404 instead of 400 [#287](https://github.com/sitespeedio/onlinetest/pull/287).
+* The server closes its Redis connection after it publishes a message, instead of keeping a new connection open for each message [#288](https://github.com/sitespeedio/onlinetest/pull/288).
 
 ## 5.0.0 - 2026-10-19
 
