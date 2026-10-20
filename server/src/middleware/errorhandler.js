@@ -5,7 +5,7 @@ import { getLogger } from '@sitespeed.io/log';
 const logger = getLogger('sitespeedio.server');
 
 export const error404 = function (request, response) {
-  response.status(400);
+  response.status(404);
   response.render('404', {
     title: '404: File Not Found',
     description: '404',
