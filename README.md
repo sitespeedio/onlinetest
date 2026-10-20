@@ -165,6 +165,7 @@ You can customize the look and feel of the GUI and enable/disable features in th
 * **Disable search** — set `disableSearchGUI: true`
 * **Disable scripting tests** — set `disableScripting: true` (or `DISABLESCRIPTING=true` in `.env`) to turn them off everywhere. By default (`disableScripting: gui`) they are off in the web GUI, so only API calls with the API key can add them, because a scripting test runs Node.js code on the testrunner. Set `disableScripting: false` (or `DISABLESCRIPTING=false`) to turn on scripting in the web GUI when you trust everyone who can open it.
 * **Basic auth** — protect the GUI with a login/password
+* **Data retention** — once a day the server removes tests older than `retention.days` (30 by default) from PostgreSQL. See [Data retention](deploy/PRODUCTION.md#data-retention)
 * **Lighthouse** — enable the Lighthouse integration with `html.useLighthouse: true` - also need the +1 container
 
 See the [full documentation](https://www.sitespeed.io/documentation/onlinetest/) for details on each option.

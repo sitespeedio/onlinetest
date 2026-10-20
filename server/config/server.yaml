@@ -44,6 +44,18 @@ disableSearchGUI: false
 #   true  - scripting tests are turned off in the GUI and the API
 disableScripting: gui
 
+# Remove old test data from PostgreSQL once a day. Every test stores its HAR
+# and browsertime result there, so the database grows without this. The
+# result files in SeaweedFS expire after 30 days.
+retention:
+  # Keep tests for this many days. 0 keeps everything.
+  days: 30
+  # What to remove when a test is older than days:
+  #   test - remove the whole test, so it is gone like its result files
+  #   data - clear the HAR and the browsertime result, keep the test in search.
+  #          The link to the result stops working after 30 days.
+  remove: test
+
 # How many max entries do you want per page?
 search:
   resultPerPage: 100

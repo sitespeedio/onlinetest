@@ -243,6 +243,21 @@ VALID_TEST_DOMAINS=^https?://(www\.|staging\.)example\.com
 VALID_TEST_DOMAINS=.*
 ```
 
+### Data retention
+
+Every test stores its HAR and browsertime result in PostgreSQL. Once a day the server removes test data that is older than `retention.days` (30 by default, the same as the result files in SeaweedFS). With `retention.remove: test` (the default) the server removes the whole test, so it is gone like its result files. With `retention.remove: data` it clears the HAR and the browsertime result and keeps the test in search, but the link to the result stops working. Tests that wait or run are never removed. In `.env`:
+
+```
+# Keep 90 days and keep the tests in search
+RETENTION_DAYS=90
+RETENTION_REMOVE=data
+
+# Keep everything
+RETENTION_DAYS=0
+```
+
+If you start the server with your own configuration file and it has no `retention` section, nothing is removed.
+
 ### sitespeed.io version
 
 Pin the sitespeed.io Docker image used by the testrunner:

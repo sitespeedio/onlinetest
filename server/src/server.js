@@ -24,6 +24,7 @@ import {
   getStaleActiveTestIds
 } from './database/index.js';
 import DatabaseHelper from './database/databasehelper.js';
+import { removeOldTestData } from './database/retention.js';
 import { testsCompletedTotal, testsFailedTotal } from './metrics.js';
 
 const logger = getLogger('sitespeedio.server');
@@ -55,6 +56,17 @@ async function setStalledStatus(jobid) {
 // freshly-active job whose `setActiveStatus` event is in flight.
 const RECONCILE_INTERVAL_MS = 60_000;
 const RECONCILE_GRACE_MINUTES = 5;
+
+// Remove old test data once a day. The first pass waits a minute, so it
+// does not slow down the start.
+const RETENTION_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const RETENTION_FIRST_RUN_MS = 60_000;
+
+function runRetention() {
+  removeOldTestData().catch(error =>
+    logger.error('Retention pass failed: %s', error.message)
+  );
+}
 
 // Catches stale active rows the global:stalled handler missed —
 // typically because the server was down when Bull fired the event,
@@ -272,6 +284,10 @@ export class SitespeedioServer {
       RECONCILE_INTERVAL_MS
     );
     this.reconcileTimer.unref();
+    this.retentionFirstTimer = setTimeout(runRetention, RETENTION_FIRST_RUN_MS);
+    this.retentionFirstTimer.unref();
+    this.retentionTimer = setInterval(runRetention, RETENTION_INTERVAL_MS);
+    this.retentionTimer.unref();
     // Tell the world that we are starting
     await publish('server', 'start');
   }
@@ -288,6 +304,9 @@ export class SitespeedioServer {
       clearInterval(this.reconcileTimer);
       this.reconcileTimer = undefined;
     }
+
+    clearTimeout(this.retentionFirstTimer);
+    clearInterval(this.retentionTimer);
 
     // Stop accepting new HTTP requests and drain the in-flight ones before
     // we tear down the database pool — otherwise a request mid-query will
