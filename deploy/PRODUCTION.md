@@ -349,11 +349,53 @@ It pulls the latest images, runs `docker compose up -d --remove-orphans`, prints
 To move to a new major release of the server/testrunner, pass `--version`:
 
 ```bash
-./deploy/update.sh --mode server --version 3.4.0
-./deploy/update.sh --mode testrunner --version 3.4.0
+./deploy/update.sh --mode server --version 6
+./deploy/update.sh --mode testrunner --version 6
 ```
 
-This rewrites `SITESPEED_IO_SERVER_VERSION` and `SITESPEED_IO_TESTRUNNER_VERSION` in `.env` to `3.4.0` before pulling.
+This rewrites `SITESPEED_IO_SERVER_VERSION` and `SITESPEED_IO_TESTRUNNER_VERSION` in `.env` to `6` before pulling. With only the major version, later 6.x releases come with each update. Read [Upgrading to a new major version](#upgrading-to-a-new-major-version) before you change the major version.
+
+### Back up PostgreSQL
+
+PostgreSQL holds the test history: every test, its configuration and script, and its HAR and browsertime result. The result pages are in SeaweedFS and expire after 30 days, so they are not part of this backup.
+
+Run this from the repository root on the machine that runs PostgreSQL. On a multi-server setup, use `deploy/docker-compose.production-server.yml` instead.
+
+```bash
+docker compose --env-file .env -f deploy/docker-compose.production.yml exec -T postgresql \
+  sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" --format=custom' \
+  > onlinetest-$(date +%F).dump
+```
+
+To restore a backup (this replaces the data that is in the database now):
+
+```bash
+docker compose --env-file .env -f deploy/docker-compose.production.yml exec -T postgresql \
+  sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --clean --if-exists' \
+  < onlinetest-2026-10-20.dump
+```
+
+### Upgrading to a new major version
+
+A major version changes how onlinetest works, and you can need to change `.env` before you update. Do these steps:
+
+1. [Back up PostgreSQL](#back-up-postgresql).
+2. Read the bold notes in the [changelog](../CHANGELOG.md) for each major version between your version and the new one. If you skip a version, for example from 4 to 6, do the steps for each version.
+3. Change `.env` as the notes tell you.
+4. Update with `update.sh` and `--version`. On a multi-server setup, update the server first and then each testrunner. Run the same major version on the server and all testrunners.
+5. Look for warnings in the server log, run a test, open its result and make sure that `/admin` asks for a password:
+    ```bash
+    docker compose --env-file .env -f deploy/docker-compose.production.yml logs sitespeed.io-server | grep -i warn
+    ```
+
+#### Upgrading to 6.0
+
+* **Tests older than 30 days are removed from PostgreSQL.** The first pass runs a minute after the server starts. To keep your test history, set `RETENTION_DAYS=0` in `.env` before you update, or set `RETENTION_REMOVE=data` to keep the tests in search and only clear their HAR and browsertime result. See [Data retention](#data-retention).
+* **Scripting tests are off in the web GUI.** API calls with the API key can still add them. To allow them in the web GUI again, set `DISABLESCRIPTING=false` in `.env`. Do this only if you trust everyone who can open the web GUI, because a scripting test runs Node.js code on the testrunner.
+
+#### Upgrading to 5.0
+
+Result storage changes from MinIO to SeaweedFS and the API needs a key. See [Upgrading from MinIO to SeaweedFS](#upgrading-from-minio-to-seaweedfs) and set `API_KEY` in `.env`.
 
 ### Upgrading from MinIO to SeaweedFS
 
