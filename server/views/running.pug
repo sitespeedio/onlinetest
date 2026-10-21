@@ -6,11 +6,22 @@ block content
       h1.sr-only Test in progress
       p.has-text-centered.mb-2
         img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
-      .console-progress(role='status' aria-live='polite' aria-atomic='true')
+      .console-progress
         .spinner(aria-hidden='true')
         .label-stack
-          strong Running test
-          span Streaming logs · auto-refreshing
+          strong#progress-stage(role='status' aria-live='polite') Running test
+          span#progress-detail Streaming logs · auto-refreshing
+        progress#progress-bar(max='1' value='0' aria-labelledby='progress-stage' hidden)
+      ol.progress-steps(aria-label='Test steps')
+        li(data-step='queued') Queued
+        li(data-step='starting') Starting
+        li(data-step='testing') Testing
+        li(data-step='report') Building report
+      .iteration-strip#iteration-results(hidden)
+        .bars#iteration-bars(aria-hidden='true')
+        p#iteration-latest
+        p
+          small TTFB / First paint / LCP
       article.message.is-success(aria-live='polite' aria-atomic='false')
         .message-header
           p#title
