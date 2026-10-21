@@ -1,6 +1,6 @@
 - var theme = nconf.get('html:theme') || 'console'
 - var fontPreload = theme === 'memphis' ? '/fonts/familjen-grotesk-var.woff2' : '/fonts/ibm-plex-sans-var.woff2'
-- var v = serverVersion ? '?v=' + serverVersion : ''
+- var v = assetVersion ? '?v=' + assetVersion : ''
 meta(charset='utf-8')
 meta(name='viewport' content='width=device-width, initial-scale=1')
 meta(name='color-scheme' content='light dark')
@@ -20,4 +20,4 @@ link(rel='apple-touch-icon-precomposed' href='/img/ico/sitespeed.io-57.png')
 link(rel='shortcut icon' href='/img/ico/sitespeed.io.ico')
 meta(name='description' content=description)
 meta(name='keywords' content='sitespeed.io, wpo, webperf, perfmatters, performance')
-script(src='/js/running.js?v=' + serverVersion data-test-id=id data-show-random-ai-image=String(nconf.get('html:showRandomAIImage') === true))
+script(src='/js/running.js?v=' + assetVersion data-test-id=id data-show-random-ai-image=String(nconf.get('html:showRandomAIImage') === true))

@@ -9,7 +9,7 @@ block content
           img(src=nconf.get('html:logo:path') width=nconf.get('html:logo:width') alt=nconf.get('html:logo:alt'))
 
       if serverConfig.length > 0
-        script(src='/js/index-tabs.js?v=' + serverVersion)
+        script(src='/js/index-tabs.js?v=' + assetVersion)
 
         .tabs.is-centered.is-boxed.is-medium(role='tablist' aria-label='Test configuration')
           button.tab.is-active(role='tab' type='button' id='tab-settings' aria-selected='true' aria-controls='settings' tabindex='0' data-open-tab='settings') #{getText('index.tab.settings')}
