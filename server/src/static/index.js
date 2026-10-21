@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 
 import { nconf } from '../config.js';
 import express from 'express';
@@ -89,6 +90,28 @@ function getFilteredHelp() {
     cachedFilteredHelp = '[]';
   }
   return cachedFilteredHelp;
+}
+
+/**
+ * A short hash of all files in public/js and public/css. Use it as the
+ * cache buster for these files, so a browser gets new files when the
+ * content changes, also when the server version stays the same.
+ */
+export function getAssetVersion() {
+  const hash = createHash('sha256');
+  for (const directory of ['js', 'css']) {
+    const base = getBaseFilePath(path.join('public', directory));
+    const files = fs
+      .readdirSync(base, { recursive: true, withFileTypes: true })
+      .filter(entry => entry.isFile())
+      .map(entry => path.join(entry.parentPath, entry.name))
+      .toSorted();
+    for (const file of files) {
+      hash.update(path.relative(base, file));
+      hash.update(fs.readFileSync(file));
+    }
+  }
+  return hash.digest('hex').slice(0, 12);
 }
 
 export function setupStatic(app) {

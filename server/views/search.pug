@@ -1,7 +1,7 @@
 extends ./layouts/default.pug
 
 block content
-  script(src='/js/search.js?v=' + serverVersion data-select-first=getText('search.compare.selectfirst') data-select-one-more=getText('search.compare.selectonemore'))
+  script(src='/js/search.js?v=' + assetVersion data-select-first=getText('search.compare.selectfirst') data-select-one-more=getText('search.compare.selectonemore'))
 
   .modal#rerunModal(role='dialog' aria-modal='true' aria-labelledby='rerunTitle' aria-hidden='true')
     .modal-background(data-search-action='close-rerun')

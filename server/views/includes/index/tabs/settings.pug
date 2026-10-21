@@ -60,4 +60,4 @@ block content
     //- this, picking a second location leaves the dependent dropdowns showing
     //- the first location's options and validateQueue rejects the submission.
     script(type='application/json' id='locations-data')!= JSON.stringify({locations: serverConfig, queueSizes: queueNamesAndSize, labels: {emulatedMobile: getText('index.tab.settings.emulatedmobile')}}).replace(/</g, '\\u003c')
-    script(src='/js/settings.js?v=' + serverVersion)
+    script(src='/js/settings.js?v=' + assetVersion)

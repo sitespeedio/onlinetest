@@ -24,7 +24,7 @@ import { api } from './routes/api/api.js';
 
 import { BasicAuth } from './middleware/basicauth.js';
 import { error404, error500 } from './middleware/errorhandler.js';
-import { setupStatic } from './static/index.js';
+import { setupStatic, getAssetVersion } from './static/index.js';
 import { getBaseFilePath } from './util/fileutil.js';
 import { isScriptingAllowed } from './util/scripting.js';
 import { register, httpRequestDuration, httpRequestsTotal } from './metrics.js';
@@ -105,6 +105,9 @@ function setupExpressServer() {
   // need an in-process equivalent.
   const require = createRequire(import.meta.url);
   app.locals.serverVersion = require('../package.json').version;
+  // The version shows in the GUI. The asset version changes when the
+  // content of the JavaScript or CSS changes.
+  app.locals.assetVersion = getAssetVersion();
   app.locals.isScriptingAllowed = isScriptingAllowed;
 
   app.enable('view cache');
