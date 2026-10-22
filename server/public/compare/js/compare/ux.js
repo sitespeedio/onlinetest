@@ -1,4 +1,4 @@
-/* exported showUpload, formatDate, formatURL, toggleRow, hideUpload, objectPropertiesToArray, formatTime, showLoading, errorMessage, formatBytes, blendWaterfalls, toggleDiffOnly, toggleWaterfallLayout, applyWaterfallLayoutPreference */
+/* exported showUpload, formatDate, formatURL, hideUpload, formatTime, showLoading, errorMessage, formatBytes, blendWaterfalls, toggleWaterfallLayout, applyWaterfallLayoutPreference, prefersReducedMotion */
 
 // Hide the upload functionality
 function hideUpload() {
@@ -16,12 +16,13 @@ function removeAndHide() {
   }
   removeChildren('har1');
   removeChildren('har2');
-  removeChildren('pageXrayContent');
+  removeChildren('summaryContent');
+  removeChildren('visualProgress');
+  removeChildren('timelineMedia');
   removeChildren('filmstripContent');
-  removeChildren('thirdPartyContent');
-  removeChildren('visualProgressContent');
-  removeChildren('requestDiffContent');
-  removeChildren('domainsContent');
+  removeChildren('metricsTableContent');
+  removeChildren('requestsContent');
+  removeChildren('capturesContent');
   hide('result');
   hide('loading');
 }
@@ -39,24 +40,10 @@ function showLoading() {
   el2.style.display = 'block';
 }
 
-function objectPropertiesToArray(object) {
-  const array = [];
-  for (let key in object) {
-    if (object.hasOwnProperty(key)) {
-      array.push({ name: key, value: object[key] });
-    }
-  }
-  return array.sort(function(a, b) {
-    if (a.name < b.name) return -1;
-    if (a.name > b.name) return 1;
-    return 0;
-  });
-}
-
 // Put a error message on the screen
 function errorMessage(myMessage) {
   const message = document.getElementById('message');
-  message.innerHTML = myMessage;
+  message.textContent = myMessage;
 }
 
 function show(id) {
@@ -71,6 +58,10 @@ function hide(id) {
   if (el) {
     el.style.display = 'none';
   }
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 function formatDate(dateString) {
@@ -105,10 +96,10 @@ function formatBytes(bytes) {
   const KB = 1024;
   const MB = 1024 * 1024;
 
-  if (!bytes || bytes < 0 || bytes === 'N/A') {
+  if (bytes == null || bytes < 0 || bytes === 'N/A') {
     return 'N/A';
   } else if (bytes === 0) {
-    return '0 b';
+    return '0 B';
   } else if (bytes < KB) {
     return Number(bytes) + ' B';
   } else if (bytes < MB) {
@@ -173,47 +164,11 @@ function applyWaterfallLayoutPreference() {
   setWaterfallSideBySide(on);
 }
 
-function toggleWaterfallLayout(btn) {
+function toggleWaterfallLayout() {
   const wrapper = document.querySelector('.harwrapper');
   if (!wrapper) return;
   const on = !wrapper.classList.contains('harwrapper--side-by-side');
   setWaterfallSideBySide(on);
   try { localStorage.setItem('compare.waterfallSideBySide', on ? '1' : '0'); }
   catch (e) { /* localStorage blocked */ }
-}
-
-// "Only show differences" toggle for the page-x-ray table — hides
-// rows whose Δ cell renders "no change", so a long metric list
-// collapses to just the things that actually moved. Persists the
-// choice so the page comes back the way the user left it.
-function toggleDiffOnly(btn) {
-  const table = document.querySelector('.pageXrayTable');
-  if (!table) return;
-  const on = !table.classList.contains('pageXrayTable--diff-only');
-  table.classList.toggle('pageXrayTable--diff-only', on);
-  btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-  try { localStorage.setItem('compare.diffOnly', on ? '1' : '0'); }
-  catch (e) { /* localStorage blocked — preference is in-memory only */ }
-}
-
-function toggleRow(element, className, toggler) {
-  const rows = element.parentNode.parentNode.parentNode.getElementsByClassName(
-    className
-  );
-
-  for (let i = 0; i < rows.length; i++) {
-    const status = rows[i].currentStyle
-      ? rows[i].currentStyle.display
-      : getComputedStyle(rows[i], null).display;
-
-    if (status === 'none') {
-      rows[i].style.display = 'table-row';
-      toggler.style.transform = 'rotate(45deg)';
-      toggler.style['-webkit-transform'] = 'rotate(45deg)';
-    } else {
-      rows[i].style.display = 'none';
-      toggler.style.transform = 'rotate(-45deg)';
-      toggler.style['-webkit-transform'] = 'rotate(-45deg)';
-    }
-  }
 }

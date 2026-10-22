@@ -1,5 +1,5 @@
-/* global isFileGzipped, isFileZipped, gzipArrayBufferToJSON, readGZipFile, errorMessage, generate, showUpload */
-/* exported readHar, fetchHar, getHarURL, loadFilesFromURL, loadFilesFromGist, loadFilesFromConfig, loadFromBundle, isBundle*/
+/* global isFileGzipped, isFileZipped, gzipArrayBufferToJSON, readGZipFile, errorMessage, generate, showUpload, showLoading */
+/* exported readHar, fetchHar, getHarURL, loadFilesFromURL, loadFilesFromGist, loadFilesFromConfig, loadFromBundle, isBundle, loadFromPaste, compareFromForm */
 
 /**
  * Help functions to read HAR/JSON files from file
@@ -124,19 +124,11 @@ function readConfig(config) {
 
 function loadFilesFromConfig(url) {
   loadJson(url)
-    .then(unparsedConfig => {
-      let content;
-      try {
-        content = JSON.parse(unparsedConfig);
-      } catch (e) {
-        throw new Error('Malformed config file.' + e);
-      }
-      return readConfig(content);
-    })
+    .then(readConfig)
     .catch(e => {
       /* eslint-disable no-console */
       console.error(e);
-      /* eslint-disable no-console */
+      /* eslint-enable no-console */
       errorMessage(e.message);
       showUpload();
     });
@@ -148,19 +140,20 @@ function loadFilesFromGist(id) {
   loadJson(url)
     .then(gist => {
       // We only support one file at the moment
-      const key = Object.keys(gist.files)[0];
+      const file = gist.files[Object.keys(gist.files)[0]];
+      if (file.truncated) return loadJson(file.raw_url).then(readConfig);
       let content;
       try {
-        content = JSON.parse(gist.files[key].content);
+        content = JSON.parse(file.content);
       } catch (e) {
-        throw new Error('Malformed gist.' + e);
+        throw new Error('Malformed gist.' + e, { cause: e });
       }
       return readConfig(content);
     })
     .catch(e => {
       /* eslint-disable no-console */
       console.error(e);
-      /* eslint-disable no-console */
+      /* eslint-enable no-console */
       errorMessage(e.message);
       showUpload();
     });
@@ -189,12 +182,14 @@ function loadFromBundle(bundle) {
     har1: {
       har: bundle.har1.har,
       run: bundle.har1.run || 0,
-      label: bundle.har1.label || 'HAR1'
+      label: bundle.har1.label || 'HAR1',
+      drawings: bundle.har1.drawings
     },
     har2: {
       har: bundle.har2.har,
       run: bundle.har2.run || 0,
-      label: bundle.har2.label || 'HAR2'
+      label: bundle.har2.label || 'HAR2',
+      drawings: bundle.har2.drawings
     },
     title: bundle.title || 'Compare HAR files',
     firstParty: bundle.firstParty || undefined,
@@ -265,8 +260,82 @@ function loadHARsFromConfig(config) {
     .catch(e => {
       /* eslint-disable no-console */
       console.error(e);
-      /* eslint-disable no-console */
+      /* eslint-enable no-console */
       errorMessage(e.message);
       showUpload();
     });
+}
+
+/**
+ * Load what the user pasted on the start page: a HAR, a bundle, a
+ * config, a gist URL or id, or a config URL. Other text is ignored.
+ * @param {string} text
+ */
+function loadFromPaste(text) {
+  const paste = text.trim();
+  // Is it a HAR, a bundle, or a gist?
+  let parsed;
+  try {
+    parsed = JSON.parse(paste);
+  } catch {
+    parsed = null;
+  }
+  if (typeof parsed !== 'object' || parsed === null) {
+    if (paste.startsWith('https://gist.github.com/')) {
+      showLoading();
+      loadFilesFromGist(paste.substring(paste.lastIndexOf('/') + 1));
+    } else if (/^https?:\/\/.+\.json$/.test(paste)) {
+      showLoading();
+      loadFilesFromConfig(paste);
+    } else if (/^[0-9a-f]{20,}$/i.test(paste)) {
+      // Guess it's a gist id
+      showLoading();
+      loadFilesFromGist(paste);
+    }
+    return;
+  }
+
+  showLoading();
+  try {
+    if (isBundle(parsed)) {
+      loadFromBundle(parsed);
+    } else if (parsed.log) {
+      generate({
+        har1: { har: parsed, run: 0, label: 'HAR1' },
+        har2: {
+          har: parsed,
+          run: parsed.log.pages.length > 1 ? 1 : 0,
+          label: 'HAR2'
+        }
+      });
+    } else {
+      readConfig(parsed);
+    }
+  } catch (e) {
+    /* eslint-disable no-console */
+    console.error(e);
+    /* eslint-enable no-console */
+    errorMessage(e.message);
+    showUpload();
+  }
+}
+
+/**
+ * Compare the HAR URLs in the start page form. With one URL, compare
+ * two runs in the same HAR.
+ */
+function compareFromForm() {
+  const url1 = document.getElementById('harurl').value.trim();
+  const url2 = document.getElementById('harurl2').value.trim();
+  if (!url1 && !url2) {
+    errorMessage('Add the URL to at least one HAR file.');
+    return;
+  }
+  errorMessage('');
+  showLoading();
+  loadHARsFromConfig({
+    har1: { url: url1 || url2 },
+    har2: { url: url1 ? url2 : '' },
+    stripVersion: document.getElementById('stripVersion').checked
+  });
 }

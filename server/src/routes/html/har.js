@@ -13,6 +13,10 @@ har.post('/', async function (request, response) {
   } else if (Array.isArray(hars)) {
     return response.redirect('/compare/index.html');
   } else {
-    return response.redirect('/compare/index.html?har1=/api/har/' + hars);
+    // compare=1 compares the runs in the HAR, else compare only fills
+    // in the URL field.
+    return response.redirect(
+      '/compare/index.html?compare=1&har1=/api/har/' + hars
+    );
   }
 });
