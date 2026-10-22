@@ -135,21 +135,12 @@ function setupExpressServer() {
     baseUri: ["'self'"],
     formAction: ["'self'"]
   };
-  const appHelmet = helmet({
-    contentSecurityPolicy: { useDefaults: false, directives: cspDirectives }
-  });
-  // The vendored compare app still has inline scripts and handlers. It
-  // keeps 'unsafe-inline' until the compare project removes them.
-  const compareHelmet = helmet({
-    contentSecurityPolicy: {
-      useDefaults: false,
-      directives: { ...cspDirectives, scriptSrc: ["'self'", "'unsafe-inline'"] }
-    }
-  });
-  app.use((request, response, next) =>
-    request.path === '/compare' || request.path.startsWith('/compare/')
-      ? compareHelmet(request, response, next)
-      : appHelmet(request, response, next)
+  // The vendored compare app has no inline scripts or handlers either,
+  // so it uses the same policy.
+  app.use(
+    helmet({
+      contentSecurityPolicy: { useDefaults: false, directives: cspDirectives }
+    })
   );
 
   if (
