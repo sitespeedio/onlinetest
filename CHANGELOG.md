@@ -2,6 +2,17 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 6.1.0 - 2026-10-22
+
+### Changed
+* Updated the vendored compare app. When both tests have several runs of the same URL, compare uses all runs and marks a change only when a Mann-Whitney U test says it is significant and it is 2% or more. Video, filmstrip, visual progress and waterfall follow one timeline, unchanged metrics are folded, and you can draw on the waterfall and save it as an image [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+
+### Fixed
+* The compare page no longer allows inline scripts. It now uses the same Content Security Policy as the rest of the web GUI, which closes the exception from [#284](https://github.com/sitespeedio/onlinetest/pull/284) [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+* In compare, every run after the first lost its connect and SSL bars in the waterfall, and some filmstrip frames showed as broken images [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+* Opening compare with one test now compares its runs, instead of showing the start page with the URL filled in [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+* Browsers got new JavaScript and CSS only when the server version changed. A build with changed files and the same version, like a branch under test or a patched install, kept serving cached old files, and the new pages ran against old JavaScript. The cache buster is now a hash of the JavaScript and CSS content [#292](https://github.com/sitespeedio/onlinetest/pull/292).
+
 ## 6.0.0 - 2026-10-20
 
 Before you update, [back up PostgreSQL](deploy/PRODUCTION.md#back-up-postgresql) and follow [Upgrading to a new major version](deploy/PRODUCTION.md#upgrading-to-a-new-major-version).
