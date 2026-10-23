@@ -2,6 +2,11 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 6.2.0 - 2026-10-23
+
+### Changed
+* The server and testrunner Docker images now use Node.js 26 [#295](https://github.com/sitespeedio/onlinetest/pull/295).
+
 ## 6.1.0 - 2026-10-22
 
 ### Changed
