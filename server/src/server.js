@@ -24,6 +24,7 @@ import {
   getStaleActiveTestIds
 } from './database/index.js';
 import DatabaseHelper from './database/databasehelper.js';
+import { removeOldTestData } from './database/retention.js';
 import { testsCompletedTotal, testsFailedTotal } from './metrics.js';
 
 const logger = getLogger('sitespeedio.server');
@@ -55,6 +56,17 @@ async function setStalledStatus(jobid) {
 // freshly-active job whose `setActiveStatus` event is in flight.
 const RECONCILE_INTERVAL_MS = 60_000;
 const RECONCILE_GRACE_MINUTES = 5;
+
+// Remove old test data once a day. The first pass waits a minute, so it
+// does not slow down the start.
+const RETENTION_INTERVAL_MS = 24 * 60 * 60 * 1000;
+const RETENTION_FIRST_RUN_MS = 60_000;
+
+function runRetention() {
+  removeOldTestData().catch(error =>
+    logger.error('Retention pass failed: %s', error.message)
+  );
+}
 
 // Catches stale active rows the global:stalled handler missed —
 // typically because the server was down when Bull fired the event,
@@ -161,6 +173,22 @@ async function setupResultQueue() {
   });
 }
 
+function registerTestRunner(serverConfig) {
+  addTestRunner(serverConfig);
+  for (let setup of serverConfig.setup) {
+    let queueName = setup.queue;
+
+    const queue = getExistingQueue(queueName);
+    // We only add queue that do not exist
+    if (!queue) {
+      onMessage(queueName, 'global:active', setActiveStatus);
+      onMessage(queueName, 'global:failed', setFailedStatus);
+      onMessage(queueName, 'global:stalled', setStalledStatus);
+      addDeviceToQueue(setup.deviceId, serverConfig.name, queueName);
+    }
+  }
+}
+
 async function setupTestRunnerQueue() {
   // Create the queue that handle testrunners
   processJob('testrunners', async job => {
@@ -169,7 +197,19 @@ async function setupTestRunnerQueue() {
       // up), stop (graceful shutdown) and heartbeat (still here). A runner
       // that misses heartbeats long enough gets pruned server-side.
       if (job.data.type === 'heartbeat') {
-        touchTestRunner(job.data.hostname);
+        const known = touchTestRunner(job.data.hostname);
+        // A heartbeat from an unknown hostname means the runner is alive
+        // but fell out of the registry — pruned during a Redis blip, or
+        // its start broadcast was lost across a server restart. The
+        // runner sends its serverConfig with each heartbeat so we can
+        // heal by re-registering instead of ignoring it forever.
+        if (!known && job.data.serverConfig) {
+          logger.info(
+            'Re-registering testrunner %s from heartbeat',
+            job.data.hostname
+          );
+          registerTestRunner(job.data.serverConfig);
+        }
         return resolve();
       }
       if (job.data.type === 'start') {
@@ -179,23 +219,7 @@ async function setupTestRunnerQueue() {
           job.data.serverConfig
         );
 
-        addTestRunner(job.data.serverConfig);
-        for (let setup of job.data.serverConfig.setup) {
-          let queueName = setup.queue;
-
-          const queue = getExistingQueue(queueName);
-          // We only add queue that do not exist
-          if (!queue) {
-            onMessage(queueName, 'global:active', setActiveStatus);
-            onMessage(queueName, 'global:failed', setFailedStatus);
-            onMessage(queueName, 'global:stalled', setStalledStatus);
-            addDeviceToQueue(
-              setup.deviceId,
-              job.data.serverConfig.name,
-              queueName
-            );
-          }
-        }
+        registerTestRunner(job.data.serverConfig);
         return resolve();
       } else {
         logger.info('TestRunner %s is shutting down', job.data.name);
@@ -260,6 +284,10 @@ export class SitespeedioServer {
       RECONCILE_INTERVAL_MS
     );
     this.reconcileTimer.unref();
+    this.retentionFirstTimer = setTimeout(runRetention, RETENTION_FIRST_RUN_MS);
+    this.retentionFirstTimer.unref();
+    this.retentionTimer = setInterval(runRetention, RETENTION_INTERVAL_MS);
+    this.retentionTimer.unref();
     // Tell the world that we are starting
     await publish('server', 'start');
   }
@@ -276,6 +304,9 @@ export class SitespeedioServer {
       clearInterval(this.reconcileTimer);
       this.reconcileTimer = undefined;
     }
+
+    clearTimeout(this.retentionFirstTimer);
+    clearInterval(this.retentionTimer);
 
     // Stop accepting new HTTP requests and drain the in-flight ones before
     // we tear down the database pool — otherwise a request mid-query will

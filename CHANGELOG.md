@@ -2,6 +2,73 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 6.2.0 - 2026-10-23
+
+### Changed
+* The server and testrunner Docker images now use Node.js 26 [#295](https://github.com/sitespeedio/onlinetest/pull/295).
+
+## 6.1.0 - 2026-10-22
+
+### Changed
+* Updated the vendored compare app. When both tests have several runs of the same URL, compare uses all runs and marks a change only when a Mann-Whitney U test says it is significant and it is 2% or more. Video, filmstrip, visual progress and waterfall follow one timeline, unchanged metrics are folded, and you can draw on the waterfall and save it as an image [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+
+### Fixed
+* The compare page no longer allows inline scripts. It now uses the same Content Security Policy as the rest of the web GUI, which closes the exception from [#284](https://github.com/sitespeedio/onlinetest/pull/284) [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+* In compare, every run after the first lost its connect and SSL bars in the waterfall, and some filmstrip frames showed as broken images [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+* Opening compare with one test now compares its runs, instead of showing the start page with the URL filled in [#294](https://github.com/sitespeedio/onlinetest/pull/294).
+* Browsers got new JavaScript and CSS only when the server version changed. A build with changed files and the same version, like a branch under test or a patched install, kept serving cached old files, and the new pages ran against old JavaScript. The cache buster is now a hash of the JavaScript and CSS content [#292](https://github.com/sitespeedio/onlinetest/pull/292).
+
+## 6.0.0 - 2026-10-20
+
+Before you update, [back up PostgreSQL](deploy/PRODUCTION.md#back-up-postgresql) and follow [Upgrading to a new major version](deploy/PRODUCTION.md#upgrading-to-a-new-major-version).
+
+**Major version because scripting tests are off in the web GUI by default.** A scripting test runs Node.js code on the testrunner, so a public instance let anyone who could open it run code there. After the update the web GUI does not show the scripting tab and the server rejects scripting tests from the web form and reruns. API calls with the API key can still add them. To allow scripting tests in the web GUI again, set `disableScripting: false` in the server configuration (or `DISABLESCRIPTING=false` in `.env`). Scripting stays off in the web GUI when the setting is missing, also with your own configuration file [#286](https://github.com/sitespeedio/onlinetest/pull/286).
+
+**Tests older than 30 days are removed from PostgreSQL.** Once a day the server removes tests older than `retention.days` (30 by default, the same as the result files in SeaweedFS), and the first pass runs a minute after the update. If you want to keep your test history, set `RETENTION_DAYS=0` in `.env` before you update, or set `RETENTION_REMOVE=data` to keep the tests in search and only clear their HAR and browsertime result. If you use your own configuration file and it has no `retention` section, nothing is removed. See [Data retention](deploy/PRODUCTION.md#data-retention).
+
+### Added
+* The server removes old test data from PostgreSQL once a day. Every test stored its HAR and browsertime result in the database forever, so the database grew without limit, while the result files in SeaweedFS already expire after 30 days. `retention.days` sets how many days to keep (0 keeps everything) and `retention.remove` is `test` (the default) to remove the whole test or `data` to keep the test in search and clear only the HAR and the browsertime result. The server removes data in small batches and never removes a test that waits or runs [#289](https://github.com/sitespeedio/onlinetest/pull/289).
+* `disableScripting` has a new value `gui`, which is the default: scripting tests are off in the web GUI and on through the API. `true` turns them off everywhere and `false` turns them on everywhere. The server checks the setting for every test that it gets, so a request sent outside the web form cannot get around it. A value of `false` in `.env` now overrides the default in `server.yaml` [#286](https://github.com/sitespeedio/onlinetest/pull/286).
+* The production docs show how to back up and restore PostgreSQL, and how to upgrade to a new major version, with the steps for 6.0.
+
+### Fixed
+* New installs got version 3.8.0 of the server and testrunner, from May 2026, without the security fixes in 4.x and 5.0, because `.env.example` and the README still pointed at version 3. They now point at the current major version, and the release script keeps them up to date [#290](https://github.com/sitespeedio/onlinetest/pull/290).
+* `deploy/update.sh` did not give `.env` to Docker Compose. Newer Docker Compose versions only read `.env` next to the compose file, so the image tags were empty and the update stopped with `invalid reference format`.
+* Pages that do not exist are answered with 404 instead of 400 [#287](https://github.com/sitespeedio/onlinetest/pull/287).
+* The server closes its Redis connection after it publishes a message, instead of keeping a new connection open for each message [#288](https://github.com/sitespeedio/onlinetest/pull/288).
+
+## 5.0.0 - 2026-10-19
+
+**Major version because result storage changes from MinIO to SeaweedFS.** Before you update an existing deployment, edit `.env`: add `SEAWEEDFS_DOCKER_VERSION` and set `SITESPEED_IO_S3_ENDPOINT` to `http://seaweedfs:9000`. Then run `deploy/update.sh`. Results that were uploaded before the update are not moved automatically. The upgrade guide has an rclone recipe to copy them, otherwise their links stop working. The test history in PostgreSQL does not change. The compose files need Docker Compose 2.23.1 or later. See [Upgrading from MinIO to SeaweedFS](deploy/PRODUCTION.md#upgrading-from-minio-to-seaweedfs).
+
+**The API now needs a key.** Until you set `api.key` in the server configuration (or `API_KEY` in `.env`), `POST /api/add` answers 403 and the server logs a warning at startup. Pass the key with `--api.key` when you add tests from the sitespeed.io CLI. The web GUI works with or without a key [#278](https://github.com/sitespeedio/onlinetest/pull/278).
+
+**If you use your own reverse proxy**, add the `Content-Security-Policy: sandbox` header for results from the [reverse proxy examples](deploy/PRODUCTION.md#reverse-proxy-examples). The Caddy setup in `deploy/` sends it already [#283](https://github.com/sitespeedio/onlinetest/pull/283).
+
+### Added
+* New `disableScripting` setting (or `DISABLESCRIPTING=true` in `.env`) that turns off scripting tests. A scripting test runs Node.js code where sitespeed.io runs, so on a public instance anyone who can add a test can run code there. With the setting on, the server rejects scripting tests from the web form, the API and reruns, and the form does not show the scripting tab. It is off by default [#282](https://github.com/sitespeedio/onlinetest/pull/282).
+
+### Fixed
+* Result storage uses [SeaweedFS](https://github.com/seaweedfs/seaweedfs) instead of MinIO. The MinIO community edition is archived, gets no security patches and its images are not on Docker Hub or quay.io anymore, so a new install could not start [#215](https://github.com/sitespeedio/onlinetest/issues/215). SeaweedFS is Apache-2 licensed and does what MinIO did for us: S3 uploads from the testrunner, public read access to results and a 30 day expiry. The S3 API is still on port 9000, the `MINIO_USER`/`MINIO_PASSWORD` variables are the same and result URLs do not change. MinIO compressed html/css/js on disk; SeaweedFS does not, so results use more disk [#270](https://github.com/sitespeedio/onlinetest/pull/270).
+* The storage container restarts automatically (`restart: always`) like Redis and PostgreSQL, so result links work again after a host reboot [#270](https://github.com/sitespeedio/onlinetest/pull/270).
+* The API did not need a key by default, so anyone who could reach the server could add tests and choose the Docker image and the sitespeed.io configuration, including options that the web GUI blocks. The API now only accepts tests when a key is set [#278](https://github.com/sitespeedio/onlinetest/pull/278).
+* The scripting test name was used as-is in the file path on the testrunner. A name with `../` or an absolute path could write the script outside the job folder, and the public form could do this without a key. Only the base name is used now [#276](https://github.com/sitespeedio/onlinetest/pull/276).
+* The page shown while a test waits or runs added the test name and the job logs as HTML. A scripting test could use them to run JavaScript for everyone who opened its link. They are now added as text [#279](https://github.com/sitespeedio/onlinetest/pull/279).
+* The server sent the browser to the result URL from the test's result file without a check. A test can change that file, so it could make the running page open a `javascript:` URL. Only http and https result URLs are followed now [#280](https://github.com/sitespeedio/onlinetest/pull/280).
+* All JavaScript in the web GUI loads from `/js`, so the Content Security Policy no longer allows inline scripts or inline event handlers, and HTML injection cannot run JavaScript. The vendored compare app keeps the old policy on `/compare/` until the compare project removes its inline code [#284](https://github.com/sitespeedio/onlinetest/pull/284).
+* Results are served from the same origin as onlinetest, and a scripting test can put its own HTML and JavaScript in its result. Caddy now sends a `Content-Security-Policy: sandbox` header with all results, so each result page gets its own origin and cannot act on the onlinetest site. The sitespeed.io report works the same in the sandbox [#283](https://github.com/sitespeedio/onlinetest/pull/283).
+* Updated Express to 5.3.0 and the other server and testrunner dependencies to their latest minor and patch versions. This fixes the known advisories in `proxy-addr`, `path-to-regexp`, `body-parser` and `qs` [#277](https://github.com/sitespeedio/onlinetest/pull/277), [#281](https://github.com/sitespeedio/onlinetest/pull/281).
+
+## 4.0.2 - 2026-09-16
+
+### Fixed
+* Pull the MinIO images from `quay.io` instead of Docker Hub. MinIO removed its images from Docker Hub after archiving the community edition, so a fresh `docker compose up` could no longer start result storage. The quay.io mirror still serves the same pinned releases, and no `.env` changes are needed. This keeps 4.x deployable until result storage moves to SeaweedFS [#270](https://github.com/sitespeedio/onlinetest/pull/270).
+
+## 4.0.1 - 2026-05-22
+
+### Fixed
+* Compare page now renders screenshots, the filmstrip and the run video when the HAR points at a different sitespeed.io result server (e.g. wikiperformance comparing HARs that live on wikimedia.sitespeed.io). The helmet CSP only allowed `'self'` for images and — via the inherited `default-src` — for video, so the cross-origin URLs the HAR carries in `_meta.screenshot` / `_meta.filmstrip[].file` / `_meta.video` were blocked and the slots came up empty. `img-src` now also allows any `https:` origin and a new `media-src` does the same for video [#269](https://github.com/sitespeedio/onlinetest/pull/269).
+
 ## 4.0.0 - 2026-05-15
 
 **Major bump because the database schema changes** — existing deployments must run `server/database/migrations/001-add-failure-fields.sh apply` (or the equivalent SQL by hand) against the live Postgres *before* rolling the server forward, otherwise the new `UPDATE` statements will fail. The migration is metadata-only on Postgres 11+ so it runs in milliseconds with no table rewrite.

@@ -1,0 +1,299 @@
+window.__initAceEditor = function () {
+if (window.__aceInitialised) return; window.__aceInitialised = true;
+var editor = ace.edit("editor");
+editor.setTheme("ace/theme/github");
+editor.session.setMode("ace/mode/javascript");
+editor.setValue(`export default async function (context, commands) { \n    await commands.measure.start('https://www.sitespeed.io'); \n    return commands.measure.start('https://www.sitespeed.io/documentation/'); \n}`);
+editor.session.setUseWrapMode(true);
+editor.setOptions({
+    fontFamily: '"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace',
+    fontSize: '14.5px',
+    showPrintMargin: false,
+    enableBasicAutocompletion: false,
+    enableSnippets: true,
+    enableLiveAutocompletion: true,
+    highlightActiveLine: true,
+    tabSize: 2,
+    useSoftTabs: true
+});
+
+editor.session.on('change', function(){
+    document.getElementById('hiddenScriptingArea').value = editor.getSession().getValue();
+});
+
+var sitespeedCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        var wordList = [
+            {
+                caption: "commands.measure.start", 
+                snippet: "await commands.measure.start('${1:url/alias}');", 
+                meta: "function", 
+                docHTML: "<b>commands.measure.start(url/alias)</b><br>Starts performance measurement for a specified URL/alias."
+            },
+            {
+                caption: "commands.measure.stop", 
+                snippet: "await commands.measure.stop();", 
+                meta: "function", 
+                docHTML: "<b>commands.measure.stop()</b><br>Stops the current performance measurement."
+            },
+            {
+                caption: "commands.navigate",
+                snippet: "await commands.navigate('${1:url}');", 
+                meta: "function", 
+                docHTML: "<b>commands.navigate(url)</b><br>Navigates to a specified URL."
+            },
+
+        // Wait commands
+        {
+            caption: "commands.wait.byId",
+            snippet: "await commands.wait.byId('${1:id}', ${2:maxTime});",
+            meta: "function",
+            docHTML: "<b>commands.wait.byId(id, maxTime)</b><br>Waits for an element with a specific ID to appear within a maximum time."
+        },
+        {
+            caption: "commands.wait.byXpath",
+            snippet: "await commands.wait.byXpath('${1:xpath}', ${2:maxTime});",
+            meta: "function",
+            docHTML: "<b>commands.wait.byXpath(xpath, maxTime)</b><br>Waits for an element located by XPath to appear within a maximum time."
+        },
+        {
+            caption: "commands.wait.bySelector",
+            snippet: "await commands.wait.bySelector('${1:selector}', ${2:maxTime});",
+            meta: "function",
+            docHTML: "<b>commands.wait.bySelector(selector, maxTime)</b><br>Waits for an element located by a CSS selector to appear within a maximum time."
+        },
+        {
+            caption: "commands.wait.byTime",
+            snippet: "await commands.wait.byTime(${1:ms});",
+            meta: "function",
+            docHTML: "<b>commands.wait.byTime(ms)</b><br>Waits for a specified amount of time."
+        },
+        {
+            caption: "commands.wait.byPageToComplete",
+            snippet: "await commands.wait.byPageToComplete();",
+            meta: "function",
+            docHTML: "<b>commands.wait.byPageToComplete()</b><br>Waits for the page to finish loading."
+        },
+        {
+            caption: "commands.wait.byCondition",
+            snippet: "await commands.wait.byCondition('${1:jsExpression}', ${2:maxTime});",
+            meta: "function",
+            docHTML: "<b>commands.wait.byCondition(jsExpression, maxTime)</b><br>Waits for a JavaScript condition to return a truthy value within a maximum time."
+        },
+        // Add text
+        {
+            caption: "commands.addText.byId",
+            snippet: "await commands.addText.byId('${1:text}', '${2:id}');",
+            meta: "function",
+            docHTML: "<b>commands.addText.byId(text, id)</b><br>Adds text to an element identified by its ID."
+        },
+        {
+            caption: "commands.addText.byXpath",
+            snippet: "await commands.addText.byXpath('${1:text}', '${2:xpath}');",
+            meta: "function",
+            docHTML: "<b>commands.addText.byXpath(text, xpath)</b><br>Adds text to an element identified by its XPath."
+        },
+        {
+            caption: "commands.addText.bySelector",
+            snippet: "await commands.addText.bySelector('${1:text}', '${2:selector}');",
+            meta: "function",
+            docHTML: "<b>commands.addText.bySelector(text, selector)</b><br>Adds text to an element identified by its CSS selector."
+        },
+        {
+            caption: "commands.addText.byClassName",
+            snippet: "await commands.addText.byClassName('${1:text}', '${2:className}');",
+            meta: "function",
+            docHTML: "<b>commands.addText.byClassName(text, className)</b><br>Adds text to an element identified by its class name."
+        },
+        {
+            caption: "commands.addText.byName",
+            snippet: "await commands.addText.byName('${1:text}', '${2:name}');",
+            meta: "function",
+            docHTML: "<b>commands.addText.byName(text, name)</b><br>Adds text to an element identified by its name attribute."
+        },
+
+        // Extra context
+        {
+            caption: "context.selenium.webdriver",
+            snippet: "context.selenium.webdriver.${1:method}(${2:params})",
+            meta: "object",
+            docHTML: "<b>context.selenium.webdriver.method(params)</b><br>Provides raw access to the Selenium WebDriver functionalities."
+        },
+        {
+            caption: "context.selenium.driver",
+            snippet: "context.selenium.driver.${1:method}(${2:params})",
+            meta: "object",
+            docHTML: "<b>context.selenium.driver.method(params)</b><br>Directly accesses the Selenium WebDriver instance for advanced browser interactions."
+        },
+
+        // JavaScript
+        {
+            "caption": "commands.javascript.run",
+            "snippet": "await commands.javascript.run('${1:jsCode}');",
+            "meta": "function",
+            "docHTML": "<b>commands.javascript.run(jsCode)</b><br>Executes a JavaScript script. Returns a promise with the result of the executed script."
+        },
+        {
+            "caption": "commands.javascript.runAndWait",
+            "snippet": "await commands.javascript.runAndWait('${1:jsCode}');",
+            "meta": "function",
+            "docHTML": "<b>commands.javascript.runAndWait(jsCode)</b><br>Executes a JavaScript script and waits for the page to complete. Returns a promise with the result of the executed script and completion of page load."
+        },
+    
+        // StopWatch
+        {
+            caption: "StopWatch.start",
+            snippet: "await commands.measure.start('${1:StopWatchName}');",
+            meta: "method",
+            docHTML: "<b>StopWatch.start()</b><br>Starts the stopwatch to begin time measurement."
+        },
+        {
+            caption: "StopWatch.stopAndAdd",
+            snippet: "await commands.measure.stopAndAdd('${1:StopWatchName}');",
+            meta: "method",
+            docHTML: "<b>StopWatch.stopAndAdd()</b><br>Stops the stopwatch and automatically adds the measured time to the last measured page. Logs an error if no page has been measured."
+        },
+        {
+            caption: "StopWatch.stop",
+            snippet: "await commands.measure.stop('${1:StopWatchName}');",
+            meta: "method",
+            docHTML: "<b>StopWatch.stop()</b><br>Stops the stopwatch and returns the measured time in milliseconds."
+        },
+        {
+            caption: "StopWatch.getName",
+            snippet: "await commands.measure.getName('${1:StopWatchName}');",
+            meta: "method",
+            docHTML: "<b>StopWatch.getName()</b><br>Returns the name of the stopwatch."
+        },
+
+        // Single click
+        {
+            caption: "SingleClick.byXpath",
+            snippet: "await commands.click.byXpath('${1:xpath}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.byXpath(xpath)</b><br>Performs a single mouse click on an element matching a given XPath selector."
+        },
+        {
+            caption: "SingleClick.byXpathAndWait",
+            snippet: "await commands.click.byXpathAndWait('${1:xpath}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.byXpathAndWait(xpath)</b><br>Performs a single mouse click on an element matching a given XPath selector and wait for page complete check."
+        },
+        {
+            caption: "SingleClick.bySelector",
+            snippet: "await commands.click.bySelector('${1:selector}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.bySelector(selector)</b><br>Performs a single mouse click on an element matching a given CSS selector."
+        },
+        {
+            caption: "SingleClick.bySelectorAndWait",
+            snippet: "await commands.click.bySelectorAndWait('${1:selector}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.bySelectorAndWait(selector)</b><br>Performs a single mouse click on an element matching a given CSS selector and waits on the page complete check."
+        },
+        {
+            caption: "SingleClick.atCursor",
+            snippet: "await commands.click.atCursor();",
+            meta: "method",
+            docHTML: "<b>SingleClick.atCursor()</b><br>Performs a single mouse click at the current cursor position."
+        },
+        {
+            caption: "SingleClick.atCursorAndWait",
+            snippet: "await commands.click.atCursorAndWait();",
+            meta: "method",
+            docHTML: "<b>SingleClick.atCursorAndWait()</b><br>Performs a single mouse click at the current cursor position and waits on the page complete check."
+        },
+        {
+            caption: "SingleClick.byLinkText",
+            snippet: "await commands.click.byLinkText('${1:text}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.byLinkText(text)</b><br>Clicks on a link whose visible text matches the given string."
+        },
+        {
+            caption: "SingleClick.byLinkTextAndWait",
+            snippet: "await commands.click.byLinkTextAndWait('${1:text}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.byLinkTextAndWait(text)</b><br>Clicks on a link whose visible text matches the given string and waits on the page complete check."
+        },
+        {
+            caption: "SingleClick.byPartialLinkText",
+            snippet: "await commands.click.byPartialLinkText('${1:text}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.byPartialLinkText(text)</b><br>Clicks on a link whose visible text contains the given substring."
+        },
+        {
+            caption: "SingleClick.byPartialLinkTextAndWait",
+            snippet: "await commands.click.byPartialLinkTextAndWait('${1:text}');",
+            meta: "method",
+            docHTML: "<b>SingleClick.byPartialLinkTextAndWait(text)</b><br>Clicks on a link whose visible text contains the given substring and waits on the page complete check."
+        },
+
+        // Click — id / className
+        { caption: "SingleClick.byId", snippet: "await commands.click.byId('${1:id}');", meta: "method", docHTML: "<b>commands.click.byId(id)</b><br>Click an element with the given id." },
+        { caption: "SingleClick.byIdAndWait", snippet: "await commands.click.byIdAndWait('${1:id}');", meta: "method", docHTML: "<b>commands.click.byIdAndWait(id)</b><br>Click element with id, then wait for page complete." },
+        { caption: "SingleClick.byClassName", snippet: "await commands.click.byClassName('${1:className}');", meta: "method", docHTML: "<b>commands.click.byClassName(className)</b><br>Click an element with the given class name." },
+        { caption: "SingleClick.byClassNameAndWait", snippet: "await commands.click.byClassNameAndWait('${1:className}');", meta: "method", docHTML: "<b>commands.click.byClassNameAndWait(className)</b><br>Click element with class, then wait for page complete." },
+        { caption: "SingleClick.byJs", snippet: "await commands.click.byJs('${1:document.querySelector(\\'.x\\')}');", meta: "method", docHTML: "<b>commands.click.byJs(jsExpression)</b><br>Click an element resolved by a JS expression." },
+
+        // Cache
+        { caption: "commands.cache.clear", snippet: "await commands.cache.clear();", meta: "function", docHTML: "<b>commands.cache.clear()</b><br>Clear the browser cache and cookies." },
+        { caption: "commands.cache.clearKeepCookies", snippet: "await commands.cache.clearKeepCookies();", meta: "function", docHTML: "<b>commands.cache.clearKeepCookies()</b><br>Clear the browser cache, keep cookies." },
+
+        // Cookies
+        { caption: "commands.cookie.add", snippet: "await commands.cookie.add('${1:name}', '${2:value}');", meta: "function", docHTML: "<b>commands.cookie.add(name, value)</b><br>Add a cookie." },
+        { caption: "commands.cookie.delete", snippet: "await commands.cookie.delete('${1:name}');", meta: "function", docHTML: "<b>commands.cookie.delete(name)</b><br>Delete a cookie by name." },
+        { caption: "commands.cookie.clear", snippet: "await commands.cookie.clear();", meta: "function", docHTML: "<b>commands.cookie.clear()</b><br>Delete all cookies for the current domain." },
+
+        // Screenshot
+        { caption: "commands.screenshot.take", snippet: "await commands.screenshot.take('${1:name}');", meta: "function", docHTML: "<b>commands.screenshot.take(name)</b><br>Take a screenshot and save it under the given name." },
+
+        // Scroll
+        { caption: "commands.scroll.byPixels", snippet: "await commands.scroll.byPixels(${1:0}, ${2:600});", meta: "function", docHTML: "<b>commands.scroll.byPixels(x, y)</b><br>Scroll the page by the given pixel offset." },
+        { caption: "commands.scroll.toBottom", snippet: "await commands.scroll.toBottom();", meta: "function", docHTML: "<b>commands.scroll.toBottom()</b><br>Scroll to the bottom of the page." },
+        { caption: "commands.scroll.byPages", snippet: "await commands.scroll.byPages(${1:1});", meta: "function", docHTML: "<b>commands.scroll.byPages(n)</b><br>Scroll the page by N viewport heights." },
+
+        // Set
+        { caption: "commands.set.viewport", snippet: "await commands.set.viewport('${1:1366x708}');", meta: "function", docHTML: "<b>commands.set.viewport(WxH)</b><br>Set the browser viewport size." },
+        { caption: "commands.set.value", snippet: "await commands.set.value('${1:selector}', '${2:value}');", meta: "function", docHTML: "<b>commands.set.value(selector, value)</b><br>Set the value of an input element." },
+        { caption: "commands.set.javaScriptEnabled", snippet: "await commands.set.javaScriptEnabled(${1:true});", meta: "function", docHTML: "<b>commands.set.javaScriptEnabled(boolean)</b><br>Enable or disable JavaScript in the browser." },
+        { caption: "commands.set.userAgent", snippet: "await commands.set.userAgent('${1:UA string}');", meta: "function", docHTML: "<b>commands.set.userAgent(ua)</b><br>Set the User-Agent for the next test." },
+
+        // Measure (extras)
+        { caption: "commands.measure.add", snippet: "await commands.measure.add('${1:metric}', ${2:value});", meta: "function", docHTML: "<b>commands.measure.add(metric, value)</b><br>Add a custom metric to the most recently measured page." },
+        { caption: "commands.measure.addObject", snippet: "await commands.measure.addObject({ ${1:metric}: ${2:value} });", meta: "function", docHTML: "<b>commands.measure.addObject(obj)</b><br>Add multiple custom metrics at once." },
+        { caption: "commands.measure.byCondition", snippet: "await commands.measure.byCondition('${1:url}', '${2:jsCondition}');", meta: "function", docHTML: "<b>commands.measure.byCondition(url, jsCondition)</b><br>Measure a URL until a JS condition becomes truthy." },
+
+        // Switch
+        { caption: "commands.switch.toFrame", snippet: "await commands.switch.toFrame('${1:nameOrIndex}');", meta: "function", docHTML: "<b>commands.switch.toFrame(nameOrIndex)</b><br>Switch driver context into the given frame." },
+        { caption: "commands.switch.toParentFrame", snippet: "await commands.switch.toParentFrame();", meta: "function", docHTML: "<b>commands.switch.toParentFrame()</b><br>Switch out of the current frame to the parent." },
+        { caption: "commands.switch.toWindow", snippet: "await commands.switch.toWindow('${1:windowName}');", meta: "function", docHTML: "<b>commands.switch.toWindow(name)</b><br>Switch context to the named browser window." },
+
+        // Element get
+        { caption: "commands.element.getElementByCss", snippet: "await commands.element.getElementByCss('${1:selector}');", meta: "function", docHTML: "<b>commands.element.getElementByCss(selector)</b><br>Get a Selenium WebElement matching a CSS selector." },
+        { caption: "commands.element.getValueByCss", snippet: "await commands.element.getValueByCss('${1:selector}');", meta: "function", docHTML: "<b>commands.element.getValueByCss(selector)</b><br>Get the value attribute from the input matched by the CSS selector." },
+
+        // JS privileged
+        { caption: "commands.js.runPrivileged", snippet: "await commands.js.runPrivileged('${1:jsCode}');", meta: "function", docHTML: "<b>commands.js.runPrivileged(jsCode)</b><br>Run JS with extended privileges (Firefox)." },
+        { caption: "commands.js.runPrivilegedAndWait", snippet: "await commands.js.runPrivilegedAndWait('${1:jsCode}');", meta: "function", docHTML: "<b>commands.js.runPrivilegedAndWait(jsCode)</b><br>Run privileged JS, then wait for page complete." },
+
+        // Profiler / geolocation / errors
+        { caption: "commands.profiler.start", snippet: "await commands.profiler.start();", meta: "function", docHTML: "<b>commands.profiler.start()</b><br>Start collecting a CPU profile." },
+        { caption: "commands.profiler.stop", snippet: "await commands.profiler.stop('${1:name}');", meta: "function", docHTML: "<b>commands.profiler.stop(name)</b><br>Stop and save the CPU profile under the given name." },
+        { caption: "commands.geolocation.set", snippet: "await commands.geolocation.set(${1:latitude}, ${2:longitude});", meta: "function", docHTML: "<b>commands.geolocation.set(lat, lng)</b><br>Override the geolocation reported to the page." },
+        { caption: "commands.error", snippet: "commands.error('${1:message}');", meta: "function", docHTML: "<b>commands.error(message)</b><br>Mark the current run as having an error." },
+        { caption: "commands.stopAsError", snippet: "commands.stopAsError('${1:message}');", meta: "function", docHTML: "<b>commands.stopAsError(message)</b><br>Stop the run and mark it as failed." }
+        ];
+          callback(null, wordList.map(function(word) {
+        return {
+            caption: word.caption,
+            snippet: word.snippet,
+            meta: word.meta,
+            docHTML: word.docHTML
+        };
+    }));
+    }
+};
+
+// Add the custom completer to Ace
+ace.require("ace/ext/language_tools").addCompleter(sitespeedCompleter);
+};

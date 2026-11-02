@@ -1,0 +1,128 @@
+window.onload = function() {
+  const { config, queueNamesAndSize } = JSON.parse(
+    document.getElementById('locations-config').textContent
+  );
+
+  function hasOption(id, option) {
+    let exist = false;
+    for (let e of document.getElementById(id).getElementsByTagName('option')) {
+      if (e.text === option) {
+        exist = true;
+      }
+    }
+   return exist;
+  }
+
+  function locationChange() {
+    const selects = ['browser', 'connectivity', 'testType', 'deviceId' ];
+  
+    for (let select of selects) {
+      let el = document.getElementById(select);
+      while (el.options.length > 0) {
+        el.remove(0);
+      }
+    }
+  
+    for (let location of config) {
+      if (this.value === location.name) {
+          for (let browser of location.setup[0].browsers) {
+            document.getElementById('browser').add(new Option(browser,browser), undefined);
+          }
+
+          for (let connectivity of location.setup[0].connectivity) {
+            document.getElementById('connectivity').add(new Option(connectivity,connectivity), undefined);
+          }
+
+          for (let setup of location.setup) {
+            if (setup.type) {
+              document.getElementById('testType').add(new Option(setup.type, setup.type), undefined);
+            }
+          }
+
+          for (let setup of location.setup) {
+            if (setup.deviceId) {
+              document.getElementById('deviceId').add(new Option(setup.deviceId,setup.deviceId), undefined);
+            }
+          }
+        } 
+      }
+  }
+
+  function testTypeChange() {
+    const selects = ['browser', 'connectivity', 'deviceId' ];
+    const location = document.getElementById('location').value;
+    for (let select of selects) {
+      let el = document.getElementById(select);
+        while (el.options.length > 0) {
+          el.remove(0);
+        }
+    }
+
+    for (let locationConfig of config) {
+      if (location === locationConfig.name) {
+        for (let setup of locationConfig.setup) {
+          if (this.value === setup.type) {
+              for (let browser of setup.browsers) {
+                 let exist = hasOption('browser', browser);
+                 if (!exist) {
+                    document.getElementById('browser').add(new Option(browser,browser), undefined);
+                 }
+              }
+            
+               for (let connectivity of setup.connectivity) {
+                let exist = hasOption('connectivity',connectivity);
+                if (!exist) {
+                  document.getElementById('connectivity').add(new Option(connectivity,connectivity), undefined);
+                }
+              } 
+              if (setup.deviceId) {
+                document.getElementById('deviceId').add(new Option(setup.model + ' - ' + setup.deviceId + '('+ queueNamesAndSize[setup.queue] +')', setup.deviceId), undefined);
+              }
+            }
+          }
+      }
+    }
+  }
+
+  function deviceIdChange() {
+    const selects = ['browser','connectivity'];
+    const location = document.getElementById('location').value;
+    const testType = document.getElementById('testType').value;
+    for (let select of selects) {
+      let el = document.getElementById(select);
+      while (el.options.length > 0) {
+        el.remove(0);
+      }
+    } 
+    for (let locationConfig of config) {
+    
+      if (location === locationConfig.name) {
+        for (let setup of locationConfig.setup) {
+          if (testType === setup.type && this.value === setup.deviceId) {
+            for (let browser of setup.browsers) {
+               let exist = hasOption('browser',browser);
+                if (!exist) {
+                  document.getElementById('browser').add(new Option(browser,browser), undefined);
+                }
+              } 
+            for (let connectivity of setup.connectivity) {
+                let exist = hasOption('connectivity',connectivity);
+                if (!exist) {
+                  document.getElementById('connectivity').add(new Option(connectivity,connectivity), undefined);
+                }
+              } 
+          }
+        }
+      }
+    }
+  }
+  if (config.length > 0) {
+    const locationElement = document.getElementById('location');
+    locationElement.addEventListener("change", locationChange);
+    const testElement = document.getElementById('testType');
+    testElement.addEventListener("change", testTypeChange);
+    const deviceIdElement = document.getElementById('deviceId');
+    deviceIdElement.addEventListener("change", deviceIdChange);
+  }
+
+}

@@ -239,7 +239,7 @@ async function handleScriptingFile(job, workingDirectory) {
     : '.mjs';
   const filename = join(
     workingDirectory,
-    (job.data.scriptingName || job.id) + scriptExtension
+    path.basename(job.data.scriptingName || job.id) + scriptExtension
   );
   await writeFile(filename, job.data.scripting);
   return filename;

@@ -107,14 +107,17 @@ export function removeTestRunner(config) {
   updateTestRunnerMetrics();
 }
 
-// Heartbeat handler: a known runner says "still here". Unknown runners
-// (heartbeat before the start message lands, or after a server-side prune)
-// are ignored — the next start broadcast will register them properly.
+// Heartbeat handler: a known runner says "still here". Returns whether the
+// hostname was known, so the caller can re-register an unknown runner from
+// the heartbeat's serverConfig (heartbeat before the start message lands,
+// after a server-side prune, or a start broadcast lost across a restart).
 export function touchTestRunner(hostname) {
   const runner = testRunners[hostname];
   if (runner) {
     runner.lastSeenAt = Date.now();
+    return true;
   }
+  return false;
 }
 
 export function pruneStaleTestRunners(now = Date.now()) {

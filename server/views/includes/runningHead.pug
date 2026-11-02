@@ -1,6 +1,6 @@
 - var theme = nconf.get('html:theme') || 'console'
 - var fontPreload = theme === 'memphis' ? '/fonts/familjen-grotesk-var.woff2' : '/fonts/ibm-plex-sans-var.woff2'
-- var v = serverVersion ? '?v=' + serverVersion : ''
+- var v = assetVersion ? '?v=' + assetVersion : ''
 meta(charset='utf-8')
 meta(name='viewport' content='width=device-width, initial-scale=1')
 meta(name='color-scheme' content='light dark')
@@ -20,60 +20,4 @@ link(rel='apple-touch-icon-precomposed' href='/img/ico/sitespeed.io-57.png')
 link(rel='shortcut icon' href='/img/ico/sitespeed.io.ico')
 meta(name='description' content=description)
 meta(name='keywords' content='sitespeed.io, wpo, webperf, perfmatters, performance')
-script(type='text/javascript').
-  document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'visible') {
-      worker(); 
-  };
-  });
-  function worker() {
-    const images = ['/img/ai/performance-engineers-healthy-relationship-to-google.jpg'];
-    const texts = ['Performance Engineers healthy relationship to Google'];
-    const showRandomAIImage = !{JSON.stringify(nconf.get('html:showRandomAIImage') === true)};
-    let xhr = new XMLHttpRequest();
-    xhr.open("GET", "/api/status/#{id}", true);
-    xhr.onload = function() {
-      const serverResponse = JSON.parse(xhr.responseText);
-      const testName = serverResponse.url === '' ? serverResponse.scriptingName : serverResponse.url; 
-
-      if (showRandomAIImage === true) {
-        const index = Math.floor(Math.random() * images.length);
-        const messageElement = document.getElementById('message');
-        const image = document.createElement('img');
-        image.src = images[index];
-        image.alt = texts[index];
-
-        const header = document.createElement('h2');
-        header.textContent = 'AI generated content:' + texts[0];
-      
-        messageElement.innerHTML = '';
-
-        messageElement.appendChild(header);
-        messageElement.appendChild(image);
-      } else {
-        document.getElementById('message').innerHTML = serverResponse.logs.join('<br>');
-      }
-      if (serverResponse.status === 'waiting') {
-        document.getElementById('title').innerHTML = "Waiting to run tests " + testName;
-        document.getElementById('message').innerHTML = serverResponse.message;
-        setTimeout(worker, 2000);
-      } else if (serverResponse.status === 'active' || serverResponse.status === 'stuck') {
-          document.getElementById('title').innerHTML = "Testing " + testName;
-          setTimeout(worker, 1000);
-      } 
-      else if (serverResponse.status === 'completed' || serverResponse.status === 'failed') {
-        if (serverResponse.result) {
-            window.location.href = serverResponse.result;
-        } else location.reload();
-        return;
-      } 
-    } 
-    xhr.onerror = function() {
-    // oops couldn't fetch the response
-    console.error('Could not fetch the response');
-    setTimeout(worker, 5000); 
-  };
-  xhr.send();
-  };
-
-  worker();
+script(src='/js/running.js?v=' + assetVersion data-test-id=id data-show-random-ai-image=String(nconf.get('html:showRandomAIImage') === true))

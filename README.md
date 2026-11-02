@@ -47,7 +47,7 @@ Follow these steps to quickly set up and run the online version of sitespeed.io 
     cp .env.example .env
     ```
 
-4. **Start the Docker containers (Redis/PostgreSQL/MinIO/sitespeed.io server and testrunner) on the same server:**
+4. **Start the Docker containers (Redis/PostgreSQL/SeaweedFS/sitespeed.io server and testrunner) on the same server:**
 
     ```bash
     docker compose -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up
@@ -65,28 +65,26 @@ You can use your existing sitespeed.io installation to add tests to the server v
 
 ```bash
 # Run a desktop test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop https://www.sitespeed.io
 
 # Run with Firefox and 5 iterations
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop -b firefox -n 5 https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop -b firefox -n 5 https://www.sitespeed.io
 
 # Emulated mobile test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType emulatedMobile https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType emulatedMobile https://www.sitespeed.io
 
 # Add a label to identify your test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop --api.label "Before release" https://www.sitespeed.io
-
-# With an API key (when the server has api.key configured)
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop --api.key YOUR_SECRET_KEY https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.label "Before release" https://www.sitespeed.io
 
 # Set priority (1 = highest, default is 10)
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.testType desktop --api.priority 1 https://www.sitespeed.io
+sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.priority 1 https://www.sitespeed.io
 ```
 
 The required parameters are:
 * `--api.hostname` — the URL of your server
 * `--api.location` — the testrunner location name (e.g. `default`)
 * `--api.testType` — one of `desktop`, `emulatedMobile`, or `android`
+* `--api.key` — the key configured on the server (see [Secure the API with a key](#secure-the-api-with-a-key))
 
 You can pass any normal sitespeed.io flags (like `-b`, `-n`, `--slug`, `--browsertime.*`, etc.) and they will be forwarded to the test runner.
 
@@ -115,41 +113,41 @@ There's a regular expression that validates the domain of the URL that you want 
 
 ### Update sitespeed.io version
 By default latest major release of sitespeed.io is configured, it looks like this in the **.env** file:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:41"`
-
-When 42 is released you just switch to:
 `SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:42"`
 
-To get latest version of 41 you need to periodically pull down the version:
-```docker pull sitespeedio/sitespeed.io:41```
+When 42 is released you just switch to:
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:43"`
+
+To get latest version of 42 you need to periodically pull down the version:
+```docker pull sitespeedio/sitespeed.io:42```
 
 If you want to run a specific version, you can pin the version to a specific version:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:41.0.0"`
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:42.0.0"`
 
 #### Access the result
 Running on your own machine the result is served from localhost. If you deploy on a server you want to change that:
 
 ```RESULT_BASE_URL="http://127.0.0.1:9000/sitespeedio"```
 
-By default the result is served by [MinIO](https://min.io) on port 9000. If you serve the result on the URL `https://sitespeed.domain.com` you change your result base to: ```RESULT_BASE_URL="https://sitespeed.domain.com/sitespeedio"```
+By default the result is served by [SeaweedFS](https://github.com/seaweedfs/seaweedfs) on port 9000. If you serve the result on the URL `https://sitespeed.domain.com` you change your result base to: ```RESULT_BASE_URL="https://sitespeed.domain.com/sitespeedio"```
 
 #### Update server and testrunner
 You can configure which version of the server and the testrunner you want to use. You can either use latest stable version or specify a specific tag. In the *.env* file you configure which Docker tag to use.
 
 ```
-SITESPEED_IO_SERVER_VERSION=3
-SITESPEED_IO_TESTRUNNER_VERSION=3
+SITESPEED_IO_SERVER_VERSION=6
+SITESPEED_IO_TESTRUNNER_VERSION=6
 ```
 
 ### Secure the API with a key
-You can and should require an API key for all tests submitted via the CLI/API. In your server configuration file add:
+The API only accepts new tests when the server has an API key. Without a key, `POST /api/add` returns 403. The web GUI works with or without a key. Set the key in your server configuration file:
 
 ```yaml
 api:
   key: YOUR_SECRET_KEY
 ```
 
-Then pass the key when adding tests: `--api.key YOUR_SECRET_KEY`.
+Or set `API_KEY` in your `.env` file. Then pass the key when adding tests: `--api.key YOUR_SECRET_KEY`.
 
 ### Localization
 The GUI is available in multiple languages. Set the locale in your `.env` file:
@@ -165,7 +163,9 @@ You can customize the look and feel of the GUI and enable/disable features in th
 * **Custom logo** — replace the default logo
 * **Disable GUI** — set `disableGUI: true` to run in API-only mode
 * **Disable search** — set `disableSearchGUI: true`
+* **Disable scripting tests** — set `disableScripting: true` (or `DISABLESCRIPTING=true` in `.env`) to turn them off everywhere. By default (`disableScripting: gui`) they are off in the web GUI, so only API calls with the API key can add them, because a scripting test runs Node.js code on the testrunner. Set `disableScripting: false` (or `DISABLESCRIPTING=false`) to turn on scripting in the web GUI when you trust everyone who can open it.
 * **Basic auth** — protect the GUI with a login/password
+* **Data retention** — once a day the server removes tests older than `retention.days` (30 by default) from PostgreSQL. See [Data retention](deploy/PRODUCTION.md#data-retention)
 * **Lighthouse** — enable the Lighthouse integration with `html.useLighthouse: true` - also need the +1 container
 
 See the [full documentation](https://www.sitespeed.io/documentation/onlinetest/) for details on each option.
@@ -224,7 +224,7 @@ The setup is split into three compose files ([docker-compose.dependencies.yml](h
 
 * **A Database**: - [PostgreSQL](https://www.postgresql.org) - the open source database.
 
-* **A Test Result Storage**: - Somewhere to store test results. The default setup uses [MinIO](https://min.io), an open source implementation of S3 but you can use all the result storages that work with sitespeed.io: S3, Google Cloud Storage or your own storage where you can scp the result.
+* **A Test Result Storage**: - Somewhere to store test results. The default setup uses [SeaweedFS](https://github.com/seaweedfs/seaweedfs), an open source S3-compatible object store, but you can use all the result storages that work with sitespeed.io: S3, Google Cloud Storage or your own storage where you can scp the result.
 
 Additionally, there's a server and one or multiple test runners that run the sitespeed.io tests.
 

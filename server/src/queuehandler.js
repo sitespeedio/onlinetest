@@ -30,7 +30,12 @@ function getRedis() {
 }
 
 export async function publish(channel, message) {
-  return getRedis().publish(channel, message);
+  const redis = getRedis();
+  try {
+    return await redis.publish(channel, message);
+  } finally {
+    await redis.quit();
+  }
 }
 
 export function processJob(queueName, process) {

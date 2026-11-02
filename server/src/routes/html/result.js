@@ -5,6 +5,7 @@ import { Router } from 'express';
 import { getConfigByTestId } from '../../configs.js';
 import { getQueueById } from '../../queuehandler.js';
 import { getText } from '../../util/text.js';
+import { safeResultUrl } from '../../util/resulturl.js';
 
 import { getTest } from '../../database/index.js';
 
@@ -19,8 +20,9 @@ result.get('/:id', async function (request, response) {
     if (job) {
       const status = await job.getState();
       if (status === 'completed' || status === 'failed') {
-        if (job.returnvalue.pageSummaryUrl) {
-          return response.redirect(job.returnvalue.pageSummaryUrl);
+        const pageSummaryUrl = safeResultUrl(job.returnvalue.pageSummaryUrl);
+        if (pageSummaryUrl) {
+          return response.redirect(pageSummaryUrl);
         } else if (status === 'failed') {
           const { logs } = await workQueue.getJobLogs(id);
           return response.render('error', {
@@ -122,8 +124,9 @@ result.get('/:id', async function (request, response) {
       testResult.status === 'completed' ||
       testResult.status === 'failed'
     ) {
-      if (testResult.result_url) {
-        return response.redirect(testResult.result_url);
+      const resultUrl = safeResultUrl(testResult.result_url);
+      if (resultUrl) {
+        return response.redirect(resultUrl);
       } else if (testResult.status === 'failed') {
         return response.render('error', {
           status: testResult,
