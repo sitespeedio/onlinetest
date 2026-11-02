@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "URL یا اسکرپٹنگ درکار ہے۔",
   "error.validation.missinglocation": "مقام نہیں",
   "error.validation.missingtesttype": "ٹیسٹ کی قسم نہیں",
+  "error.validation.toomanyiterations": "اس سرور پر زیادہ سے زیادہ %s تکرار چلائی جا سکتی ہیں۔",
   "error.validation.nomatchingtestwithid": "id %s کا ٹیسٹ نہیں",
   "error.missingresultbaseurl": "resultBaseURL سیٹ نہیں (sitespeed.io).",
   "error.testfailed": "ٹیسٹ ناکام",
