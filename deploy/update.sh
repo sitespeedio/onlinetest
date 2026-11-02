@@ -1,81 +1,68 @@
 #!/usr/bin/env bash
 # deploy/update.sh — set up or update an onlinetest installation in place.
-#
-# First run on a fresh host:
-#   ./deploy/update.sh --domain=onlinetest.example.com
-#   (auto-generates secrets, writes .env, brings everything up)
-#
-# Every run after that:
-#   ./deploy/update.sh
-#   (pulls latest images, restarts services)
+# Use this on a production host instead of running `docker compose`
+# commands by hand.
 #
 # Usage:
 #   ./deploy/update.sh [--mode all-in-one|server|testrunner]
-#                      [--domain DOMAIN] [--version X.Y.Z]
+#                      [--domain DOMAIN] [--version X.Y.Z] [--no-start]
 #
 # Examples:
-#   ./deploy/update.sh --domain=foo.com           # first install (all-in-one)
-#   ./deploy/update.sh                            # subsequent update
-#   ./deploy/update.sh --mode server              # multi-server, server box
-#   ./deploy/update.sh --mode testrunner          # multi-server, testrunner box
+#   ./deploy/update.sh --domain foo.com           # first install (all-in-one)
+#   ./deploy/update.sh                            # all-in-one, versions from .env
+#   ./deploy/update.sh --mode server              # server box (multi-server)
+#   ./deploy/update.sh --mode testrunner          # testrunner box (multi-server)
 #   ./deploy/update.sh --version 3.4.0            # pin server & testrunner to 3.4.0
+#
+# First install (all-in-one only): when .env is missing or still has
+# CHANGE_ME values, the script creates .env from .env.example, generates
+# the passwords and sets the domain and the URLs that use it.
+# --no-start does only that and does not start the containers.
 #
 # Modes:
 #   all-in-one  — single host running Caddy + server + testrunner + deps.
-#                 Uses deploy/docker-compose.production.yml. First-run install
-#                 (auto-generated secrets, DOMAIN prompt) only runs in this mode.
+#                 Uses deploy/docker-compose.production.yml.
 #   server      — multi-server "server" host running deps + server only.
 #                 Uses deploy/docker-compose.production-server.yml.
 #   testrunner  — multi-server "testrunner" host.
 #                 Uses deploy/docker-compose.production-testrunner.yml.
 #
-# Requirements: docker, docker compose v2, .env at the repo root (auto-created
-# from .env.example on first run in all-in-one mode).
+# Requirements: docker, docker compose v2. For server and testrunner, .env
+# at the repo root.
 
 set -euo pipefail
 
 MODE="all-in-one"
 VERSION=""
-DOMAIN_ARG=""
+DOMAIN=""
 NO_START=0
 
 usage() {
-  sed -n '2,33p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,31p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [[ $# -gt 0 ]]; do
+  # Accept --option=value as well as --option value
+  if [[ "$1" == --*=* ]]; then
+    set -- "${1%%=*}" "${1#*=}" "${@:2}"
+  fi
   case "$1" in
     --mode)
       MODE="${2:-}"
       if [ -z "$MODE" ]; then echo "--mode requires a value" >&2; exit 1; fi
       shift 2
       ;;
-    --mode=*)
-      MODE="${1#--mode=}"
-      shift
-      ;;
     --version)
       VERSION="${2:-}"
       if [ -z "$VERSION" ]; then echo "--version requires a value" >&2; exit 1; fi
       shift 2
       ;;
-    --version=*)
-      VERSION="${1#--version=}"
-      shift
-      ;;
     --domain)
-      DOMAIN_ARG="${2:-}"
-      if [ -z "$DOMAIN_ARG" ]; then echo "--domain requires a value" >&2; exit 1; fi
+      DOMAIN="${2:-}"
+      if [ -z "$DOMAIN" ]; then echo "--domain requires a value" >&2; exit 1; fi
       shift 2
       ;;
-    --domain=*)
-      DOMAIN_ARG="${1#--domain=}"
-      shift
-      ;;
     --no-start)
-      # Run the install steps (generate secrets, write .env, etc.) but skip
-      # `docker compose pull/up`. Useful for CI / inspecting the generated
-      # .env before bringing services up.
       NO_START=1
       shift
       ;;
@@ -93,245 +80,14 @@ done
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-# ─── sanity checks ────────────────────────────────────────────────────────────
-
-require_docker() {
-  if ! command -v docker >/dev/null 2>&1; then
-    echo "Error: docker not found in PATH" >&2
-    echo "       Install docker: https://docs.docker.com/engine/install/" >&2
-    exit 1
-  fi
-  if ! docker compose version >/dev/null 2>&1; then
-    echo "Error: docker compose v2 not available (this script does not use docker-compose v1)" >&2
-    exit 1
-  fi
-}
-
-require_openssl() {
-  if ! command -v openssl >/dev/null 2>&1; then
-    echo "Error: openssl not found in PATH (needed to generate secrets on first run)" >&2
-    exit 1
-  fi
-}
-
-# ─── install-path helpers ─────────────────────────────────────────────────────
-
-# Echoes "install" if this looks like a first run (no .env, or any
-# VARNAME=CHANGE_ME_… placeholder still present); echoes "update" otherwise.
-# The pattern is intentionally strict so comment text mentioning CHANGE_ME
-# (e.g. in .env.example's header) does not trigger an install loop.
-detect_run_mode() {
-  if [ ! -f .env ]; then
-    echo install
-  elif grep -qE '^[A-Z_]+=CHANGE_ME_' .env; then
-    echo install
-  else
-    echo update
-  fi
-}
-
-generate_secret() {
-  # base64 of 24 random bytes → 32 chars, alphabet [A-Za-z0-9+/=]. No newlines.
-  openssl rand -base64 24 | tr -d '\n'
-}
-
-# For every line of the form `VARNAME=CHANGE_ME_*` in .env, generate a fresh
-# secret and write it back atomically. Logs the variables that got filled in
-# so the user sees what happened. User-set values are preserved untouched.
-fill_env_placeholders() {
-  local tmp filled=() varname secret
-  tmp="$(mktemp "${REPO_ROOT}/.env.fill.XXXXXX")"
-  trap 'rm -f "$tmp"' RETURN
-
-  while IFS= read -r line || [ -n "$line" ]; do
-    if [[ "$line" =~ ^([A-Z_]+)=CHANGE_ME_ ]]; then
-      varname="${BASH_REMATCH[1]}"
-      secret="$(generate_secret)"
-      printf '%s=%s\n' "$varname" "$secret" >> "$tmp"
-      filled+=("$varname")
-    else
-      printf '%s\n' "$line" >> "$tmp"
-    fi
-  done < .env
-
-  mv "$tmp" .env
-  trap - RETURN
-
-  if [ "${#filled[@]}" -gt 0 ]; then
-    echo ">> Generated secrets for: ${filled[*]}"
-  fi
-}
-
-# Set DOMAIN=<value> in .env and derive RESULT_BASE_URL +
-# SITESPEED.IO_HTML_HOMEURL from it. Handles existing uncommented lines,
-# commented-out lines, and missing lines (append).
-set_env_domain() {
-  local value="$1" tmp
-  local result_url="https://${value}/sitespeedio"
-  local home_url="https://${value}/"
-
-  tmp="$(mktemp "${REPO_ROOT}/.env.dom.XXXXXX")"
-  trap 'rm -f "$tmp"' RETURN
-
-  local saw_domain=0 saw_result=0 saw_home=0
-  # .env.example may contain both an uncommented line and a commented example
-  # for the same variable. Replace only the first match for each variable;
-  # drop any subsequent matches so the resulting .env has exactly one line
-  # per variable.
-  while IFS= read -r line || [ -n "$line" ]; do
-    if [[ "$line" =~ ^DOMAIN= ]] || [[ "$line" =~ ^[[:space:]]*#[[:space:]]*DOMAIN= ]]; then
-      if [ "$saw_domain" -eq 0 ]; then
-        printf 'DOMAIN=%s\n' "$value" >> "$tmp"
-        saw_domain=1
-      fi
-    elif [[ "$line" =~ ^RESULT_BASE_URL= ]] || [[ "$line" =~ ^[[:space:]]*#[[:space:]]*RESULT_BASE_URL= ]]; then
-      if [ "$saw_result" -eq 0 ]; then
-        printf 'RESULT_BASE_URL="%s"\n' "$result_url" >> "$tmp"
-        saw_result=1
-      fi
-    elif [[ "$line" =~ ^SITESPEED\.IO_HTML_HOMEURL= ]] || [[ "$line" =~ ^[[:space:]]*#[[:space:]]*SITESPEED\.IO_HTML_HOMEURL= ]]; then
-      if [ "$saw_home" -eq 0 ]; then
-        printf 'SITESPEED.IO_HTML_HOMEURL="%s"\n' "$home_url" >> "$tmp"
-        saw_home=1
-      fi
-    else
-      printf '%s\n' "$line" >> "$tmp"
-    fi
-  done < .env
-
-  if [ "$saw_domain" -eq 0 ]; then printf 'DOMAIN=%s\n' "$value" >> "$tmp"; fi
-  if [ "$saw_result" -eq 0 ]; then printf 'RESULT_BASE_URL="%s"\n' "$result_url" >> "$tmp"; fi
-  if [ "$saw_home" -eq 0 ]; then printf 'SITESPEED.IO_HTML_HOMEURL="%s"\n' "$home_url" >> "$tmp"; fi
-
-  mv "$tmp" .env
-  trap - RETURN
-}
-
-# Echo the DOMAIN value to use: --domain flag wins, else interactive prompt.
-prompt_domain() {
-  if [ -n "$DOMAIN_ARG" ]; then
-    printf '%s' "$DOMAIN_ARG"
-    return
-  fi
-  local value=""
-  while [ -z "$value" ]; do
-    printf 'Enter the public domain for this onlinetest instance (e.g. onlinetest.example.com): ' >&2
-    if ! IFS= read -r value </dev/tty; then
-      echo "" >&2
-      echo "Error: cannot read DOMAIN interactively (no tty). Pass --domain=foo.com instead." >&2
-      exit 1
-    fi
-    if [ -z "$value" ]; then
-      echo "  (required — must not be empty)" >&2
-    fi
-  done
-  printf '%s' "$value"
-}
-
-# Read a value from .env. Echoes empty if the key isn't present.
-read_env() {
-  local key="$1"
-  if [ ! -f .env ]; then return; fi
-  grep -E "^${key}=" .env | head -1 | sed -e "s/^${key}=//" -e 's/^"//' -e 's/"$//'
-}
-
-# ─── version pin ──────────────────────────────────────────────────────────────
-
-pin_versions() {
-  local tmp
-  tmp="$(mktemp "${REPO_ROOT}/.env.update.XXXXXX")"
-  trap 'rm -f "$tmp"' RETURN
-  awk -v v="$VERSION" '
-    /^SITESPEED_IO_SERVER_VERSION=/ { print "SITESPEED_IO_SERVER_VERSION=" v; next }
-    /^SITESPEED_IO_TESTRUNNER_VERSION=/ { print "SITESPEED_IO_TESTRUNNER_VERSION=" v; next }
-    { print }
-  ' .env > "$tmp"
-  mv "$tmp" .env
-  trap - RETURN
-  echo "Pinned server/testrunner versions to $VERSION in .env"
-}
-
-# ─── compose actions ──────────────────────────────────────────────────────────
-
-compose_pull() {
-  echo ">> Pulling images (mode=$MODE)…"
-  docker compose "${COMPOSE_FILES[@]}" pull
-}
-
-compose_up() {
-  echo ">> Restarting services…"
-  docker compose "${COMPOSE_FILES[@]}" up -d --remove-orphans
-}
-
-compose_status() {
-  echo ">> Container status:"
-  docker compose "${COMPOSE_FILES[@]}" ps
-}
-
-compose_tail_logs() {
-  echo ">> Tailing logs for 10 seconds (Ctrl+C to keep watching)…"
-  # `timeout` returns 124 when it kills the process — that's the success path
-  # here, so swallow the non-zero exit. Plain `|| true` keeps `set -e` happy.
-  timeout 10 docker compose "${COMPOSE_FILES[@]}" logs --tail 30 -f || true
-}
-
-# ─── end-of-run messages ──────────────────────────────────────────────────────
-
-print_install_summary() {
-  local domain admin_login admin_pw valid_domains
-  domain="$(read_env DOMAIN)"
-  admin_login="$(read_env ADMIN_BASICAUTH_LOGIN)"
-  admin_pw="$(read_env ADMIN_BASICAUTH_PASSWORD)"
-  valid_domains="$(read_env VALID_TEST_DOMAINS)"
-
-  cat <<EOF
-
-================================================================
- onlinetest installed.
-
-  Dashboard:        https://${domain}/
-  Admin URL:        https://${domain}/admin/
-  Admin login:      ${admin_login}
-  Admin password:   ${admin_pw}
-
-  (Generated secrets are stored in .env at the repo root.)
-
-  NEXT STEPS
-   - Point DNS for ${domain} at this server's IP. Caddy will issue a
-     Let's Encrypt cert on first request once DNS resolves.
-   - Test it: curl https://${domain}/api/
-EOF
-
-  if [ "$valid_domains" = ".*" ]; then
-    cat <<'EOF'
-
-  WARNING: VALID_TEST_DOMAINS is set to ".*" — your instance accepts test
-  submissions for ANY URL. If this server is reachable from the public
-  internet, you should either:
-    - set VALID_TEST_DOMAINS in .env to restrict (then rerun this script), or
-    - configure basicAuth in server/config/server.yaml, or
-    - configure api.key in server/config/server.yaml
-EOF
-  fi
-
-  echo "================================================================"
-}
-
-print_migration_hints() {
-  if [ -f redis-conf/redis.conf ] && grep -qE '^[[:space:]]*requirepass[[:space:]]' redis-conf/redis.conf; then
-    cat <<'EOF'
-
-  Note: redis-conf/redis.conf still contains a "requirepass" line.
-  The redis password is now passed via the docker-compose command line
-  and the config-file line is ignored. You can safely delete it from
-  redis-conf/redis.conf.
-EOF
-  fi
-}
-
-# ─── main flow ────────────────────────────────────────────────────────────────
-
-require_docker
+if ! command -v docker >/dev/null 2>&1; then
+  echo "Error: docker not found in PATH" >&2
+  exit 1
+fi
+if ! docker compose version >/dev/null 2>&1; then
+  echo "Error: docker compose v2 not available (this script does not use docker-compose v1)" >&2
+  exit 1
+fi
 
 # Compose reads .env next to the compose file, not from the repository root,
 # so give it the file here. Without it the image tags are empty.
@@ -351,64 +107,125 @@ case "$MODE" in
     ;;
 esac
 
-# Compose v2 reads .env from the *project directory* (defaults to the dir of
-# the first -f file), not the CWD. The production compose files live under
-# deploy/ but .env is at the repo root — so we point compose at it explicitly.
-# Only do this once .env exists; on first run the install path creates it
-# before we ever call compose.
-COMPOSE_FILES=(--env-file .env "${COMPOSE_FILES[@]}")
+# Set KEY=VALUE in .env. Replace the first KEY= line, remove the other
+# KEY= lines, and add the line if it is missing.
+set_env() {
+  local tmp
+  tmp="$(mktemp "${REPO_ROOT}/.env.update.XXXXXX")"
+  KEY="$1" VALUE="$2" awk '
+    index($0, ENVIRON["KEY"] "=") == 1 { if (!done) print ENVIRON["KEY"] "=" ENVIRON["VALUE"]; done = 1; next }
+    { print }
+    END { if (!done) print ENVIRON["KEY"] "=" ENVIRON["VALUE"] }
+  ' .env > "$tmp"
+  mv "$tmp" .env
+}
 
-RUN_MODE="$(detect_run_mode)"
-
-if [ "$RUN_MODE" = "install" ]; then
-  # The install path (auto-generate secrets, prompt for DOMAIN) only runs for
-  # all-in-one. server/testrunner boxes still need a hand-prepared .env that
-  # matches the server's secrets — that workflow is a separate piece of work.
+INSTALL=0
+if [ ! -f .env ] || grep -qE '^[A-Z_]+=CHANGE_ME_' .env; then
   if [ "$MODE" != "all-in-one" ]; then
-    if [ ! -f .env ]; then
-      echo "Error: .env not found at $REPO_ROOT/.env" >&2
-      echo "       For multi-server setups, copy .env from the server box and" >&2
-      echo "       adjust per deploy/PRODUCTION.md before running this script." >&2
-      exit 1
-    fi
-    echo "Warning: .env still contains CHANGE_ME placeholders. The install" >&2
-    echo "         flow only auto-fills these in --mode all-in-one. Fix .env" >&2
-    echo "         by hand or rerun with --mode all-in-one." >&2
+    echo "Error: .env is missing or still has CHANGE_ME values." >&2
+    echo "       For multi-server setups, copy .env from the server box and" >&2
+    echo "       adjust it per deploy/PRODUCTION.md before running this script." >&2
+    exit 1
+  fi
+  if [ -z "$DOMAIN" ] && [ -t 0 ]; then
+    read -r -p "Public domain for this onlinetest instance (for example onlinetest.example.com): " DOMAIN
+  fi
+  if [ -z "$DOMAIN" ]; then
+    echo "Error: first install needs the public domain. Run again with --domain your.domain.com" >&2
     exit 1
   fi
 
-  require_openssl
-  echo ">> First run detected — installing onlinetest in all-in-one mode."
+  echo ">> First install: writing .env"
   if [ ! -f .env ]; then
-    echo ">> Creating .env from .env.example"
     cp .env.example .env
   fi
-  DOMAIN_VALUE="$(prompt_domain)"
-  set_env_domain "$DOMAIN_VALUE"
-  fill_env_placeholders
-elif [ -n "$DOMAIN_ARG" ]; then
-  echo "Warning: --domain ignored — DOMAIN is already set in .env." >&2
-  echo "         To change it, edit .env and restart services." >&2
+  set_env DOMAIN "$DOMAIN"
+  set_env RESULT_BASE_URL "\"https://${DOMAIN}/sitespeedio\""
+  set_env SITESPEED.IO_HTML_HOMEURL "\"https://${DOMAIN}/\""
+  PLACEHOLDERS="$(grep -oE '^[A-Z_]+=CHANGE_ME_' .env | cut -d= -f1)"
+  for key in $PLACEHOLDERS; do
+    # Hex, because base64 has "+", which is a space in a URL (?api.key=)
+    set_env "$key" "$(head -c 24 /dev/urandom | od -An -tx1 | tr -d " \n")"
+    echo "   Generated $key"
+  done
+  chmod 600 .env
+  INSTALL=1
+elif [ -n "$DOMAIN" ]; then
+  echo "Warning: --domain is only used on the first install. To change the domain, edit DOMAIN, RESULT_BASE_URL and SITESPEED.IO_HTML_HOMEURL in .env." >&2
+fi
+
+# A new release can add settings to .env.example, but it does not change .env
+MISSING="$(comm -23 <(grep -oE '^[A-Za-z_.]+=' .env.example | sort -u) <(grep -oE '^[A-Za-z_.]+=' .env | sort -u) | tr -d =)"
+if [ -n "$MISSING" ]; then
+  echo "Warning: these settings from .env.example are not in .env. Copy them over:" >&2
+  echo "   ${MISSING//$'\n'/$'\n'   }" >&2
 fi
 
 if [ -n "$VERSION" ]; then
-  pin_versions
+  # Rewrite the two version pins in .env atomically. awk handles the keys
+  # that already exist; we don't add them if they're missing, on the
+  # assumption the operator started from .env.example which already
+  # documents both.
+  TMP="$(mktemp "${REPO_ROOT}/.env.update.XXXXXX")"
+  trap 'rm -f "$TMP"' EXIT
+  awk -v v="$VERSION" '
+    /^SITESPEED_IO_SERVER_VERSION=/ { print "SITESPEED_IO_SERVER_VERSION=" v; next }
+    /^SITESPEED_IO_TESTRUNNER_VERSION=/ { print "SITESPEED_IO_TESTRUNNER_VERSION=" v; next }
+    { print }
+  ' .env > "$TMP"
+  mv "$TMP" .env
+  trap - EXIT
+  echo "Pinned server/testrunner versions to $VERSION in .env"
 fi
 
 if [ "$NO_START" -eq 1 ]; then
-  echo ">> --no-start: skipping docker compose pull/up. .env is ready at $REPO_ROOT/.env."
+  echo ">> --no-start: .env is ready, containers not started."
   exit 0
 fi
 
-compose_pull
-compose_up
-compose_status
-compose_tail_logs
+echo ">> Pulling images (mode=$MODE)…"
+docker compose "${COMPOSE_FILES[@]}" pull
 
-if [ "$RUN_MODE" = "install" ]; then
-  print_install_summary
-else
-  print_migration_hints
+# The testrunner starts the sitespeed.io container itself, so compose does not
+# pull it. Without this, the first image that was pulled stays forever.
+if [ "$MODE" != "server" ]; then
+  SITESPEED_IO_CONTAINER="$(grep -m1 '^SITESPEED_IO_CONTAINER=' .env | cut -d= -f2- | tr -d '"' || true)"
+  if [ -n "$SITESPEED_IO_CONTAINER" ]; then
+    docker pull "$SITESPEED_IO_CONTAINER"
+  fi
+fi
+
+echo ">> Restarting services…"
+docker compose "${COMPOSE_FILES[@]}" up -d --remove-orphans
+
+echo ">> Container status:"
+docker compose "${COMPOSE_FILES[@]}" ps
+
+echo ">> Tailing logs for 10 seconds (Ctrl+C to keep watching)…"
+# `timeout` returns 124 when it kills the process — that's the success path
+# here, so swallow the non-zero exit. Plain `|| true` keeps `set -e` happy.
+timeout 10 docker compose "${COMPOSE_FILES[@]}" logs --tail 30 -f || true
+
+if [ "$INSTALL" -eq 1 ]; then
+  cat <<EOF
+
+================================================================
+ onlinetest is installed: https://${DOMAIN}/
+ Admin: https://${DOMAIN}/admin/ (the login and password are in .env)
+
+ Point DNS for ${DOMAIN} at this server. Caddy gets a Let's Encrypt
+ certificate on the first request after DNS resolves.
+EOF
+  if grep -qE '^VALID_TEST_DOMAINS=\.\*$' .env; then
+    cat <<'EOF'
+
+ WARNING: VALID_TEST_DOMAINS is ".*", so anyone who can reach this
+ server can test any URL. Restrict it in .env, or set basicAuth or
+ api.key in server/config/server.yaml, then run this script again.
+EOF
+  fi
+  echo "================================================================"
 fi
 
 echo ">> Done."
