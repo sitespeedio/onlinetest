@@ -22,32 +22,26 @@ All services (Redis, PostgreSQL, SeaweedFS, the sitespeed.io server, testrunner,
     git checkout <release-tag>
     ```
 
-2. **Copy and configure the environment file:**
+2. **Install and start everything:**
     ```bash
-    cp .env.example .env
+    ./deploy/update.sh --domain yourdomain.com
+    ```
+    On the first run the script creates `.env` from `.env.example`, generates every `CHANGE_ME` password, and sets `DOMAIN`, `RESULT_BASE_URL` and `SITESPEED.IO_HTML_HOMEURL` from your domain. Then it pulls the images, starts the containers and tails the logs for 10 seconds so first-boot errors land in your terminal. The admin login and password are in `.env`. Add `--no-start` if you want to check `.env` before anything starts.
+
+3. **Restrict which domains can be tested** (important for public-facing instances). Set this in `.env` and run `./deploy/update.sh` again:
+    ```
+    VALID_TEST_DOMAINS=^(.*\.)?(example\.com|mysite\.org)$
     ```
 
-3. **Change all passwords** in `.env` — every `CHANGE_ME` value must be replaced. Use `openssl rand -base64 24` to generate strong passwords.
+To update later, check out the new release and run the script again. It pulls the new images, including the sitespeed.io image the testrunner uses, and warns if the new `.env.example` has settings that your `.env` is missing:
 
-4. **Set your domain and URLs:**
-    ```
-    DOMAIN=yourdomain.com
-    RESULT_BASE_URL=https://yourdomain.com/sitespeedio
-    SITESPEED.IO_HTML_HOMEURL=https://yourdomain.com/
-    ```
-
-5. **Restrict which domains can be tested** (important for public-facing instances):
-    ```
-    VALID_TEST_DOMAINS=^https?://(.*\.)?(example\.com|mysite\.org)
-    ```
-
-6. **Update the Redis password** in `redis-conf/redis.conf` — change the `requirepass` line to match `REDIS_PASSWORD` in your `.env`.
-
-7. **Start everything:**
     ```bash
-    ./deploy/update.sh --mode all-in-one
+    git fetch --tags
+    git checkout <new-release-tag>
+    ./deploy/update.sh
     ```
-    Equivalent to `docker compose -f deploy/docker-compose.production.yml pull && docker compose -f deploy/docker-compose.production.yml up -d`. The script also tails container logs for 10 seconds so first-boot errors land in your terminal.
+
+If you upgrade from a version where you set the Redis password in `redis-conf/redis.conf`: the password now comes from `REDIS_PASSWORD` in `.env`, so `git checkout redis-conf/redis.conf` before you pull.
 
 Make sure your DNS points `yourdomain.com` to the server's IP. Caddy will automatically obtain a TLS certificate from Let's Encrypt on first request.
 
@@ -70,7 +64,7 @@ Run one testrunner per machine for stable results.
 
 ### Server machine
 
-1. **Clone, checkout a release tag, and configure `.env`** (same steps as single-server above, steps 1–6).
+1. **Clone, checkout a release tag, and configure `.env`:** clone as in single-server step 1, then `cp .env.example .env`. Replace every `CHANGE_ME` value (for example with `openssl rand -hex 24`) and set `RESULT_BASE_URL` and `SITESPEED.IO_HTML_HOMEURL` to the URLs you will use. The first-install mode of `update.sh` only runs in all-in-one mode, so do this by hand.
 
 2. **Start the server and dependencies:**
     ```bash
@@ -230,14 +224,14 @@ You can mount custom configuration files into the containers using Docker volume
 
 ### Domain validation
 
-Use `VALID_TEST_DOMAINS` to restrict which URLs can be tested. This is a regular expression matched against each submitted URL. Examples:
+Use `VALID_TEST_DOMAINS` to restrict which URLs can be tested. This is a regular expression matched against the host name of each submitted URL (for example `www.example.com`, without `https://`). Examples:
 
 ```
 # Allow only example.com and mysite.org (with subdomains)
-VALID_TEST_DOMAINS=^https?://(.*\.)?(example\.com|mysite\.org)
+VALID_TEST_DOMAINS=^(.*\.)?(example\.com|mysite\.org)$
 
 # Allow only specific subdomains
-VALID_TEST_DOMAINS=^https?://(www\.|staging\.)example\.com
+VALID_TEST_DOMAINS=^(www\.|staging\.)example\.com$
 
 # Allow all domains (only for private/internal instances)
 VALID_TEST_DOMAINS=.*
