@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "Du musst entweder eine URL angeben oder Scripting nutzen.",
   "error.validation.missinglocation": "Fehlender Ort",
   "error.validation.missingtesttype": "Fehlender Testtyp",
+  "error.validation.toomanyiterations": "Auf diesem Server sind höchstens %s Iterationen erlaubt.",
   "error.validation.nomatchingtestwithid": "Es gibt keine Tests mit der ID %s",
   "error.missingresultbaseurl": "resultBaseURL ist für sitespeed.io nicht gesetzt. Bitte in der Konfiguration ergänzen (inkl. http:// oder https://).",
   "error.testfailed": "Der Testlauf ist fehlgeschlagen",

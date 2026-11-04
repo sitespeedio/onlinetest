@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "你需要添加 URL 或使用脚本。",
   "error.validation.missinglocation": "缺少位置",
   "error.validation.missingtesttype": "缺少测试类型",
+  "error.validation.toomanyiterations": "此服务器最多允许 %s 次迭代。",
   "error.validation.nomatchingtestwithid": "没有 id 为 %s 的测试",
   "error.missingresultbaseurl": "未配置 sitespeeed.io 的 resultBaseURL。请在配置中修复。",
   "error.testfailed": "测试运行失败",
