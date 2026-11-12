@@ -113,16 +113,16 @@ There's a regular expression that validates the domain of the URL that you want 
 
 ### Update sitespeed.io version
 By default latest major release of sitespeed.io is configured, it looks like this in the **.env** file:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:42"`
-
-When 42 is released you just switch to:
 `SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:43"`
 
-To get latest version of 42 you need to periodically pull down the version:
-```docker pull sitespeedio/sitespeed.io:42```
+When 44 is released you just switch to:
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:44"`
+
+To get latest version of 43 you need to periodically pull down the version:
+```docker pull sitespeedio/sitespeed.io:43```
 
 If you want to run a specific version, you can pin the version to a specific version:
-`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:42.0.0"`
+`SITESPEED_IO_CONTAINER="sitespeedio/sitespeed.io:43.0.0"`
 
 #### Access the result
 Running on your own machine the result is served from localhost. If you deploy on a server you want to change that:
