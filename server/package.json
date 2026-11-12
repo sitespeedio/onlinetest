@@ -41,7 +41,6 @@
     "views",
     "public",
     "package.json",
-    "npm-shrinkwrap.json",
     "config",
     "db",
     "locales"
