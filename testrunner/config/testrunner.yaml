@@ -64,6 +64,12 @@ docker:
   #extraparameters: "--cap-add=NET_ADMIN"
   #baselinedir: "$(pwd)"
 
+# Stop a test that runs longer than this number of minutes. A test that does
+# not stop, for example a page that never finishes loading, blocks this
+# testrunner for all other tests. 0 turns the limit off.
+test:
+  timeout: 60
+
 # The number of jobs to keep in the queue
 # Depending on how many jobs you run and how much memory
 # you have on your Redis/KeyDb instance you can tune this

@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "URL/स्क्रिप्टिंग चाहिए.",
   "error.validation.missinglocation": "लोकेशन",
   "error.validation.missingtesttype": "टेस्ट प्रकार नहीं",
+  "error.validation.toomanyiterations": "इस सर्वर पर अधिकतम %s इटरेशन चलाए जा सकते हैं।",
   "error.validation.nomatchingtestwithid": "id %s नहीं",
   "error.missingresultbaseurl": "resultBaseURL सेट नहीं (sitespeed.io)।",
   "error.testfailed": "टेस्ट विफल",

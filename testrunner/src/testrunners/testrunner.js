@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import { nconf } from '../config.js';
+import { nconf, getTestTimeout } from '../config.js';
 import get from 'lodash.get';
 
 import { queueHandler } from '../queue/queuehandler.js';
@@ -159,7 +159,10 @@ async function runTest(job, workingDirectory, configFileName, logger) {
   let exitCode = 0;
   let failedReason;
   try {
-    const process = execa(binary, parameters, environment);
+    const process = execa(binary, parameters, {
+      ...environment,
+      timeout: getTestTimeout() * 60 * 1000
+    });
     process.stdout.on('data', chunk => {
       logger.debug(chunk.toString());
       job.log(chunk.toString());
@@ -193,6 +196,9 @@ async function runTest(job, workingDirectory, configFileName, logger) {
 // even when piped) but always include the exit code as a fallback —
 // some failures produce no stderr output at all (kills, OOM, etc.).
 function buildFailedReason(error) {
+  if (error.timedOut) {
+    return `Test stopped after the time limit of ${getTestTimeout()} minutes`;
+  }
   const tail = (error.stderr || '')
     .split('\n')
     .map(line => line.trim())

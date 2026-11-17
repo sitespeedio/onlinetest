@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "Vous devez ajouter une URL ou utiliser le scripting.",
   "error.validation.missinglocation": "Lieu manquant",
   "error.validation.missingtesttype": "Type de test manquant",
+  "error.validation.toomanyiterations": "Ce serveur autorise au maximum %s itérations.",
   "error.validation.nomatchingtestwithid": "Aucun test avec l’id %s",
   "error.missingresultbaseurl": "Configuration resultBaseURL manquante pour sitespeeed.io. Corrigez-la dans votre configuration.",
   "error.testfailed": "Test échoué",
