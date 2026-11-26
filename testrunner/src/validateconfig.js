@@ -67,6 +67,7 @@ const configSchema = Joi.object({
   redis: redisSchema.required(),
   log: loggingSchema.required(),
   sitespeedioConfigFile: Joi.string().optional(),
+  sitespeedioApiConfigFile: Joi.string().optional(),
   workingDirectory: Joi.string().optional(),
   executable: Joi.string().required(),
   docker: dockerSchema.required(),

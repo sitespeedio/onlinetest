@@ -47,6 +47,11 @@ log:
 # the full path to the configuration file
 # sitespeedioConfigFile:
 
+# Tests added through the API use this file instead of sitespeedioConfigFile.
+# Use it for settings that only your own tests must use, for example Graphite.
+# Tests from the web GUI, also re-runs of API tests, use sitespeedioConfigFile.
+# sitespeedioApiConfigFile:
+
 # The working directory for the testrunner, where it temporary will put it files
 # By default it used the os.tmpdir
 # workingDirectory: "."
