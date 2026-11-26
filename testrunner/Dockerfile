@@ -1,7 +1,7 @@
 FROM node:26-trixie-slim
 WORKDIR /usr/src/app
 
-COPY package.json npm-shrinkwrap.json ./
+COPY package.json package-lock.json ./
 
 RUN npm ci --omit=dev
 

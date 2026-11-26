@@ -1,5 +1,15 @@
+# Docker keeps container logs without a size limit by default, and the
+# testrunner logs all the output of every test, so the disk fills up over
+# time. Keep at most 3 files of 10 MB for each container.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   caddy:
+    logging: *logging
     image: caddy:2
     restart: always
     ports:
@@ -18,8 +28,9 @@ services:
       sitespeed.io-server:
         condition: service_healthy
   redis:
+    logging: *logging
     image: redis:${REDIS_DOCKER_VERSION}
-    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"]
     restart: always
     networks:
       - skynet
@@ -32,6 +43,7 @@ services:
       timeout: 3s
       retries: 30
   postgresql:
+    logging: *logging
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
     restart: always
     networks:
@@ -49,6 +61,7 @@ services:
       timeout: 5s
       retries: 30
   seaweedfs:
+    logging: *logging
     image: chrislusf/seaweedfs:${SEAWEEDFS_DOCKER_VERSION}
     restart: always
     volumes:
@@ -82,6 +95,7 @@ services:
       timeout: 3s
       retries: 30
   seaweedfs-init:
+    logging: *logging
     image: chrislusf/seaweedfs:${SEAWEEDFS_DOCKER_VERSION}
     depends_on:
       seaweedfs:
@@ -99,6 +113,7 @@ services:
       echo 'fs.configure -locationPrefix=/buckets/sitespeedio/ -ttl=30d -apply' | weed shell -master=seaweedfs:9333 &&
       echo 'SeaweedFS bucket and TTL setup complete.'"
   sitespeed.io-server:
+    logging: *logging
     image: sitespeedio/server:${SITESPEED_IO_SERVER_VERSION}
     env_file:
       - ../.env
@@ -128,6 +143,7 @@ services:
       retries: 30
       start_period: 30s
   sitespeed.io-testrunner:
+    logging: *logging
     image: sitespeedio/testrunner:${SITESPEED_IO_TESTRUNNER_VERSION}
     env_file:
       - ../.env

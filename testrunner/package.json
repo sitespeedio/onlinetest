@@ -39,7 +39,6 @@
     "app.js",
     "src",
     "package.json",
-    "npm-shrinkwrap.json",
     "config",
     "wpr"
   ],

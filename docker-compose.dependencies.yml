@@ -1,7 +1,17 @@
+# Docker keeps container logs without a size limit by default, and the
+# testrunner logs all the output of every test, so the disk fills up over
+# time. Keep at most 3 files of 10 MB for each container.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   redis:
+    logging: *logging
     image: redis:${REDIS_DOCKER_VERSION}
-    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf", "--requirepass", "${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}"]
     restart: always
     networks:
       - skynet
@@ -14,6 +24,7 @@ services:
       timeout: 3s
       retries: 30
   postgresql:
+    logging: *logging
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
     restart: always
     networks:
@@ -31,6 +42,7 @@ services:
       timeout: 5s
       retries: 30
   seaweedfs:
+    logging: *logging
     image: chrislusf/seaweedfs:${SEAWEEDFS_DOCKER_VERSION}
     restart: always
     volumes:
@@ -66,6 +78,7 @@ services:
       timeout: 3s
       retries: 30
   seaweedfs-init:
+    logging: *logging
     image: chrislusf/seaweedfs:${SEAWEEDFS_DOCKER_VERSION}
     depends_on:
       seaweedfs:

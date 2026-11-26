@@ -59,7 +59,7 @@ if [[ "$VERSION" != *-* ]]; then
   done
 fi
 
-git add server/package.json server/npm-shrinkwrap.json testrunner/package.json testrunner/npm-shrinkwrap.json .env.example README.md
+git add server/package.json server/package-lock.json testrunner/package.json testrunner/package-lock.json .env.example README.md
 git commit -m "Release v$VERSION"
 git push
 
