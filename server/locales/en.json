@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "Name of your script, the name needs to match regex [-a-zA-Z0-9\\._-]",
   "index.tab.scripting.recommendation": "Autocomplete/code completion works best in Visual Studio Code",
   "index.tab.scripting.documentation": "documentation",
+  "index.tab.scripting.disabled": "Scripting tests are turned off in the web GUI on this server. To turn them on, set disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env). Scripts run Node.js code on the testrunner, so turn them on only if you trust everyone who can use the GUI.",
   "index.waitingtestrunners": "Waiting for test runners to come online.",
   "index.refresh": "Refresh",
   "index.waitingtorunnext": "Waiting to run next.",

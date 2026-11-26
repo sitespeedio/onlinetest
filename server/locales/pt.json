@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "Nome do seu script, deve corresponder à regex [-a-zA-Z0-9\\._-]",
   "index.tab.scripting.recommendation": "Autocompletar/completar código funciona melhor no Visual Studio Code",
   "index.tab.scripting.documentation": "Documentação",
+  "index.tab.scripting.disabled": "Os testes com scripts estão desativados na interface web deste servidor. Para ativá-los, defina disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env). Os scripts executam código Node.js no testrunner, então ative-os somente se você confia em todos que podem usar a interface.",
   "index.waitingtestrunners": "Aguardando os test runners ficarem online.",
   "index.refresh": "Atualizar",
   "index.waitingtorunnext": "Aguardando próximo.",
