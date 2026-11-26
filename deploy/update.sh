@@ -4,7 +4,7 @@
 # commands by hand.
 #
 # Usage:
-#   ./deploy/update.sh [--mode all-in-one|server|testrunner]
+#   ./deploy/update.sh [--mode all-in-one|server|testrunner|local]
 #                      [--domain DOMAIN] [--version X.Y.Z] [--no-start]
 #
 # Examples:
@@ -13,10 +13,12 @@
 #   ./deploy/update.sh --mode server              # server box (multi-server)
 #   ./deploy/update.sh --mode testrunner          # testrunner box (multi-server)
 #   ./deploy/update.sh --version 3.4.0            # pin server & testrunner to 3.4.0
+#   ./deploy/update.sh --mode local               # try it on your own machine
 #
-# First install (all-in-one only): when .env is missing or still has
-# CHANGE_ME values, the script creates .env from .env.example, generates
-# the passwords and sets the domain and the URLs that use it.
+# First install (all-in-one and local): when .env is missing, the script
+# creates it from .env.example and generates the passwords. All-in-one also
+# does this when .env still has CHANGE_ME values, and sets the domain and
+# the URLs that use it.
 # --no-start does only that and does not start the containers.
 #
 # Modes:
@@ -26,6 +28,9 @@
 #                 Uses deploy/docker-compose.production-server.yml.
 #   testrunner  — multi-server "testrunner" host.
 #                 Uses deploy/docker-compose.production-testrunner.yml.
+#   local       — everything on this machine without HTTPS, for trying
+#                 onlinetest. Uses the docker-compose.*.yml files in the
+#                 repo root.
 #
 # Requirements: docker, docker compose v2. For server and testrunner, .env
 # at the repo root.
@@ -38,7 +43,7 @@ DOMAIN=""
 NO_START=0
 
 usage() {
-  sed -n '2,31p' "$0" | sed 's/^# \{0,1\}//'
+  sed -n '2,36p' "$0" | sed 's/^# \{0,1\}//'
 }
 
 while [[ $# -gt 0 ]]; do
@@ -101,8 +106,11 @@ case "$MODE" in
   testrunner)
     COMPOSE_FILES=(--env-file .env -f deploy/docker-compose.production-testrunner.yml)
     ;;
+  local)
+    COMPOSE_FILES=(--env-file .env -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml)
+    ;;
   *)
-    echo "Unknown --mode: $MODE (expected all-in-one|server|testrunner)" >&2
+    echo "Unknown --mode: $MODE (expected all-in-one|server|testrunner|local)" >&2
     exit 1
     ;;
 esac
@@ -121,17 +129,19 @@ set_env() {
 }
 
 INSTALL=0
-if [ ! -f .env ] || grep -qE '^[A-Z_]+=CHANGE_ME_' .env; then
-  if [ "$MODE" != "all-in-one" ]; then
+# A local .env copied by hand can keep its CHANGE_ME values, because the
+# PostgreSQL volume only reads the password when it is created.
+if [ ! -f .env ] || { [ "$MODE" != "local" ] && grep -qE '^[A-Z_]+=CHANGE_ME_' .env; }; then
+  if [ "$MODE" = "server" ] || [ "$MODE" = "testrunner" ]; then
     echo "Error: .env is missing or still has CHANGE_ME values." >&2
     echo "       For multi-server setups, copy .env from the server box and" >&2
     echo "       adjust it per deploy/PRODUCTION.md before running this script." >&2
     exit 1
   fi
-  if [ -z "$DOMAIN" ] && [ -t 0 ]; then
+  if [ "$MODE" = "all-in-one" ] && [ -z "$DOMAIN" ] && [ -t 0 ]; then
     read -r -p "Public domain for this onlinetest instance (for example onlinetest.example.com): " DOMAIN
   fi
-  if [ -z "$DOMAIN" ]; then
+  if [ "$MODE" = "all-in-one" ] && [ -z "$DOMAIN" ]; then
     echo "Error: first install needs the public domain. Run again with --domain your.domain.com" >&2
     exit 1
   fi
@@ -140,9 +150,14 @@ if [ ! -f .env ] || grep -qE '^[A-Z_]+=CHANGE_ME_' .env; then
   if [ ! -f .env ]; then
     cp .env.example .env
   fi
-  set_env DOMAIN "$DOMAIN"
-  set_env RESULT_BASE_URL "\"https://${DOMAIN}/sitespeedio\""
-  set_env SITESPEED.IO_HTML_HOMEURL "\"https://${DOMAIN}/\""
+  if [ "$MODE" = "all-in-one" ]; then
+    set_env DOMAIN "$DOMAIN"
+    set_env RESULT_BASE_URL "\"https://${DOMAIN}/sitespeedio\""
+    set_env SITESPEED.IO_HTML_HOMEURL "\"https://${DOMAIN}/\""
+  else
+    # Plain "docker compose logs" and "docker compose down" use these files
+    set_env COMPOSE_FILE "docker-compose.dependencies.yml:docker-compose.server.yml:docker-compose.testrunner.yml"
+  fi
   PLACEHOLDERS="$(grep -oE '^[A-Z_]+=CHANGE_ME_' .env | cut -d= -f1)"
   for key in $PLACEHOLDERS; do
     # Hex, because base64 has "+", which is a space in a URL (?api.key=)
@@ -202,12 +217,27 @@ docker compose "${COMPOSE_FILES[@]}" up -d --remove-orphans
 echo ">> Container status:"
 docker compose "${COMPOSE_FILES[@]}" ps
 
-echo ">> Tailing logs for 10 seconds (Ctrl+C to keep watching)…"
-# `timeout` returns 124 when it kills the process — that's the success path
-# here, so swallow the non-zero exit. Plain `|| true` keeps `set -e` happy.
-timeout 10 docker compose "${COMPOSE_FILES[@]}" logs --tail 30 -f || true
+# macOS does not have timeout
+if command -v timeout >/dev/null 2>&1; then
+  echo ">> Tailing logs for 10 seconds (Ctrl+C to keep watching)…"
+  # `timeout` returns 124 when it kills the process — that's the success path
+  # here, so swallow the non-zero exit. Plain `|| true` keeps `set -e` happy.
+  timeout 10 docker compose "${COMPOSE_FILES[@]}" logs --tail 30 -f || true
+fi
 
-if [ "$INSTALL" -eq 1 ]; then
+if [ "$MODE" = "local" ]; then
+  API_KEY="$(grep -m1 '^API_KEY=' .env | cut -d= -f2-)"
+  cat <<EOF
+
+================================================================
+ onlinetest runs at http://127.0.0.1:3000/
+ Add a test from the command line:
+   sitespeed.io --api.hostname 127.0.0.1 --api.location default \\
+     --api.key ${API_KEY} --api.testType desktop https://www.sitespeed.io
+ Update: ./deploy/update.sh --mode local   Stop: docker compose down
+================================================================
+EOF
+elif [ "$INSTALL" -eq 1 ]; then
   cat <<EOF
 
 ================================================================

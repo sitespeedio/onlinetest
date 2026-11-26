@@ -42,18 +42,17 @@ Follow these steps to quickly set up and run the online version of sitespeed.io 
     ```bash
     cd onlinetest
     ```
-3. **Copy the example environment file:**
-    ```bash
-    cp .env.example .env
-    ```
-
-4. **Start the Docker containers (Redis/PostgreSQL/SeaweedFS/sitespeed.io server and testrunner) on the same server:**
+3. **Start the Docker containers (Redis/PostgreSQL/SeaweedFS/sitespeed.io server and testrunner):**
 
     ```bash
-    docker compose -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up
+    ./deploy/update.sh --mode local
     ```
+
+    The first time, the script creates `.env` with generated passwords and an API key. It pulls all images, including the sitespeed.io image that runs the tests, so the first test does not wait for a large download. When it is done, it shows the command to add a test with your API key. Run the same command to update. `docker compose logs` and `docker compose down` work without any `-f` flags.
 
 Now you can open your web browser and navigate to [http://127.0.0.1:3000](http://127.0.0.1:3000) to run your first test.
+
+If you want to do it by hand, run `cp .env.example .env`, change the `CHANGE_ME` values, and start with `docker compose -f docker-compose.dependencies.yml -f docker-compose.server.yml -f docker-compose.testrunner.yml up`.
 
 If you are on Linux you need to run `sudo modprobe ifb numifbs=1` to be able to set different connectivities inside of Docker. On Mac you can only run native connectivity when you run inside of Docker.
 
@@ -65,23 +64,23 @@ You can use your existing sitespeed.io installation to add tests to the server v
 
 ```bash
 # Run a desktop test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop https://www.sitespeed.io
+sitespeed.io --api.hostname 127.0.0.1 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop https://www.sitespeed.io
 
 # Run with Firefox and 5 iterations
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop -b firefox -n 5 https://www.sitespeed.io
+sitespeed.io --api.hostname 127.0.0.1 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop -b firefox -n 5 https://www.sitespeed.io
 
 # Emulated mobile test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType emulatedMobile https://www.sitespeed.io
+sitespeed.io --api.hostname 127.0.0.1 --api.location default --api.key YOUR_SECRET_KEY --api.testType emulatedMobile https://www.sitespeed.io
 
 # Add a label to identify your test
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.label "Before release" https://www.sitespeed.io
+sitespeed.io --api.hostname 127.0.0.1 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.label "Before release" https://www.sitespeed.io
 
 # Set priority (1 = highest, default is 10)
-sitespeed.io --api.hostname http://127.0.0.1:3000 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.priority 1 https://www.sitespeed.io
+sitespeed.io --api.hostname 127.0.0.1 --api.location default --api.key YOUR_SECRET_KEY --api.testType desktop --api.priority 1 https://www.sitespeed.io
 ```
 
 The required parameters are:
-* `--api.hostname` — the URL of your server
+* `--api.hostname` — the hostname of your server, without `http://`. The port is 3000 by default. If the server uses HTTPS, add `--api.port 443`.
 * `--api.location` — the testrunner location name (e.g. `default`)
 * `--api.testType` — one of `desktop`, `emulatedMobile`, or `android`
 * `--api.key` — the key configured on the server (see [Secure the API with a key](#secure-the-api-with-a-key))

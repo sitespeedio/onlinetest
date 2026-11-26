@@ -47,6 +47,13 @@ jobs:
       run: ./deploy/update.sh --no-start
     - name: Verify .env unchanged on re-run
       run: diff .env .env.first-run
+    - name: Run local install (no-start)
+      run: |
+        set -e
+        rm .env
+        ./deploy/update.sh --no-start --mode local
+        if grep -E '^[A-Z_]+=CHANGE_ME_|^DOMAIN=' .env; then exit 1; fi
+        grep -q '^COMPOSE_FILE=' .env
 
   integration:
     runs-on: ubuntu-latest
