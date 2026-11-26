@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "Name deines Skripts, der Name muss regex [-a-zA-Z0-9\\._-] entsprechen",
   "index.tab.scripting.recommendation": "Autovervollständigen/Code-Vervollständigen funktioniert am besten in VS Code",
   "index.tab.scripting.documentation": "Dokumentation",
+  "index.tab.scripting.disabled": "Scripting-Tests sind in der Weboberfläche dieses Servers ausgeschaltet. Zum Einschalten setze disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env). Skripte führen Node.js-Code auf dem Testrunner aus, schalte sie also nur ein, wenn du allen vertraust, die die Oberfläche nutzen können.",
   "index.waitingtestrunners": "Wartet darauf, dass die Testrunner online sind.",
   "index.refresh": "Aktualisieren",
   "index.waitingtorunnext": "Wartet...",

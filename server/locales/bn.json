@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "স্ক্রিপ্ট নাম (regex [-a-zA-Z0-9\\._-])",
   "index.tab.scripting.recommendation": "অটো-কমপ্লিট VS Code-এ ভালো কাজ করে",
   "index.tab.scripting.documentation": "ডকস",
+  "index.tab.scripting.disabled": "এই সার্ভারের ওয়েব GUI-তে স্ক্রিপ্টিং টেস্ট বন্ধ আছে। চালু করতে disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env) সেট করুন। স্ক্রিপ্ট টেস্টরানারে Node.js কোড চালায়, তাই GUI ব্যবহার করতে পারে এমন সবাইকে বিশ্বাস করলেই এটি চালু করুন।",
   "index.waitingtestrunners": "রানার অপেক্ষায়।",
   "index.refresh": "রিফ্রেশ",
   "index.waitingtorunnext": "পরবর্তী.",
