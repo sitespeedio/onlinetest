@@ -24,7 +24,10 @@ block content
           .content-tab#extras(role='tabpanel' aria-labelledby='tab-extras' hidden)
             include includes/index/tabs/extras.pug
           .content-tab#commandline(role='tabpanel' aria-labelledby='tab-commandline' hidden)
-            include includes/index/tabs/commandLine.pug
+            if isCommandLineAllowed()
+              include includes/index/tabs/commandLine.pug
+            else
+              p.help-line #{getText('index.tab.cli.disabled')}
           if isScriptingAllowed(false)
             .content-tab#scripting(role='tabpanel' aria-labelledby='tab-scripting' hidden)
               include includes/index/tabs/scripting.pug

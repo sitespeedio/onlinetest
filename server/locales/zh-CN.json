@@ -18,6 +18,7 @@
   "index.tab.cli.addargs": "添加命令行参数",
   "index.tab.cli.clioptions": "选项",
   "index.tab.cli.placeholder": "额外的 sitespeed.io 参数",
+  "index.tab.cli.disabled": "此服务器已关闭命令行参数。要开启，请设置 allowCommandLine: true (server.yaml) / ALLOWCOMMANDLINE=true (.env)。",
   "index.tab.extras.sustainable": "可持续性测试",
   "index.tab.extras.axe": "无障碍测试",
   "index.tab.extras.crux": "CrUX 数据",

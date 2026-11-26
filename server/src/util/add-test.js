@@ -25,6 +25,7 @@ import { updateStatus } from '../database/index.js';
 import { testsSubmittedTotal } from '../metrics.js';
 import { getText } from './text.js';
 import { isScriptingAllowed } from './scripting.js';
+import { isCommandLineAllowed } from './commandline.js';
 
 const logger = getLogger('sitespeedio.server');
 
@@ -65,6 +66,7 @@ export async function reRunTest(request) {
     get(oldTest, 'configuration.browsertime.firefox.android.deviceSerial');
 
   const queueName = getQueueName(oldTest.location, deviceId);
+  const extras = isCommandLineAllowed() ? oldTest.cli_params : undefined;
 
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 50;
   const removeOnFail = nconf.get('queue:removeOnFail') || 100;
@@ -84,7 +86,7 @@ export async function reRunTest(request) {
         oldTest.slug,
         // oldTest.configuration.browsertime,
         oldTest.configuration,
-        oldTest.cli_params
+        extras
       );
 
       logger.info(`Adding test with id ${jobId} in queue ${queueName} (rerun)`);
@@ -93,7 +95,7 @@ export async function reRunTest(request) {
         {
           url: url || oldTest.url,
           config: oldTest.configuration,
-          extras: oldTest.cli_params,
+          extras,
           scripting: oldTest.scripting,
           scriptingName: oldTest.scripting_name,
           label: label || oldTest.label
@@ -148,6 +150,10 @@ export async function addTest(request) {
     cruxKey,
     lighthouse: useLighthouse
   } = request.body;
+
+  if (!isCommandLineAllowed()) {
+    extras = undefined;
+  }
 
   const defaultConfig = await getDefaultSitespeedConfiguration();
 

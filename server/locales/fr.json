@@ -18,6 +18,7 @@
   "index.tab.cli.addargs": "Ajouter args CLI",
   "index.tab.cli.clioptions": "Options",
   "index.tab.cli.placeholder": "Arguments sitespeed.io supplémentaires",
+  "index.tab.cli.disabled": "Les arguments de ligne de commande sont désactivés sur ce serveur. Pour les activer, définissez allowCommandLine: true (server.yaml) / ALLOWCOMMANDLINE=true (.env).",
   "index.tab.extras.sustainable": "Tests durables",
   "index.tab.extras.axe": "Tests d’accessibilité",
   "index.tab.extras.crux": "Données CrUX",

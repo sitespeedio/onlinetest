@@ -18,6 +18,7 @@
   "index.tab.cli.addargs": "CLI آرگز شامل کریں",
   "index.tab.cli.clioptions": "آپشنز",
   "index.tab.cli.placeholder": "اضافی sitespeed.io آرگیومنٹس",
+  "index.tab.cli.disabled": "اس سرور پر کمانڈ لائن آرگیومنٹس بند ہیں۔ انہیں چالو کرنے کے لیے allowCommandLine: true (server.yaml) / ALLOWCOMMANDLINE=true (.env) سیٹ کریں۔",
   "index.tab.extras.sustainable": "پائیدار ٹیسٹس",
   "index.tab.extras.axe": "رسائی کے ٹیسٹس",
   "index.tab.extras.crux": "CrUX ڈیٹا",
