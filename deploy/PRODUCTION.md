@@ -64,7 +64,7 @@ Run one testrunner per machine for stable results.
 
 ### Server machine
 
-1. **Clone, checkout a release tag, and configure `.env`:** clone as in single-server step 1, then `cp .env.example .env`. Replace every `CHANGE_ME` value (for example with `openssl rand -hex 24`) and set `RESULT_BASE_URL` and `SITESPEED.IO_HTML_HOMEURL` to the URLs you will use. The first-install mode of `update.sh` only runs in all-in-one mode, so do this by hand.
+1. **Clone, checkout a release tag, and configure `.env`:** clone as in single-server step 1, then `cp .env.example .env`. Replace every `CHANGE_ME` value (for example with `openssl rand -hex 24`) and set `RESULT_BASE_URL` and `SITESPEED.IO_HTML_HOMEURL` to the URLs you will use. The first-install mode of `update.sh` only runs in all-in-one mode, so do this by hand. Keep `POSTGRESQL_HOST=postgresql`: the server reaches PostgreSQL inside the Docker network, because the PostgreSQL port is not published. If you set it to the IP of the server machine in an earlier version, change it back.
 
 2. **Start the server and dependencies:**
     ```bash
@@ -76,7 +76,6 @@ This exposes:
 | Port | Service    |
 |------|------------|
 | 3000 | Server     |
-| 5432 | PostgreSQL |
 | 6379 | Redis      |
 | 9000 | SeaweedFS  |
 
@@ -84,26 +83,24 @@ SeaweedFS also listens on 9333 (master), 8080 (volume) and 8888 (filer) inside t
 
 You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 and 9000 for HTTPS — see [Reverse proxy examples](#reverse-proxy-examples) below.
 
-3. **Lock down ports with iptables** — Redis, PostgreSQL, and SeaweedFS should only be accessible from your testrunner machine(s), not the public internet. Replace `<testrunner-ip>` with the IP of each testrunner:
+3. **Lock down the ports.** Redis and SeaweedFS must only be reachable from your testrunner machine(s), not from the public internet. PostgreSQL is not published, because only the server uses it.
+
+    The easiest and safest way is the firewall of your hosting provider (for example Hetzner Cloud Firewall, AWS security groups or DigitalOcean Cloud Firewalls): allow 6379 and 9000 only from the IP of each testrunner. If both machines are on a private network, use the private IPs, so that Redis traffic does not go over the internet.
+
+    If you use iptables on the server, do **not** add the rules to the `INPUT` chain. Docker sends traffic to published ports past `INPUT`, so those rules do not block anything. Add them to the `DOCKER-USER` chain, which Docker checks first. Replace `<public-interface>` with the network interface that faces the internet (`ip route get 1.1.1.1` shows it, for example `eth0`) and `<testrunner-ip>` with the IP of the testrunner:
 
     ```bash
-    # Allow testrunner(s) to reach Redis
-    sudo iptables -A INPUT -p tcp --dport 6379 -s <testrunner-ip> -j ACCEPT
-    # Allow testrunner(s) to reach SeaweedFS
-    sudo iptables -A INPUT -p tcp --dport 9000 -s <testrunner-ip> -j ACCEPT
-
-    # Block everyone else from Redis, PostgreSQL, and SeaweedFS
-    sudo iptables -A INPUT -p tcp --dport 6379 -j DROP
-    sudo iptables -A INPUT -p tcp --dport 5432 -j DROP
-    sudo iptables -A INPUT -p tcp --dport 9000 -j DROP
+    # Block everyone from Redis and SeaweedFS ...
+    sudo iptables -I DOCKER-USER -i <public-interface> -p tcp -m conntrack --ctorigdstport 6379 --ctdir ORIGINAL -j DROP
+    sudo iptables -I DOCKER-USER -i <public-interface> -p tcp -m conntrack --ctorigdstport 9000 --ctdir ORIGINAL -j DROP
+    # ... except the testrunner. -I adds a rule first in the chain, so add these after the DROP rules.
+    sudo iptables -I DOCKER-USER -i <public-interface> -p tcp -m conntrack --ctorigdstport 6379 --ctdir ORIGINAL --ctorigsrc <testrunner-ip> -j ACCEPT
+    sudo iptables -I DOCKER-USER -i <public-interface> -p tcp -m conntrack --ctorigdstport 9000 --ctdir ORIGINAL --ctorigsrc <testrunner-ip> -j ACCEPT
     ```
 
-    If you have multiple testrunners, repeat the ACCEPT lines for each IP. To persist the rules across reboots, use `iptables-save` or install `iptables-persistent`:
+    For more testrunners, add the two `ACCEPT` lines for each IP. `-i <public-interface>` makes sure that the rules do not stop the containers from talking to each other, and a reverse proxy on the same machine can still use `127.0.0.1:9000`. Check from a machine that is not a testrunner that the ports are closed, for example with `nc -zv <server-ip> 6379`.
 
-    ```bash
-    sudo apt-get install iptables-persistent
-    sudo netfilter-persistent save
-    ```
+    The rules are gone after a reboot. To add them again, put the commands in a script and run it from a systemd service that starts after Docker (`After=docker.service`).
 
 ### Testrunner machine
 
@@ -122,7 +119,6 @@ You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 
     ```
     REDIS_HOST=<server-machine-ip>
     REDIS_PASSWORD=<same-password-as-server>
-    POSTGRESQL_HOST=<server-machine-ip>            # not used by testrunner today, kept for consistency
     SITESPEED_IO_S3_ENDPOINT=http://<server-machine-ip>:9000
     MINIO_USER=sitespeedio
     MINIO_PASSWORD=<same-minio-password-as-server>
@@ -145,7 +141,7 @@ You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 
 
 Each testrunner machine follows the same recipe as the first — clone the repo, write the same `.env` (point at the same `REDIS_HOST`, share the same `REDIS_PASSWORD`/`MINIO_*` secrets), then `docker compose -f deploy/docker-compose.production-testrunner.yml up -d`. The only thing that **must** differ between machines is `LOCATION_NAME` (or, on Android farms, the `deviceId` in `testrunner/config/testrunner.yaml`).
 
-Don't forget the iptables/firewall step: the server machine needs to accept Redis (6379), PostgreSQL (5432) and SeaweedFS (9000) traffic from each new testrunner IP. Repeat the `ACCEPT` rules from the lock-down step for every additional runner.
+Don't forget the firewall step: the server machine needs to accept Redis (6379) and SeaweedFS (9000) traffic from each new testrunner IP. Add the new IP to your provider firewall, or repeat the `ACCEPT` rules from the lock-down step for every additional runner.
 
 A few minutes after a runner boots it should appear under **Connected testrunners** on `/admin` with a green "fresh" badge. If it doesn't show up:
 
@@ -413,7 +409,7 @@ is two `.env` edits on the machine that runs storage:
 
 Multi-server testrunner boxes need no changes at all: their
 `SITESPEED_IO_S3_ENDPOINT` points at the server machine's IP and port
-9000, both of which still work, and the iptables rules stay the same.
+9000, both of which still work, and the firewall rules stay the same.
 
 Old results are **not** migrated automatically: links to runs uploaded
 before the switch stop working unless you copy them over (see below).

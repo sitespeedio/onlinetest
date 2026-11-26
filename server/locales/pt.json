@@ -86,6 +86,7 @@
   "error.apidisabled": "A API está desativada. Defina api.key na configuração do servidor para ativá-la.",
   "error.missinglocation": "Localização ausente",
   "error.nonexistingqueue": "Fila inexistente",
+  "error.queuefull": "Há muitos testes esperando na fila. Tente novamente mais tarde.",
   "navigationbar.search": "Buscar",
   "navigationbar.home": "Início",
   "edit.title": "Editar ou reexecutar teste",

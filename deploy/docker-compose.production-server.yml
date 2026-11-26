@@ -29,8 +29,6 @@ services:
     logging: *logging
     image: postgres:${POSTGRESQL_DOCKER_VERSION}
     restart: always
-    ports:
-      - "5432:5432"
     networks:
       - skynet
     environment:

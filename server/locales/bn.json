@@ -86,6 +86,7 @@
   "error.apidisabled": "API বন্ধ আছে। চালু করতে সার্ভার কনফিগারেশনে api.key সেট করুন।",
   "error.missinglocation": "অবস্থান",
   "error.nonexistingqueue": "কিউ নেই",
+  "error.queuefull": "সারিতে অনেক বেশি টেস্ট অপেক্ষা করছে। পরে আবার চেষ্টা করুন।",
   "navigationbar.search": "সার্চ",
   "navigationbar.home": "হোম",
   "edit.title": "সম্পাদনা",
