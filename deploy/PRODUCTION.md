@@ -220,7 +220,7 @@ You can mount custom configuration files into the containers using Docker volume
 
 ### Domain validation
 
-Use `VALID_TEST_DOMAINS` to restrict which URLs can be tested. This is a regular expression matched against the host name of each submitted URL (for example `www.example.com`, without `https://`). Examples:
+Use `VALID_TEST_DOMAINS` to restrict which URLs can be tested. This is a regular expression matched against the host name of each submitted URL (for example `www.example.com`, without `https://`). Only tests added in the web GUI are checked: anyone with the API key can test any domain, so keep the key secret. Examples:
 
 ```
 # Allow only example.com and mysite.org (with subdomains)
