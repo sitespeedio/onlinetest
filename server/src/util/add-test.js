@@ -337,7 +337,8 @@ export async function addTestFromAPI(
         scripting,
         scriptingName,
         label,
-        dockerContainer
+        dockerContainer,
+        fromAPI: true
       },
       jobConfig
     );

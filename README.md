@@ -149,6 +149,9 @@ api:
 
 Or set `API_KEY` in your `.env` file. Then pass the key when adding tests: `--api.key YOUR_SECRET_KEY`.
 
+### Different settings for API tests
+Every test extends the sitespeed.io configuration file in `sitespeedioConfigFile` in the [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml). Set `sitespeedioApiConfigFile` to use another file for tests added through the API. Then you can, for example, send the metrics from your own scheduled tests to Graphite, and keep the tests from the web GUI out of Graphite. The secrets stay in the file on the testrunner and are not sent through the API. A re-run from the web GUI is a web GUI test, also when the first test came from the API.
+
 ### Localization
 The GUI is available in multiple languages. Set the locale in your `.env` file:
 

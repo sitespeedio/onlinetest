@@ -4,7 +4,7 @@ import os from 'node:os';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import { nconf, getTestTimeout } from '../config.js';
+import { nconf, getTestTimeout, getSitespeedioConfigFile } from '../config.js';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { removeFlags, safeMerge } from '../utility.js';
@@ -43,8 +43,9 @@ export default async function runJob(job) {
     const resultFileName = `${job.queue.name}-${job.id}-result.json`;
 
     // Modify config for use with default settings
-    if (nconf.get('sitespeedioConfigFile') !== undefined) {
-      job.data.config.extends = nconf.get('sitespeedioConfigFile');
+    const sitespeedioConfigFile = getSitespeedioConfigFile(job);
+    if (sitespeedioConfigFile !== undefined) {
+      job.data.config.extends = sitespeedioConfigFile;
     }
 
     const testrunnerConfig = nconf.get('sitespeed.io') || {};

@@ -128,5 +128,14 @@ function getTestTimeout() {
   return nconf.get('test:timeout') ?? 60;
 }
 
-export { getFilteredConfig, getTestTimeout };
+// Tests from the API can use a different file, for example one with the
+// Graphite settings, so that tests from the web GUI do not send data there.
+function getSitespeedioConfigFile(job) {
+  return (
+    (job.data.fromAPI && nconf.get('sitespeedioApiConfigFile')) ||
+    nconf.get('sitespeedioConfigFile')
+  );
+}
+
+export { getFilteredConfig, getTestTimeout, getSitespeedioConfigFile };
 export { default as nconf } from 'nconf';
