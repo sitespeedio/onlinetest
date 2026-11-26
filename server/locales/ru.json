@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "Имя скрипта должно соответствовать regex [-a-zA-Z0-9\\._-]",
   "index.tab.scripting.recommendation": "Автодополнение лучше всего в VS Code",
   "index.tab.scripting.documentation": "Документация",
+  "index.tab.scripting.disabled": "Тесты со скриптами отключены в веб-интерфейсе этого сервера. Чтобы включить их, задайте disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env). Скрипты выполняют код Node.js на testrunner, поэтому включайте их, только если доверяете всем, кто может пользоваться интерфейсом.",
   "index.waitingtestrunners": "Ожидание тест-раннеров.",
   "index.refresh": "Обновить",
   "index.waitingtorunnext": "Ждем следующего",
