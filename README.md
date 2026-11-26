@@ -107,7 +107,7 @@ The **[.env.example](https://github.com/sitespeedio/onlinetest/blob/main/.env.ex
 You can configure everything that you are used to configure with sitespeed.io + more. The server and the testrunner takes `--config /path/to/file`. Default [server configuration](https://github.com/sitespeedio/onlinetest/blob/main/server/config/server.yaml) and [testrunner configuration](https://github.com/sitespeedio/onlinetest/blob/main/testrunner/config/testrunner.yaml).
 
 ### Change which pages/URLs you can test
-There's a regular expression that validates the domain of the URL that you want to test. You can use this to make sure a public instance only can tests pages on your web sites.
+There's a regular expression that validates the domain of the URL that you want to test. You can use this to make sure a public instance only can tests pages on your web sites. Tests added through the API are not checked, because the API key already gives full control of the test.
 
 ```VALID_TEST_DOMAINS=".*"```
 
