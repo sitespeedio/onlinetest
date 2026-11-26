@@ -71,6 +71,7 @@ const configSchema = Joi.object({
   executable: Joi.string().required(),
   docker: dockerSchema.required(),
   queue: queueSchema.optional(),
+  test: Joi.object({ timeout: Joi.number().min(0) }).optional(),
   'sitespeed.io': Joi.object().optional().unknown(true)
 });
 
