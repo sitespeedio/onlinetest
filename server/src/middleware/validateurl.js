@@ -9,13 +9,8 @@ import { getText } from '../util/text.js';
 
 const logger = getLogger('sitespeedio.server');
 
-export const validateURL = (request, response, next) => {
+function checkURL(request, next, checkDomain) {
   const testDomain = nconf.any('valid:test:domains', 'validTestDomains');
-
-  // If its an API call using script, do not validate the URL
-  if (request.body.api && request.body.api.scripting) {
-    return next();
-  }
 
   // From the web or the API
   let url = request.body.url;
@@ -31,6 +26,10 @@ export const validateURL = (request, response, next) => {
     if (url === 'undefined' || !isURL(url)) {
       logger.error('Non valid URL %s', url);
       request.inputValidationError = getText('error.urlnotvalid', url);
+      return next();
+    }
+
+    if (!checkDomain) {
       return next();
     }
 
@@ -61,4 +60,12 @@ export const validateURL = (request, response, next) => {
     }
   }
   next();
-};
+}
+
+export const validateURL = (request, response, next) =>
+  checkURL(request, next, true);
+
+// The API key already gives full control of the test configuration, so the
+// domain check adds no protection for the API.
+export const validateURLForAPI = (request, response, next) =>
+  checkURL(request, next, false);
