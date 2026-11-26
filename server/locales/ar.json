@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "يلزم URL أو سكربت.",
   "error.validation.missinglocation": "موقع مفقود",
   "error.validation.missingtesttype": "نوع الاختبار مفقود",
+  "error.validation.toomanyiterations": "يمكنك استخدام %s تكرارات كحد أقصى على هذا الخادم.",
   "error.validation.nomatchingtestwithid": "لا اختبار بالمعرف %s",
   "error.missingresultbaseurl": "resultBaseURL غير مضبوط لـ sitespeed.io.",
   "error.testfailed": "فشل الاختبار",

@@ -44,6 +44,11 @@ disableSearchGUI: false
 #   true  - scripting tests are turned off in the GUI and the API
 disableScripting: gui
 
+# The highest number of iterations for a test that is added in the GUI. On
+# a public server everyone can use the GUI, so this limits how long one test
+# can use a testrunner. The API has no limit, because it needs the API key.
+maxIterations: 21
+
 # Remove old test data from PostgreSQL once a day. Every test stores its HAR
 # and browsertime result there, so the database grows without this. The
 # result files in SeaweedFS expire after 30 days.

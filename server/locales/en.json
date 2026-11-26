@@ -79,6 +79,7 @@
   "error.validation.missingurlorscripting": "You need to either add a URL or use scripting.",
   "error.validation.missinglocation": "Missing location",
   "error.validation.missingtesttype": "Missing test type",
+  "error.validation.toomanyiterations": "You can use at most %s iterations on this server.",
   "error.validation.nomatchingtestwithid": "There are no tests with id %s",
   "error.missingresultbaseurl": "Missing resultBaseURL setup for sitespeed.io. You need to fix that in your configuration.",
   "error.testfailed": "The test failed to run",

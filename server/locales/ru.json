@@ -73,6 +73,7 @@
   "error.validation.missingurlorscripting": "Нужен URL или скриптинг.",
   "error.validation.missinglocation": "Нет локации",
   "error.validation.missingtesttype": "Нет типа теста",
+  "error.validation.toomanyiterations": "На этом сервере можно использовать не более %s итераций.",
   "error.validation.nomatchingtestwithid": "Нет тестов с id %s",
   "error.missingresultbaseurl": "resultBaseURL не задан для sitespeed.io.",
   "error.testfailed": "Сбой запуска",

@@ -34,6 +34,7 @@ const ENV_LIST = [
   'docker_extraparameters',
   'docker_container',
   'location_name',
+  'test_timeout',
   'sitespeed.io_s3_endpoint',
   'sitespeed.io_s3_bucketname',
   'sitespeed.io_s3_key',
@@ -121,5 +122,11 @@ function getFilteredConfig() {
 // Initialize immediately on import (same behavior as your current CLI file)
 initConfig();
 
-export { getFilteredConfig };
+// In minutes. 0 turns the limit off. The default also applies to a
+// configuration file that does not set it.
+function getTestTimeout() {
+  return nconf.get('test:timeout') ?? 60;
+}
+
+export { getFilteredConfig, getTestTimeout };
 export { default as nconf } from 'nconf';

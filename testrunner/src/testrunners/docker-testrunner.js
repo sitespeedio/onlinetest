@@ -4,7 +4,7 @@ import os from 'node:os';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import { nconf } from '../config.js';
+import { nconf, getTestTimeout } from '../config.js';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { removeFlags, safeMerge } from '../utility.js';
@@ -82,6 +82,13 @@ export default async function runJob(job) {
         job.data.config.compare
     );
 
+    // A name, so that the container can be stopped after a timeout
+    const containerName = `sitespeedio-${job.queue.name}-${job.id}`.replaceAll(
+      /[^\w.-]/g,
+      '-'
+    );
+    parameters.splice(1, 0, '--name', containerName);
+
     if (job.data.scripting) {
       const scriptingFileName = await handleScriptingFile(
         job,
@@ -103,6 +110,7 @@ export default async function runJob(job) {
     const testResult = await runDocker(
       job,
       parameters,
+      containerName,
       workingDirectory,
       resultFileName,
       logger,
@@ -209,6 +217,7 @@ function setupDockerParameters(
 async function runDocker(
   job,
   parameters,
+  containerName,
   workingDirectory,
   resultFileName,
   logger,
@@ -217,7 +226,9 @@ async function runDocker(
   let exitCode = 0;
   let failedReason;
   try {
-    const process = execa('docker', parameters);
+    const process = execa('docker', parameters, {
+      timeout: getTestTimeout() * 60 * 1000
+    });
 
     process.stdout.on('data', chunk => {
       dockerLogger.info(chunk.toString());
@@ -232,6 +243,10 @@ async function runDocker(
     await process;
   } catch (error) {
     logger.error('Could not run Docker:' + error);
+    if (error.timedOut) {
+      // Killing the docker client does not always stop the container
+      await execa('docker', ['kill', containerName]).catch(() => {});
+    }
     exitCode = error.exitCode;
     failedReason = buildFailedReason(error);
   }
@@ -252,6 +267,9 @@ async function runDocker(
 // surfaces here; if docker itself fails (image pull, daemon issues)
 // the same path captures docker's stderr instead.
 function buildFailedReason(error) {
+  if (error.timedOut) {
+    return `Test stopped after the time limit of ${getTestTimeout()} minutes`;
+  }
   const tail = (error.stderr || '')
     .split('\n')
     .map(line => line.trim())
