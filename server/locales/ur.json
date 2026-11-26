@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "اسکرپٹ نام (regex [-a-zA-Z0-9\\._-])",
   "index.tab.scripting.recommendation": "آٹو کمپلیٹ VS Code میں بہتر ہے",
   "index.tab.scripting.documentation": "دستاویزات",
+  "index.tab.scripting.disabled": "اس سرور کے ویب GUI میں اسکرپٹنگ ٹیسٹ بند ہیں۔ انہیں چالو کرنے کے لیے disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env) سیٹ کریں۔ اسکرپٹس ٹیسٹ رنر پر Node.js کوڈ چلاتے ہیں، اس لیے انہیں صرف تب چالو کریں جب آپ GUI استعمال کرنے والے ہر شخص پر بھروسہ کرتے ہوں۔",
   "index.waitingtestrunners": "ٹیسٹ رنرز کا انتظار ہے۔",
   "index.refresh": "ریفریش",
   "index.waitingtorunnext": "اگلے کا انتظار.",

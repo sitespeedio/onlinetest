@@ -28,6 +28,7 @@
   "index.tab.scripting.scriptname": "脚本名称，需匹配 regex [-a-zA-Z0-9\\._-]",
   "index.tab.scripting.recommendation": "自动补全/代码补全在 Visual Studio Code 中效果最好",
   "index.tab.scripting.documentation": "文档",
+  "index.tab.scripting.disabled": "此服务器的网页界面已关闭脚本测试。要开启，请设置 disableScripting: false (server.yaml) / DISABLESCRIPTING=false (.env)。脚本会在 testrunner 上运行 Node.js 代码，因此只有在信任所有能使用该界面的人时才开启。",
   "index.waitingtestrunners": "等待测试运行器上线。",
   "index.refresh": "刷新",
   "index.waitingtorunnext": "等待下一个运行。",
