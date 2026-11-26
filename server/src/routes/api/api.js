@@ -22,7 +22,7 @@ import {
   validateKey,
   validateKeyForReads
 } from '../../middleware/validatekey.js';
-import { validateURL } from '../../middleware/validateurl.js';
+import { validateURLForAPI } from '../../middleware/validateurl.js';
 import { validateParameters } from '../../middleware/validateparameters.js';
 
 import { addTestFromAPI } from '../../util/add-test.js';
@@ -228,7 +228,7 @@ api.post(
   '/add',
   validateKey,
   validateParameters,
-  validateURL,
+  validateURLForAPI,
   validateQueue,
   async function (request, response) {
     if (request.inputValidationError) {
