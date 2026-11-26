@@ -86,6 +86,7 @@
   "error.apidisabled": "API отключён. Укажите api.key в конфигурации сервера, чтобы включить его.",
   "error.missinglocation": "Нет локации",
   "error.nonexistingqueue": "Очереди нет",
+  "error.queuefull": "В очереди ожидает слишком много тестов. Попробуйте позже.",
   "navigationbar.search": "Поиск",
   "navigationbar.home": "Главная",
   "edit.title": "Ред./перезапуск",

@@ -92,6 +92,7 @@
   "error.apidisabled": "The API is turned off. Set api.key in the server configuration to turn it on.",
   "error.missinglocation": "Missing location",
   "error.nonexistingqueue": "Non-existing queue",
+  "error.queuefull": "Too many tests are waiting in the queue. Try again later.",
   "navigationbar.search": "Search",
   "navigationbar.home": "Home",
   "edit.title": "Edit or rerun test",

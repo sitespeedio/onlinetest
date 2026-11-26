@@ -86,6 +86,7 @@
   "error.apidisabled": "Die API ist deaktiviert. Setzen Sie api.key in der Serverkonfiguration, um sie zu aktivieren.",
   "error.missinglocation": "Fehlender Ort",
   "error.nonexistingqueue": "Nicht existierende Warteschlange",
+  "error.queuefull": "Zu viele Tests warten in der Warteschlange. Versuche es später noch einmal.",
   "navigationbar.search": "Suche",
   "navigationbar.home": "Home",
   "edit.title": "Test editieren oder erneut starten",
