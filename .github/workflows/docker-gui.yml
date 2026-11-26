@@ -26,7 +26,10 @@ jobs:
     - name: Pull sitespeed.io
       run: docker pull sitespeedio/sitespeed.io:43
     - name: Prepare env
-      run: cp .env.example .env
+      run: |
+        cp .env.example .env
+        # The test adds --headless in the Command line tab
+        echo "ALLOWCOMMANDLINE=true" >> .env
     - name: Start dependencies
       env:
         SITESPEED_IO_SERVER_VERSION: "local-action"

@@ -4,12 +4,13 @@ import { getLogger } from '@sitespeed.io/log';
 const logger = getLogger('sitespeedio.server');
 
 import { getText } from '../util/text.js';
+import { isQueueFullForGui } from '../util/queuelimit.js';
 
 function getQueueName(location, deviceId) {
   return getDeviceQueue(deviceId, location);
 }
 
-export const validateQueue = (request, response, next) => {
+export const validateQueue = async (request, response, next) => {
   const location = request.body.location || request.body.api?.location;
 
   if (location) {
@@ -30,6 +31,10 @@ export const validateQueue = (request, response, next) => {
         deviceId
       );
       request.inputValidationError = getText('error.nonexistingqueue');
+      return next();
+    }
+    if (request.baseUrl !== '/api' && (await isQueueFullForGui(queueName))) {
+      request.inputValidationError = getText('error.queuefull');
       return next();
     }
     next();
