@@ -86,6 +86,7 @@
   "error.apidisabled": "API بند ہے۔ اسے چالو کرنے کے لیے سرور کنفیگریشن میں api.key سیٹ کریں۔",
   "error.missinglocation": "مقام نہیں",
   "error.nonexistingqueue": "قطار موجود نہیں",
+  "error.queuefull": "قطار میں بہت زیادہ ٹیسٹ انتظار کر رہے ہیں۔ بعد میں دوبارہ کوشش کریں۔",
   "navigationbar.search": "تلاش",
   "navigationbar.home": "ہوم",
   "edit.title": "ترمیم/دوبارہ",

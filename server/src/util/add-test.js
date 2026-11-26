@@ -26,6 +26,7 @@ import { testsSubmittedTotal } from '../metrics.js';
 import { getText } from './text.js';
 import { isScriptingAllowed } from './scripting.js';
 import { isCommandLineAllowed } from './commandline.js';
+import { isQueueFullForGui } from './queuelimit.js';
 
 const logger = getLogger('sitespeedio.server');
 
@@ -66,6 +67,9 @@ export async function reRunTest(request) {
     get(oldTest, 'configuration.browsertime.firefox.android.deviceSerial');
 
   const queueName = getQueueName(oldTest.location, deviceId);
+  if (queueName && (await isQueueFullForGui(queueName))) {
+    throw new Error(getText('error.queuefull'));
+  }
   const extras = isCommandLineAllowed() ? oldTest.cli_params : undefined;
 
   const removeOnComplete = nconf.get('queue:removeOnComplete') || 50;

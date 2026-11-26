@@ -86,6 +86,7 @@
   "error.apidisabled": "La API está desactivada. Configure api.key en la configuración del servidor para activarla.",
   "error.missinglocation": "Falta ubicación",
   "error.nonexistingqueue": "Cola inexistente",
+  "error.queuefull": "Hay demasiadas pruebas esperando en la cola. Inténtalo de nuevo más tarde.",
   "navigationbar.search": "Buscar",
   "navigationbar.home": "Inicio",
   "edit.title": "Editar o reejecutar prueba",

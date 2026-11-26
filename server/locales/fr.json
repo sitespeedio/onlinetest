@@ -86,6 +86,7 @@
   "error.apidisabled": "L’API est désactivée. Définissez api.key dans la configuration du serveur pour l’activer.",
   "error.missinglocation": "Lieu manquant",
   "error.nonexistingqueue": "File inexistante",
+  "error.queuefull": "Trop de tests attendent dans la file. Réessayez plus tard.",
   "navigationbar.search": "Rechercher",
   "navigationbar.home": "Accueil",
   "edit.title": "Modifier ou relancer le test",

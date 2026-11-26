@@ -86,6 +86,7 @@
   "error.apidisabled": "API बंद है। इसे चालू करने के लिए सर्वर कॉन्फ़िगरेशन में api.key सेट करें।",
   "error.missinglocation": "लोकेशन",
   "error.nonexistingqueue": "क्यू नहीं",
+  "error.queuefull": "कतार में बहुत अधिक टेस्ट प्रतीक्षा कर रहे हैं। बाद में फिर से प्रयास करें।",
   "navigationbar.search": "खोज",
   "navigationbar.home": "होम",
   "edit.title": "संपादन",

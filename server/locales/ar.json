@@ -86,6 +86,7 @@
   "error.apidisabled": "واجهة API معطلة. اضبط api.key في إعدادات الخادم لتفعيلها.",
   "error.missinglocation": "موقع مفقود",
   "error.nonexistingqueue": "طابور غير موجود",
+  "error.queuefull": "يوجد عدد كبير جدًا من الاختبارات في قائمة الانتظار. حاول مرة أخرى لاحقًا.",
   "navigationbar.search": "بحث",
   "navigationbar.home": "الرئيس",
   "edit.title": "تحرير/إعادة",
