@@ -18,6 +18,7 @@
   "index.tab.cli.addargs": "إضافة وسائط",
   "index.tab.cli.clioptions": "خيارات",
   "index.tab.cli.placeholder": "وسيطات إضافية لـ sitespeed.io",
+  "index.tab.cli.disabled": "وسائط سطر الأوامر معطلة على هذا الخادم. لتفعيلها، اضبط allowCommandLine: true (server.yaml) / ALLOWCOMMANDLINE=true (.env).",
   "index.tab.extras.sustainable": "استدامة",
   "index.tab.extras.axe": "إتاحة",
   "index.tab.extras.crux": "CrUX",

@@ -49,6 +49,13 @@ disableScripting: gui
 # can use a testrunner. The API has no limit, because it needs the API key.
 maxIterations: 21
 
+# Let a user add sitespeed.io options to a test in the Command line tab of
+# the GUI. When it is off, the tab tells how to turn it on and the server
+# ignores the options. Turn it on only if you trust everyone who can use the
+# GUI: the options can make the testrunner open URLs that do not match
+# validTestDomains. The API is not affected.
+allowCommandLine: false
+
 # Remove old test data from PostgreSQL once a day. Every test stores its HAR
 # and browsertime result there, so the database grows without this. The
 # result files in SeaweedFS expire after 30 days.

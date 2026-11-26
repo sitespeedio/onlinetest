@@ -27,6 +27,7 @@ import { error404, error500 } from './middleware/errorhandler.js';
 import { setupStatic, getAssetVersion } from './static/index.js';
 import { getBaseFilePath } from './util/fileutil.js';
 import { isScriptingAllowed } from './util/scripting.js';
+import { isCommandLineAllowed } from './util/commandline.js';
 import { register, httpRequestDuration, httpRequestsTotal } from './metrics.js';
 
 const logger = getLogger('sitespeedio.server');
@@ -109,6 +110,7 @@ function setupExpressServer() {
   // content of the JavaScript or CSS changes.
   app.locals.assetVersion = getAssetVersion();
   app.locals.isScriptingAllowed = isScriptingAllowed;
+  app.locals.isCommandLineAllowed = isCommandLineAllowed;
 
   app.enable('view cache');
 

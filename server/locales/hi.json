@@ -18,6 +18,7 @@
   "index.tab.cli.addargs": "आर्ग्स",
   "index.tab.cli.clioptions": "विकल्प",
   "index.tab.cli.placeholder": "अतिरिक्त sitespeed.io आर्ग्यूमेंट",
+  "index.tab.cli.disabled": "इस सर्वर पर कमांड लाइन आर्गुमेंट बंद हैं। इन्हें चालू करने के लिए allowCommandLine: true (server.yaml) / ALLOWCOMMANDLINE=true (.env) सेट करें।",
   "index.tab.extras.sustainable": "सस्टेनेबल",
   "index.tab.extras.axe": "Axe",
   "index.tab.extras.crux": "CrUX डेटा",

@@ -30,7 +30,10 @@ jobs:
         sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
         google-chrome --version
     - name: Prepare env
-      run: cp .env.example .env
+      run: |
+        cp .env.example .env
+        # The test adds --headless in the Command line tab
+        echo "ALLOWCOMMANDLINE=true" >> .env
     - name: Start dependencies
       run: docker compose -f docker-compose.dependencies.yml -f standalone/docker-compose.dependencies.standalone.yml up -d
     - name: Start the server

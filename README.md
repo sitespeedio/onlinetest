@@ -230,7 +230,7 @@ Additionally, there's a server and one or multiple test runners that run the sit
 
 ## Keeping the CLI picker in sync
 
-The "command line" tab on the start page has a searchable picker of every sitespeed.io flag, sourced from `server/public/sitespeed-help.json`. Regenerate it whenever sitespeed.io ships a new version:
+The "command line" tab on the start page has a searchable picker of every sitespeed.io flag, sourced from `server/public/sitespeed-help.json`. The tab is off by default: it shows how to turn it on, and the server ignores options sent from the GUI, because they can make the testrunner open URLs that do not match `validTestDomains`. Turn it on with `allowCommandLine: true` in `server.yaml` (or `ALLOWCOMMANDLINE=true` in `.env`) if you trust everyone who can use the GUI. Regenerate the picker whenever sitespeed.io ships a new version:
 
 ```bash
 # pipe --help from any sitespeed.io binary you have
