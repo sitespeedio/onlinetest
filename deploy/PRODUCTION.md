@@ -127,6 +127,16 @@ You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 
     ```
     Every variable in `.env.example` is documented in-file; only the ones above need changing on a fresh testrunner box.
 
+    To store the results somewhere else than SeaweedFS, for example on your own web server with scp, set `SITESPEED_IO_S3_ENDPOINT=` (empty) and put the upload settings in a sitespeed.io configuration file on the testrunner machine:
+    ```
+    SITESPEED_IO_S3_ENDPOINT=
+    RESULT_BASE_URL=https://results.yourdomain.com
+    DOCKER_EXTRAPARAMETERS=--cap-add=NET_ADMIN --shm-size=4g -v /config:/config
+    SITESPEEDIO_CONFIG_FILE=/config/gui.json
+    SITESPEEDIO_API_CONFIG_FILE=/config/api.json
+    ```
+    Every test extends `SITESPEEDIO_CONFIG_FILE`. Tests from the API extend `SITESPEEDIO_API_CONFIG_FILE` instead, so you can keep settings such as Graphite for your own tests. The paths are inside the sitespeed.io container, so `DOCKER_EXTRAPARAMETERS` mounts the directory.
+
 3. **Start the testrunner:**
     ```bash
     ./deploy/update.sh --mode testrunner
