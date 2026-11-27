@@ -81,6 +81,7 @@
   "error.testfailed": "टेस्ट विफल",
   "error.parsingscript": "पार्स त्रुटि",
   "error.scriptingdisabled": "इस सर्वर पर स्क्रिप्टिंग टेस्ट बंद हैं।",
+  "error.apitestlocked": "यह टेस्ट API से जोड़ा गया था। आप इसे वेब GUI में बदल या दोबारा नहीं चला सकते। इसके बजाय एक नया टेस्ट जोड़ें।",
   "error.urlnotvalid": "URL %s वैध नहीं है",
   "error.nonmatchingdomain": "URL %s होस्टनेम %s regex से नहीं मिला",
   "error.invalidkey": "अमान्य API key।",

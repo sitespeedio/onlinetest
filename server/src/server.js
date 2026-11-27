@@ -18,6 +18,7 @@ import {
 } from './testrunners.js';
 import {
   testConnection,
+  checkDatabaseSchema,
   updateStatus,
   updateTest,
   getTest,
@@ -256,6 +257,7 @@ export class SitespeedioServer {
 
     try {
       await testConnection();
+      await checkDatabaseSchema();
     } catch (error) {
       logger.error('Could not access the database', error);
       throw error;

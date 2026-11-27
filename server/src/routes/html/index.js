@@ -107,7 +107,14 @@ index.post('/update', async (request, response) => {
   const id = request.body.id;
   const label = request.body.label;
   try {
-    await updateLabel(id, label);
+    const updatedRows = await updateLabel(id, label);
+    if (updatedRows === 0) {
+      return response.render('error', {
+        message: getText('error.apitestlocked'),
+        nconf,
+        getText
+      });
+    }
     return response.redirect(`/search/`);
   } catch (error) {
     return response.render('error', {

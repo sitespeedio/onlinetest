@@ -81,6 +81,7 @@
   "error.testfailed": "测试运行失败",
   "error.parsingscript": "无法解析脚本",
   "error.scriptingdisabled": "此服务器已关闭脚本测试。",
+  "error.apitestlocked": "此测试是通过 API 添加的。你无法在网页界面中修改或重新运行它。请改为添加一个新测试。",
   "error.urlnotvalid": "URL %s 不是有效的 URL",
   "error.nonmatchingdomain": "URL %s 与主机名 %s 配置的 regex 不匹配",
   "error.invalidkey": "无效的 API key。",
