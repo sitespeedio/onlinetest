@@ -81,6 +81,7 @@
   "error.testfailed": "فشل الاختبار",
   "error.parsingscript": "تعذر تحليل السكربت",
   "error.scriptingdisabled": "اختبارات البرمجة النصية معطلة على هذا الخادم.",
+  "error.apitestlocked": "تمت إضافة هذا الاختبار عبر واجهة API. لا يمكنك تغييره أو تشغيله مرة أخرى من واجهة الويب. أضف اختبارًا جديدًا بدلاً من ذلك.",
   "error.urlnotvalid": "URL %s غير صالح",
   "error.nonmatchingdomain": "URL %s لا يطابق regex للمضيف %s",
   "error.invalidkey": "مفتاح API غير صالح.",

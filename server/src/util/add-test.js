@@ -57,6 +57,11 @@ export async function reRunTest(request) {
   }
     */
   const oldTest = await getTest(id);
+  // A re-run would reuse the configuration of an API test, without the
+  // limits of the web GUI.
+  if (oldTest?.from_api) {
+    throw new Error(getText('error.apitestlocked'));
+  }
   // A rerun comes from the web GUI
   if (oldTest?.scripting && !isScriptingAllowed(false)) {
     throw new Error(getText('error.scriptingdisabled'));
@@ -308,7 +313,9 @@ export async function addTestFromAPI(
     scripting,
     label,
     slug,
-    config
+    config,
+    undefined,
+    true
   );
 
   logger.info(`Adding test with id ${jobId} in queue ${queue} using the API`);

@@ -81,6 +81,7 @@
   "error.testfailed": "Der Testlauf ist fehlgeschlagen",
   "error.parsingscript": "Skript konnte nicht verarbeitet werden",
   "error.scriptingdisabled": "Skript-Tests sind auf diesem Server deaktiviert.",
+  "error.apitestlocked": "Dieser Test wurde über die API hinzugefügt. Du kannst ihn in der Weboberfläche nicht ändern oder erneut ausführen. Füge stattdessen einen neuen Test hinzu.",
   "error.urlnotvalid": "Die URL %s ist keine valide URL",
   "error.nonmatchingdomain": "Die URL %s passt nicht zum konfigurierten regex für den Hostnamen %s",
   "error.invalidkey": "Ungültiger API-Schlüssel.",
