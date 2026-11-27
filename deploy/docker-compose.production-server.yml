@@ -107,7 +107,7 @@ services:
       postgresql_server: ${POSTGRESQL_HOST}
       validTestDomains: ${VALID_TEST_DOMAINS}
     ports:
-      - "3000:3000"
+      - "${SERVER_PUBLISH:-3000}:3000"
     restart: always
     networks:
       - skynet
