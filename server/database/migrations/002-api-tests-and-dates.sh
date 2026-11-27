@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Helper for applying migration 002-add-from-api.sql against a
+# Helper for applying migration 002-api-tests-and-dates.sql against a
 # Postgres instance running under docker compose. Each subcommand maps
 # to one of the steps in server/database/migrations/README.md.
 #
@@ -9,12 +9,12 @@
 # so e.g. `COMPOSE_FILE=deploy/docker-compose.production.yml ./… apply`
 # works for the prod compose file):
 #
-#   ./002-add-from-api.sh check     # confirm container + show current schema
-#   ./002-add-from-api.sh backup    # pg_dump just this table to ./
-#   ./002-add-from-api.sh dry-run   # apply inside a tx + rollback
-#   ./002-add-from-api.sh apply     # apply for real
-#   ./002-add-from-api.sh verify    # show new schema + API test count
-#   ./002-add-from-api.sh rollback  # drop the column
+#   ./002-api-tests-and-dates.sh check     # confirm container + show current schema
+#   ./002-api-tests-and-dates.sh backup    # pg_dump just this table to ./
+#   ./002-api-tests-and-dates.sh dry-run   # apply inside a tx + rollback
+#   ./002-api-tests-and-dates.sh apply     # apply for real
+#   ./002-api-tests-and-dates.sh verify    # show new schema + API test count
+#   ./002-api-tests-and-dates.sh rollback  # undo the migration
 #
 # Override the compose service name (defaults to `postgresql`) by
 # exporting PG_SERVICE before running.
@@ -22,7 +22,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SQL_FILE="$SCRIPT_DIR/002-add-from-api.sql"
+SQL_FILE="$SCRIPT_DIR/002-api-tests-and-dates.sql"
 PG_SERVICE="${PG_SERVICE:-postgresql}"
 
 # Pick `docker compose` (v2) over `docker-compose` (v1) when both
@@ -73,7 +73,8 @@ cmd_dry_run() {
         echo 'ROLLBACK;'
     } | psql_in_container
     echo
-    echo "Look for 'from_api | boolean' in the schema printout above."
+    echo "Look for 'from_api | boolean', 'timestamp with time zone' on the three date columns,"
+    echo "'connectivity | text' and 'added_date_index' in the schema printout above."
     echo "The trailing 'ROLLBACK' confirms nothing was committed."
 }
 
@@ -92,13 +93,19 @@ cmd_verify() {
 }
 
 cmd_rollback() {
-    echo "Dropping from_api ..."
+    echo "Undoing migration 002 ..."
     echo "WARNING: only safe if the new server has NOT been deployed yet."
     echo "Press Ctrl-C within 5 seconds to abort."
     sleep 5
     psql_in_container <<'SQL'
+SET timezone = 'UTC';
+DROP INDEX IF EXISTS added_date_index;
 ALTER TABLE sitespeed_io_test_runs
-    DROP COLUMN IF EXISTS from_api;
+    DROP COLUMN IF EXISTS from_api,
+    ALTER COLUMN added_date TYPE TIMESTAMP,
+    ALTER COLUMN run_date TYPE TIMESTAMP,
+    ALTER COLUMN finished_date TYPE TIMESTAMP,
+    ALTER COLUMN connectivity TYPE VARCHAR(12);
 SQL
     echo "Rollback finished."
 }

@@ -34,7 +34,7 @@ export async function saveTest(
   fromAPI = false
 ) {
   const insert =
-    'INSERT INTO sitespeed_io_test_runs(added_date, browser_name, location, url, test_type, scripting_name, scripting, label, slug, configuration, cli_params, from_api) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id';
+    'INSERT INTO sitespeed_io_test_runs(added_date, browser_name, location, url, test_type, scripting_name, scripting, label, slug, configuration, cli_params, from_api, connectivity) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id';
   const values = [
     new Date(),
     browser,
@@ -47,7 +47,8 @@ export async function saveTest(
     slug,
     configuration,
     cliParameters,
-    fromAPI
+    fromAPI,
+    configuration?.browsertime?.connectivity?.profile
   ];
 
   try {
@@ -463,6 +464,30 @@ export async function getStatistics() {
     // Don't break /admin when stats fail — return the previous good
     // value if we have one, otherwise zeros so the template renders.
     return statsCache || emptyStats();
+  }
+}
+
+// The server writes these columns, so without the migration every new test
+// fails to save. Stop at startup with the name of the migration instead.
+const REQUIRED_COLUMNS = [
+  ['from_api', 'boolean'],
+  ['added_date', 'timestamp with time zone']
+];
+
+export async function checkDatabaseSchema() {
+  const result = await DatabaseHelper.getInstance().query(
+    "SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'sitespeed_io_test_runs'"
+  );
+  const types = new Map(
+    result.rows.map(row => [row.column_name, row.data_type])
+  );
+  const missing = REQUIRED_COLUMNS.filter(
+    ([column, type]) => types.get(column) !== type
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `The database schema is too old (${missing.map(([column]) => column).join(', ')}). Run server/database/migrations/002-api-tests-and-dates.sh apply, see server/database/migrations/README.md`
+    );
   }
 }
 
