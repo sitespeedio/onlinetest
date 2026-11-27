@@ -2,6 +2,43 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
+## 7.0.0 - UNRELEASED
+
+Before you update, [back up PostgreSQL](deploy/PRODUCTION.md#back-up-postgresql) and follow [Upgrading to a new major version](deploy/PRODUCTION.md#upgrading-to-a-new-major-version).
+
+**Major version because the database schema changes.** Run `server/database/migrations/002-api-tests-and-dates.sh apply` against your PostgreSQL *before* you update the server. The new server does not start until the migration is applied, and the log names the migration to run. The previous server works on the migrated schema, so migrate first and update after. The migration stores the dates with their time zone, adds an index on `added_date`, saves the connectivity of each test and records which tests came through the API. Existing dates are read as UTC, which is correct for the Docker setup. If your server ran in another time zone, old tests move by that offset, one time. New installs get the new schema automatically [#310](https://github.com/sitespeedio/onlinetest/pull/310).
+
+**Other changes that can affect your install:**
+* Command line options in the web GUI are off by default. The server ignores options sent from the GUI, because they can make the testrunner open URLs that do not match `VALID_TEST_DOMAINS`. Set `ALLOWCOMMANDLINE=true` in `.env` to turn them on [#304](https://github.com/sitespeedio/onlinetest/pull/304).
+* Tests stop after 60 minutes (`TEST_TIMEOUT`, 0 turns it off), and tests from the web GUI can have at most 21 iterations (`MAXITERATIONS`) [#298](https://github.com/sitespeedio/onlinetest/pull/298).
+* `VALID_TEST_DOMAINS` only applies to tests from the web GUI. Tests added through the API can test any domain, because the API key already gives full control of the test. Keep the API key secret [#307](https://github.com/sitespeedio/onlinetest/pull/307).
+* The web GUI can no longer re-run tests that came through the API or change their label [#310](https://github.com/sitespeedio/onlinetest/pull/310).
+* In the multi-server setup, PostgreSQL is no longer published. If you set `POSTGRESQL_HOST` to the server machine's IP on the server box, set it back to `postgresql` [#306](https://github.com/sitespeedio/onlinetest/pull/306).
+* Redis gets its password from `.env`. If you changed `redis-conf/redis.conf`, restore it before you update, because the `requirepass` line is gone [#296](https://github.com/sitespeedio/onlinetest/pull/296).
+
+### Added
+* `./deploy/update.sh --domain example.com` installs onlinetest with one command: it creates `.env`, generates the passwords and sets the URLs that depend on the domain. On updates it pulls the sitespeed.io image and warns about settings in `.env.example` that are missing in `.env` [#296](https://github.com/sitespeedio/onlinetest/pull/296).
+* `./deploy/update.sh --mode local` starts onlinetest on your own machine with generated secrets [#303](https://github.com/sitespeedio/onlinetest/pull/303).
+* The running page shows the progress of the test: the step, the iteration, the LCP of each finished iteration and the median so far [#293](https://github.com/sitespeedio/onlinetest/pull/293).
+* `MAXQUEUESIZE` limits how many tests from the web GUI can wait in a queue, so that one user cannot fill it. It is off by default and the API is not limited [#305](https://github.com/sitespeedio/onlinetest/pull/305).
+* The testrunner can extend a different sitespeed.io configuration file for tests from the API (`sitespeedioApiConfigFile`), for example to send only your own tests to Graphite. The secrets stay on the testrunner [#309](https://github.com/sitespeedio/onlinetest/pull/309).
+* In the multi-server setup, `SERVER_PUBLISH` sets the address and port of the server, for example `127.0.0.1:3001` behind a reverse proxy on the same machine [#311](https://github.com/sitespeedio/onlinetest/pull/311).
+* A testrunner can store results without SeaweedFS, for example with scp: an empty `SITESPEED_IO_S3_ENDPOINT` turns off the upload to S3, and `DOCKER_EXTRAPARAMETERS`, `SITESPEEDIO_CONFIG_FILE` and `SITESPEEDIO_API_CONFIG_FILE` can be set in `.env` [#312](https://github.com/sitespeedio/onlinetest/pull/312).
+
+### Changed
+* Use sitespeed.io 43 [#302](https://github.com/sitespeedio/onlinetest/pull/302).
+* The Scripting tab shows also when scripting is off, and explains how to turn it on [#308](https://github.com/sitespeedio/onlinetest/pull/308).
+* Every container keeps at most three log files of 10 MB, so the logs no longer fill the disk [#297](https://github.com/sitespeedio/onlinetest/pull/297).
+* The lockfiles are `package-lock.json`, so the Docker builds also work with npm 12 [#299](https://github.com/sitespeedio/onlinetest/pull/299).
+
+### Fixed
+* The multi-server docs locked down Redis and SeaweedFS with iptables `INPUT` rules, but Docker sends traffic to published ports past `INPUT`, so the rules blocked nothing. The docs now use the provider firewall or `DOCKER-USER` rules. If you followed the old steps, check that your ports are closed [#306](https://github.com/sitespeedio/onlinetest/pull/306).
+* A request from the web GUI could skip the domain check by adding an `api.scripting` field [#307](https://github.com/sitespeedio/onlinetest/pull/307).
+* The edit dialog in search could change the label of any test [#310](https://github.com/sitespeedio/onlinetest/pull/310).
+* When the server or a testrunner did not use UTC, new tests looked hours old or hours in the future in the admin statistics, the check for stuck tests and retention. The connectivity of a test was never saved [#310](https://github.com/sitespeedio/onlinetest/pull/310).
+* The `VALID_TEST_DOMAINS` examples matched a full URL, but the server checks only the host name, so they refused every test [#296](https://github.com/sitespeedio/onlinetest/pull/296).
+* The API examples in the README used a URL as the hostname, which sitespeed.io cannot resolve [#303](https://github.com/sitespeedio/onlinetest/pull/303).
+
 ## 6.2.0 - 2026-10-23
 
 ### Changed
