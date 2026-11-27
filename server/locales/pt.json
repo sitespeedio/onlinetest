@@ -81,6 +81,7 @@
   "error.testfailed": "O teste falhou ao executar",
   "error.parsingscript": "Erro ao interpretar script",
   "error.scriptingdisabled": "Os testes com scripts estão desativados neste servidor.",
+  "error.apitestlocked": "Este teste foi adicionado pela API. Você não pode alterá-lo nem executá-lo novamente pela interface web. Adicione um novo teste.",
   "error.urlnotvalid": "A URL %s não é válida",
   "error.nonmatchingdomain": "A URL %s não corresponde à regex configurada para o hostname %s",
   "error.invalidkey": "Chave de API inválida.",

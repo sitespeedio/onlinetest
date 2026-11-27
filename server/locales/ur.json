@@ -81,6 +81,7 @@
   "error.testfailed": "ٹیسٹ ناکام",
   "error.parsingscript": "اسکرپٹ پارس نہیں ہوا",
   "error.scriptingdisabled": "اس سرور پر اسکرپٹنگ ٹیسٹ بند ہیں۔",
+  "error.apitestlocked": "یہ ٹیسٹ API کے ذریعے شامل کیا گیا تھا۔ آپ اسے ویب GUI میں تبدیل یا دوبارہ نہیں چلا سکتے۔ اس کے بجائے نیا ٹیسٹ شامل کریں۔",
   "error.urlnotvalid": "URL %s درست نہیں",
   "error.nonmatchingdomain": "URL %s ہوسٹ نیم %s کے regex سے نہیں ملا",
   "error.invalidkey": "غلط API key۔",

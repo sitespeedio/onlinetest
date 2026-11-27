@@ -75,13 +75,15 @@ This exposes:
 
 | Port | Service    |
 |------|------------|
-| 3000 | Server     |
+| 3000 | Server (change it with `SERVER_PUBLISH`) |
 | 6379 | Redis      |
 | 9000 | SeaweedFS  |
 
 SeaweedFS also listens on 9333 (master), 8080 (volume) and 8888 (filer) inside the Docker network. Those ports have no authentication, so never publish them. Only port 9000 (the S3 API) should ever leave the `skynet` network.
 
 You will want to put a reverse proxy (Caddy, nginx, etc.) in front of port 3000 and 9000 for HTTPS — see [Reverse proxy examples](#reverse-proxy-examples) below.
+
+If the reverse proxy runs on the server machine, or port 3000 is already in use, set `SERVER_PUBLISH` in `.env` to the address and port that the server publishes. For example, `SERVER_PUBLISH=127.0.0.1:3001` uses port 3001 and accepts connections only from the machine itself, so the web GUI is reachable only through the reverse proxy.
 
 3. **Lock down the ports.** Redis and SeaweedFS must only be reachable from your testrunner machine(s), not from the public internet. PostgreSQL is not published, because only the server uses it.
 

@@ -81,6 +81,7 @@
   "error.testfailed": "Сбой запуска",
   "error.parsingscript": "Скрипт не разобран",
   "error.scriptingdisabled": "Тесты со скриптами отключены на этом сервере.",
+  "error.apitestlocked": "Этот тест добавлен через API. Его нельзя изменить или запустить повторно в веб-интерфейсе. Добавьте новый тест.",
   "error.urlnotvalid": "URL %s некорректен",
   "error.nonmatchingdomain": "URL %s не соответствует regex для hostname %s",
   "error.invalidkey": "Недействительный API-ключ.",

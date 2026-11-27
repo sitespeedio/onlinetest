@@ -81,6 +81,7 @@
   "error.testfailed": "ব্যর্থ",
   "error.parsingscript": "পার্স ত্রুটি",
   "error.scriptingdisabled": "এই সার্ভারে স্ক্রিপ্টিং টেস্ট বন্ধ আছে।",
+  "error.apitestlocked": "এই টেস্টটি API দিয়ে যোগ করা হয়েছে। ওয়েব GUI থেকে এটি পরিবর্তন বা আবার চালানো যাবে না। এর বদলে একটি নতুন টেস্ট যোগ করুন।",
   "error.urlnotvalid": "URL %s বৈধ নয়",
   "error.nonmatchingdomain": "URL %s হোস্টনেম %s-এর regex মেলে না",
   "error.invalidkey": "অবৈধ API key।",

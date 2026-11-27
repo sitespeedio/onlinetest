@@ -183,9 +183,10 @@ block content
                         span.icon.is-small
                           img(src='/img/icons/content-copy.svg' alt='Add to search field' title='Add to search field')
                     td
-                      a(role='button' data-rerun-id=test.id data-rerun-url=(test.url || test.scripting_name) data-rerun-label=(test.label || ''))
-                        span.icon.is-small
-                          img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
+                      if !test.from_api
+                        a(role='button' data-rerun-id=test.id data-rerun-url=(test.url || test.scripting_name) data-rerun-label=(test.label || ''))
+                          span.icon.is-small
+                            img(src='/img/icons/edit.svg' alt='Edit/rerun test' title='Edit/rerun test')
             p.has-background-white.has-text-black.p-3.has-text-centered.has-addons
               button.button.is-link.is-medium.mr-2(
                 data-page=currentPage - 1 aria-label='Go to page #{currentPage - 1}' disabled=(currentPage <= 1)) #{getText('search.button.previous')}
