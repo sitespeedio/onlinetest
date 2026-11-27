@@ -56,7 +56,7 @@ const loggingSchema = Joi.object({
 const dockerSchema = Joi.object({
   container: Joi.string().optional(),
   extraparameters: Joi.string().allow(null).optional(),
-  baselinedir: Joi.string().allow(null).optional()
+  baselinedir: Joi.string().allow(null, '').optional()
 })
   .optional()
   .allow(null);
@@ -66,8 +66,8 @@ const configSchema = Joi.object({
   location: locationSchema.required(),
   redis: redisSchema.required(),
   log: loggingSchema.required(),
-  sitespeedioConfigFile: Joi.string().optional(),
-  sitespeedioApiConfigFile: Joi.string().optional(),
+  sitespeedioConfigFile: Joi.string().allow('').optional(),
+  sitespeedioApiConfigFile: Joi.string().allow('').optional(),
   workingDirectory: Joi.string().optional(),
   executable: Joi.string().required(),
   docker: dockerSchema.required(),
