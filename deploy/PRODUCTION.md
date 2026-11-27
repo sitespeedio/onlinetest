@@ -351,11 +351,11 @@ It pulls the latest images, runs `docker compose up -d --remove-orphans`, prints
 To move to a new major release of the server/testrunner, pass `--version`:
 
 ```bash
-./deploy/update.sh --mode server --version 6
-./deploy/update.sh --mode testrunner --version 6
+./deploy/update.sh --mode server --version 7
+./deploy/update.sh --mode testrunner --version 7
 ```
 
-This rewrites `SITESPEED_IO_SERVER_VERSION` and `SITESPEED_IO_TESTRUNNER_VERSION` in `.env` to `6` before pulling. With only the major version, later 6.x releases come with each update. Read [Upgrading to a new major version](#upgrading-to-a-new-major-version) before you change the major version.
+This rewrites `SITESPEED_IO_SERVER_VERSION` and `SITESPEED_IO_TESTRUNNER_VERSION` in `.env` to `7` before pulling. With only the major version, later 7.x releases come with each update. Read [Upgrading to a new major version](#upgrading-to-a-new-major-version) before you change the major version.
 
 ### Back up PostgreSQL
 
