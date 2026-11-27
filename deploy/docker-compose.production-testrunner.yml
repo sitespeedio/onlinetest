@@ -18,6 +18,7 @@ services:
       location_name: ${LOCATION_NAME}
       docker_container: ${SITESPEED_IO_CONTAINER}
       docker_extraparameters: ${DOCKER_EXTRAPARAMETERS:---cap-add=NET_ADMIN}
+      docker_baselinedir: ${DOCKER_BASELINEDIR:-}
       sitespeedioConfigFile: ${SITESPEEDIO_CONFIG_FILE:-}
       sitespeedioApiConfigFile: ${SITESPEEDIO_API_CONFIG_FILE:-}
       sitespeed.io_s3_endpoint: ${SITESPEED_IO_S3_ENDPOINT}
