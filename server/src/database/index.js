@@ -5,7 +5,7 @@ import DatabaseHelper from './databasehelper.js';
 const logger = getLogger('sitespeedio.database');
 
 const LIMITED_COLUMS =
-  'id, location, test_type, run_date, added_date, connectivity, browser_name, url, result_url, status, scripting_name, label, slug';
+  'id, location, test_type, run_date, added_date, connectivity, browser_name, url, result_url, status, scripting_name, label, slug, from_api';
 
 function logError(message, error) {
   if (error instanceof AggregateError) {
@@ -30,10 +30,11 @@ export async function saveTest(
   label,
   slug,
   configuration,
-  cliParameters
+  cliParameters,
+  fromAPI = false
 ) {
   const insert =
-    'INSERT INTO sitespeed_io_test_runs(added_date, browser_name, location, url, test_type, scripting_name, scripting, label, slug, configuration, cli_params) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id';
+    'INSERT INTO sitespeed_io_test_runs(added_date, browser_name, location, url, test_type, scripting_name, scripting, label, slug, configuration, cli_params, from_api) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING id';
   const values = [
     new Date(),
     browser,
@@ -45,7 +46,8 @@ export async function saveTest(
     label,
     slug,
     configuration,
-    cliParameters
+    cliParameters,
+    fromAPI
   ];
 
   try {
@@ -132,13 +134,16 @@ export async function getLatestTests(limit, page) {
 /**
  * Update the label of a test.
  */
+// Tests from the API keep their label, so that the web GUI cannot change
+// the labels of your own scheduled tests.
 export async function updateLabel(id, label) {
-  const update = 'UPDATE sitespeed_io_test_runs SET label = $1 WHERE id = $2';
+  const update =
+    'UPDATE sitespeed_io_test_runs SET label = $1 WHERE id = $2 AND from_api IS NOT TRUE';
 
   const values = [label, id];
   try {
     const result = await DatabaseHelper.getInstance().query(update, values);
-    return result.rows[0];
+    return result.rowCount;
   } catch (error) {
     logError('Could not update label for id', error);
   }

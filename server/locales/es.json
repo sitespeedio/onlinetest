@@ -81,6 +81,7 @@
   "error.testfailed": "La prueba no se pudo ejecutar",
   "error.parsingscript": "No se pudo analizar el script",
   "error.scriptingdisabled": "Las pruebas con scripts están desactivadas en este servidor.",
+  "error.apitestlocked": "Esta prueba se añadió a través de la API. No puedes cambiarla ni volver a ejecutarla desde la interfaz web. Añade una prueba nueva en su lugar.",
   "error.urlnotvalid": "La URL %s no es válida",
   "error.nonmatchingdomain": "La URL %s no coincide con la regex configurada para el hostname %s",
   "error.invalidkey": "Clave de API no válida.",

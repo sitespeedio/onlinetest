@@ -81,6 +81,7 @@
   "error.testfailed": "Test échoué",
   "error.parsingscript": "Impossible d’analyser le script",
   "error.scriptingdisabled": "Les tests scriptés sont désactivés sur ce serveur.",
+  "error.apitestlocked": "Ce test a été ajouté via l'API. Vous ne pouvez pas le modifier ni le relancer depuis l'interface web. Ajoutez plutôt un nouveau test.",
   "error.urlnotvalid": "L’URL %s n’est pas valide",
   "error.nonmatchingdomain": "L’URL %s ne correspond pas à la regex configurée pour le nom d’hôte %s",
   "error.invalidkey": "Clé d’API invalide.",

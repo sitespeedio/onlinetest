@@ -20,7 +20,8 @@ CREATE TABLE sitespeed_io_test_runs (
     configuration JSONB,
     cli_params TEXT,
     failed_reason TEXT,
-    finished_date TIMESTAMP
+    finished_date TIMESTAMP,
+    from_api BOOLEAN
 );
 
 CREATE INDEX url_index ON sitespeed_io_test_runs (url);
