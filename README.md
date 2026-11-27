@@ -134,8 +134,8 @@ By default the result is served by [SeaweedFS](https://github.com/seaweedfs/seaw
 You can configure which version of the server and the testrunner you want to use. You can either use latest stable version or specify a specific tag. In the *.env* file you configure which Docker tag to use.
 
 ```
-SITESPEED_IO_SERVER_VERSION=6
-SITESPEED_IO_TESTRUNNER_VERSION=6
+SITESPEED_IO_SERVER_VERSION=7
+SITESPEED_IO_TESTRUNNER_VERSION=7
 ```
 
 ### Secure the API with a key
