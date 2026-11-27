@@ -4,7 +4,12 @@ import os from 'node:os';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import { nconf, getTestTimeout, getSitespeedioConfigFile } from '../config.js';
+import {
+  nconf,
+  getTestTimeout,
+  getSitespeedioConfigFile,
+  getSitespeedioDefaults
+} from '../config.js';
 
 import { queueHandler } from '../queue/queuehandler.js';
 import { removeFlags, safeMerge } from '../utility.js';
@@ -48,7 +53,7 @@ export default async function runJob(job) {
       job.data.config.extends = sitespeedioConfigFile;
     }
 
-    const testrunnerConfig = nconf.get('sitespeed.io') || {};
+    const testrunnerConfig = getSitespeedioDefaults();
     const config = safeMerge({}, testrunnerConfig, job.data.config);
 
     // If we use baseline setup the directory by default

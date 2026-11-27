@@ -42,7 +42,9 @@ const ENV_LIST = [
   'sitespeed.io_s3_region',
   'sitespeed.io_s3_options_forcePathStyle',
   'sitespeed.io_s3_removeLocalResult',
-  'sitespeed.io_resultBaseURL'
+  'sitespeed.io_resultBaseURL',
+  'sitespeedioConfigFile',
+  'sitespeedioApiConfigFile'
 ];
 
 function readConfigFile(configFilePath) {
@@ -79,6 +81,14 @@ function initConfig() {
         }
         case 'sitespeed.io_resultbaseurl': {
           object.key = 'sitespeed.io_resultBaseURL';
+          break;
+        }
+        case 'sitespeedioconfigfile': {
+          object.key = 'sitespeedioConfigFile';
+          break;
+        }
+        case 'sitespeedioapiconfigfile': {
+          object.key = 'sitespeedioApiConfigFile';
           break;
         }
         case 'sitespeed.io_s3_removelocalresult': {
@@ -133,9 +143,25 @@ function getTestTimeout() {
 function getSitespeedioConfigFile(job) {
   return (
     (job.data.fromAPI && nconf.get('sitespeedioApiConfigFile')) ||
-    nconf.get('sitespeedioConfigFile')
+    nconf.get('sitespeedioConfigFile') ||
+    undefined
   );
 }
 
-export { getFilteredConfig, getTestTimeout, getSitespeedioConfigFile };
+// An empty S3 endpoint turns off the upload to S3, for example when the
+// sitespeed.io configuration file uploads the result with scp.
+function getSitespeedioDefaults() {
+  const config = { ...nconf.get('sitespeed.io') };
+  if (config.s3 && !config.s3.endpoint) {
+    delete config.s3;
+  }
+  return config;
+}
+
+export {
+  getFilteredConfig,
+  getTestTimeout,
+  getSitespeedioConfigFile,
+  getSitespeedioDefaults
+};
 export { default as nconf } from 'nconf';

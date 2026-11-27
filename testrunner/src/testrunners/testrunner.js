@@ -5,7 +5,12 @@ import { fileURLToPath } from 'node:url';
 
 import { execa } from 'execa';
 import { getLogger } from '@sitespeed.io/log';
-import { nconf, getTestTimeout, getSitespeedioConfigFile } from '../config.js';
+import {
+  nconf,
+  getTestTimeout,
+  getSitespeedioConfigFile,
+  getSitespeedioDefaults
+} from '../config.js';
 import get from 'lodash.get';
 
 import { queueHandler } from '../queue/queuehandler.js';
@@ -117,7 +122,7 @@ function prepareSitespeedConfig(job) {
       ? getBaseFilePath('./config/sitespeedDefault.json')
       : path.resolve(sitespeedioConfigFile);
 
-  const testrunnerConfig = nconf.get('sitespeed.io') || {};
+  const testrunnerConfig = getSitespeedioDefaults();
   const config = safeMerge({}, testrunnerConfig, jobConfig);
   return config;
 }
