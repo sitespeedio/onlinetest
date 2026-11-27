@@ -390,6 +390,22 @@ A major version changes how onlinetest works, and you can need to change `.env` 
     docker compose --env-file .env -f deploy/docker-compose.production.yml logs sitespeed.io-server | grep -i warn
     ```
 
+#### Upgrading to 7.0
+
+* **Run migration 002 before you update the server.** The new server does not start until it is applied. Run it from the repository root while the old server still runs, with `COMPOSE_FILE` set to the compose file that you use:
+    ```bash
+    export COMPOSE_FILE=deploy/docker-compose.production.yml   # or docker-compose.production-server.yml
+    ./server/database/migrations/002-api-tests-and-dates.sh backup
+    ./server/database/migrations/002-api-tests-and-dates.sh dry-run
+    ./server/database/migrations/002-api-tests-and-dates.sh apply
+    ./server/database/migrations/002-api-tests-and-dates.sh verify
+    ```
+    Existing dates are read as UTC. If your server ran in another time zone, old tests move by that offset, one time.
+* **Command line options in the web GUI are off.** To turn them on again, set `ALLOWCOMMANDLINE=true` in `.env`.
+* **Tests stop after 60 minutes, and tests from the web GUI can have at most 21 iterations.** Change this with `TEST_TIMEOUT` and `MAXITERATIONS` in `.env`.
+* **Multi-server setup:** PostgreSQL is no longer published. If you set `POSTGRESQL_HOST` to the server machine's IP on the server box, set it back to `postgresql`. Check that the firewall really blocks Redis and SeaweedFS, see step 3 in [Server machine](#server-machine).
+* **If you changed `redis-conf/redis.conf`,** restore it before you update. Redis gets its password from `.env`.
+
 #### Upgrading to 6.0
 
 * **Tests older than 30 days are removed from PostgreSQL.** The first pass runs a minute after the server starts. To keep your test history, set `RETENTION_DAYS=0` in `.env` before you update, or set `RETENTION_REMOVE=data` to keep the tests in search and only clear their HAR and browsertime result. See [Data retention](#data-retention).
