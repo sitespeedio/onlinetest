@@ -2,7 +2,7 @@
 
 This changelog combines the server and testrunner changes. The changelog do [semantic versioning](https://semver.org).
 
-## 7.0.0 - UNRELEASED
+## 7.0.0 - 2026-11-27
 
 Before you update, [back up PostgreSQL](deploy/PRODUCTION.md#back-up-postgresql) and follow [Upgrading to a new major version](deploy/PRODUCTION.md#upgrading-to-a-new-major-version).
 
