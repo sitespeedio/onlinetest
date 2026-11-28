@@ -213,7 +213,12 @@ function setupDockerParameters(
   }
 
   if (usingBaseline) {
-    const baselineDirectory = nconf.get('docker:baselinedir') || '"$(pwd)"';
+    const baselineDirectory = nconf.get('docker:baselinedir');
+    if (!baselineDirectory) {
+      throw new Error(
+        'Tests with compare need a baseline directory. Set docker.baselinedir (DOCKER_BASELINEDIR) on the testrunner.'
+      );
+    }
     baseParameters.splice(1, 0, '-v', `${baselineDirectory}:/baseline`);
   }
 

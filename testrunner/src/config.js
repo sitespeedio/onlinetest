@@ -32,6 +32,7 @@ const ENV_LIST = [
   'redis_password',
   'minio_password',
   'docker_extraparameters',
+  'docker_baselinedir',
   'docker_container',
   'location_name',
   'test_timeout',
